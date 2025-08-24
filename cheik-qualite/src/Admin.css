@@ -1,0 +1,230 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+ * {
+     margin: 0;
+     padding: 0;
+     box-sizing: border-box;
+     font-family: 'Poppins', sans-serif;
+ }
+
+ body {
+     background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+     color: #333;
+     line-height: 1.6;
+     min-height: 100vh;
+     display: flex;
+     flex-direction: column;
+ }
+
+ .App {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+ }
+
+ .container {
+     max-width: 1200px;
+     margin: 0 auto;
+     padding: 20px;
+ }
+
+ .main-content {
+     flex-grow: 1;
+ }
+
+ /* Styles du Header */
+ header {
+     text-align: center;
+     padding: 30px 20px;
+     background: linear-gradient(to right, #3498db, #2c3e50);
+     color: white;
+     border-bottom-left-radius: 15px;
+     border-bottom-right-radius: 15px;
+     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+     position: relative;
+     overflow: hidden;
+ }
+ 
+ .guinea-flag {
+     position: absolute;
+     top: 10px;
+     right: 10px;
+     width: 40px;
+     height: 25px;
+     background: linear-gradient(to bottom, 
+         #ce1126 0%, 
+         #ce1126 33%, 
+         #fcd116 33%, 
+         #fcd116 66%, 
+         #009e49 66%, 
+         #009e49 100%);
+     border-radius: 3px;
+ }
+ 
+ header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+ header p { font-size: 1.2rem; max-width: 800px; margin: 0 auto; opacity: 0.9; }
+
+ .header-nav { margin-top: 20px; }
+ .header-nav ul { list-style: none; display: flex; justify-content: center; gap: 30px; }
+ .header-nav ul li a { color: white; text-decoration: none; font-size: 1.1rem; font-weight: 500; transition: color 0.3s ease; }
+ .header-nav ul li a:hover { color: #fcd116; }
+
+ /* Styles du Tableau de bord */
+ .dashboard-container {
+     background: white;
+     border-radius: 15px;
+     padding: 40px;
+     box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+     margin-top: 30px;
+ }
+
+ .dashboard-header {
+     text-align: center;
+     margin-bottom: 40px;
+ }
+
+ .dashboard-header h2 {
+     font-size: 2.5rem;
+     color: #2c3e50;
+ }
+ 
+ .dashboard-header p {
+     font-size: 1.1rem;
+     color: #7f8c8d;
+ }
+
+ .dashboard-stats {
+     display: grid;
+     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+     gap: 25px;
+     margin-bottom: 40px;
+     text-align: center;
+ }
+
+ .stat-card {
+     background: #eaf6ff;
+     padding: 20px;
+     border-radius: 15px;
+     border-left: 5px solid #3498db;
+ }
+
+ .stat-card h3 {
+     font-size: 1.2rem;
+     color: #555;
+ }
+
+ .stat-card p {
+     font-size: 2.5rem;
+     font-weight: 700;
+     color: #3498db;
+ }
+
+ .dashboard-section {
+     background: #f8f9fa;
+     border-radius: 15px;
+     padding: 30px;
+     margin-bottom: 30px;
+     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+ }
+
+ .dashboard-section h3 {
+     font-size: 1.8rem;
+     color: #2c3e50;
+     margin-bottom: 20px;
+     border-bottom: 2px solid #ddd;
+     padding-bottom: 10px;
+ }
+ 
+ .table-container {
+     overflow-x: auto;
+ }
+
+ table {
+     width: 100%;
+     border-collapse: collapse;
+ }
+
+ table th, table td {
+     padding: 15px;
+     text-align: left;
+     border-bottom: 1px solid #ddd;
+ }
+
+ table thead {
+     background: #ecf0f1;
+     color: #2c3e50;
+ }
+
+ .status-badge {
+     padding: 5px 10px;
+     border-radius: 20px;
+     color: white;
+     font-size: 0.9rem;
+     font-weight: 600;
+ }
+
+ .status-pending { background-color: #f39c12; }
+ .status-approved { background-color: #2ecc71; }
+ .status-rejected { background-color: #e74c3c; }
+
+ .action-btn {
+     background: none;
+     border: none;
+     color: #3498db;
+     cursor: pointer;
+     font-size: 1.2rem;
+     margin-right: 10px;
+ }
+
+ .action-btn.delete-btn { color: #e74c3c; }
+ .action-btn.approve-btn { color: #2ecc71; }
+
+ /* Pied de page (réutilisé) */
+ .site-footer {
+     background: linear-gradient(135deg, #3498db, #2c3e50);
+     color: #f5f7fa;
+     padding: 60px 20px 20px;
+     width: 100%;
+     margin-top: auto; /* Pushes footer to the bottom */
+ }
+ 
+ .footer-container {
+     max-width: 1200px;
+     margin: 0 auto;
+     display: flex;
+     justify-content: space-between;
+     flex-wrap: wrap;
+     gap: 30px;
+     padding-bottom: 40px;
+     border-bottom: 1px solid #3e5066;
+ }
+
+ .footer-section { flex: 1; min-width: 200px; }
+ .footer-section h3 { font-size: 1.4rem; margin-bottom: 20px; color: #3498db; border-bottom: 2px solid #3498db; padding-bottom: 10px; display: inline-block; }
+ .footer-section p, .footer-section li { font-size: 1rem; line-height: 1.8; }
+ .footer-section ul { list-style: none; }
+ .footer-section a { color: #f5f7fa; text-decoration: none; transition: color 0.3s ease; }
+ .footer-section a:hover { color: #3498db; }
+ .footer-section.contact p { display: flex; align-items: center; gap: 10px; }
+ .social-icons { display: flex; gap: 15px; margin-top: 10px; }
+ .social-icons a { color: #f5f7fa; font-size: 1.5rem; transition: transform 0.3s ease; }
+ .social-icons a:hover { transform: translateY(-5px); color: #3498db; }
+ .footer-bottom { text-align: center; padding-top: 20px; font-size: 0.9rem; color: #7f8c8d; }
+ 
+ @media (max-width: 768px) {
+     .footer-container {
+         flex-direction: column;
+         text-align: center;
+     }
+     .footer-section h3 {
+         display: block;
+         text-align: center;
+     }
+     .social-icons {
+         justify-content: center;
+     }
+ }
+
+ .form-group {
+    margin-bottom: 1rem;
+ }

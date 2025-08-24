@@ -1,0 +1,207 @@
+/* General Styles */
+body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+    color: #333;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Poppins', sans-serif;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.main-content {
+    flex-grow: 1;
+}
+
+/* Header */
+header {
+    text-align: center;
+    padding: 30px 20px;
+    background: linear-gradient(to right, #3498db, #2c3e50);
+    color: white;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.guinea-flag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 25px;
+    background: linear-gradient(to bottom, #ce1126 33%, #fcd116 33%, #fcd116 66%, #009e49 66%);
+    border-radius: 3px;
+}
+
+header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+header p { font-size: 1.2rem; max-width: 800px; margin: 0 auto; opacity: 0.9; }
+
+.header-nav { margin-top: 20px; }
+.header-nav ul { list-style: none; display: flex; justify-content: center; gap: 30px; padding: 0; }
+.header-nav ul li a { color: white; text-decoration: none; font-size: 1.1rem; font-weight: 500; transition: color 0.3s ease; }
+.header-nav ul li a:hover { color: #fcd116; }
+
+/* Submission Page Styles */
+.submission-container {
+    background: white;
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    margin-top: 30px;
+}
+
+.submission-container h2 {
+    font-size: 2.5rem;
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.submission-container p {
+    text-align: center;
+    color: #7f8c8d;
+    margin-bottom: 30px;
+    font-size: 1.1rem;
+}
+
+form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="file"],
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    outline: none;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.file-upload-label {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px dashed #ddd;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.file-upload-label:hover {
+    border-color: #3498db;
+    background: #eaf6ff;
+}
+
+.file-upload-label i {
+    font-size: 2rem;
+    color: #3498db;
+    margin-bottom: 10px;
+}
+
+.file-upload-label span {
+    display: block;
+    font-size: 1rem;
+    color: #7f8c8d;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+button[type="submit"] {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background: #2c3e50;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background: #34495e;
+}
+
+/* Footer */
+.site-footer {
+    background: linear-gradient(135deg, #3498db, #2c3e50);
+    color: #f5f7fa;
+    padding: 60px 20px 20px;
+    width: 100%;
+    margin-top: 40px;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 30px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid #3e5066;
+}
+
+.footer-section { flex: 1; min-width: 200px; }
+.footer-section h3 { font-size: 1.4rem; margin-bottom: 20px; color: #3498db; border-bottom: 2px solid #3498db; padding-bottom: 10px; display: inline-block; }
+.footer-section p, .footer-section li { font-size: 1rem; line-height: 1.8; }
+.footer-section ul { list-style: none; padding: 0; }
+.footer-section a { color: #f5f7fa; text-decoration: none; transition: color 0.3s ease; }
+.footer-section a:hover { color: #3498db; }
+.footer-section.contact p { display: flex; align-items: center; gap: 10px; }
+
+.social-icons { display: flex; gap: 15px; margin-top: 10px; }
+.social-icons a { color: #f5f7fa; font-size: 1.5rem; transition: transform 0.3s ease; }
+.social-icons a:hover { transform: translateY(-5px); color: #3498db; }
+
+.footer-bottom { text-align: center; padding-top: 20px; font-size: 0.9rem; color: #7f8c8d; }
+
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        text-align: center;
+    }
+    .footer-section h3 {
+        display: block;
+        text-align: center;
+    }
+    .social-icons {
+        justify-content: center;
+    }
+}

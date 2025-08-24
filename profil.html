@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Profil - Conseils Santé Guinée</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .main-content {
+            flex-grow: 1;
+        }
+
+        /* Styles du Header (réutilisé) */
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            color: white;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .guinea-flag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 40px;
+            height: 25px;
+            background: linear-gradient(to bottom, 
+                #ce1126 0%, 
+                #ce1126 33%, 
+                #fcd116 33%, 
+                #fcd116 66%, 
+                #009e49 66%, 
+                #009e49 100%);
+            border-radius: 3px;
+        }
+        
+        header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        header p { font-size: 1.2rem; max-width: 800px; margin: 0 auto; opacity: 0.9; }
+
+        .header-nav { margin-top: 20px; }
+        .header-nav ul { list-style: none; display: flex; justify-content: center; gap: 30px; }
+        .header-nav ul li a { color: white; text-decoration: none; font-size: 1.1rem; font-weight: 500; transition: color 0.3s ease; }
+        .header-nav ul li a:hover { color: #fcd116; }
+
+        /* Styles de la page de profil */
+        .profile-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-top: 30px;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .profile-header h2 {
+            font-size: 2.5rem;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+        
+        .profile-header p {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+        }
+
+        .profile-card {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 40px;
+            align-items: flex-start;
+        }
+        
+        .profile-avatar {
+            text-align: center;
+        }
+        
+        .profile-avatar img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid #bdc3c7;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-avatar img:hover {
+            transform: scale(1.05);
+        }
+
+        .profile-info h3 {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .info-group {
+            margin-bottom: 20px;
+        }
+
+        .info-group label {
+            display: block;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .info-group p {
+            font-size: 1.1rem;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .health-preferences h3 {
+            font-size: 1.8rem;
+            color: #3498db;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .health-preferences .preference-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .health-preferences .preference-item {
+            background: #eaf6ff;
+            color: #3498db;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .edit-btn {
+            display: inline-block;
+            background: #2c3e50;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            margin-top: 30px;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .edit-btn:hover {
+            background: #34495e;
+        }
+
+        /* Pied de page (réutilisé) */
+        .site-footer {
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: #f5f7fa;
+            padding: 60px 20px 20px;
+            width: 100%;
+            margin-top: 40px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid #3e5066;
+        }
+
+        .footer-section { flex: 1; min-width: 200px; }
+        .footer-section h3 { font-size: 1.4rem; margin-bottom: 20px; color: #3498db; border-bottom: 2px solid #3498db; padding-bottom: 10px; display: inline-block; }
+        .footer-section p, .footer-section li { font-size: 1rem; line-height: 1.8; }
+        .footer-section ul { list-style: none; }
+        .footer-section a { color: #f5f7fa; text-decoration: none; transition: color 0.3s ease; }
+        .footer-section a:hover { color: #3498db; }
+        .footer-section.contact p { display: flex; align-items: center; gap: 10px; }
+        .social-icons { display: flex; gap: 15px; margin-top: 10px; }
+        .social-icons a { color: #f5f7fa; font-size: 1.5rem; transition: transform 0.3s ease; }
+        .social-icons a:hover { transform: translateY(-5px); color: #3498db; }
+        .footer-bottom { text-align: center; padding-top: 20px; font-size: 0.9rem; color: #7f8c8d; }
+        
+        @media (max-width: 768px) {
+            .profile-card {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .profile-info {
+                text-align: center;
+            }
+            .profile-info h3 {
+                margin-top: 20px;
+            }
+            .profile-avatar {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="guinea-flag"></div>
+        <h1><i class="fas fa-user-circle"></i> Mon Profil</h1>
+        <p>Gérez vos informations et préférences de santé</p>
+        
+        <nav class="header-nav">
+            <ul>
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="notifications.html">Notifications</a></li>
+                <li><a href="produits-locaux.html">Produits Locaux</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="main-content container">
+        <div class="profile-container">
+            <div class="profile-header">
+                <h2>Bonjour, Mamadou!</h2>
+                <p>Votre tableau de bord personnel</p>
+            </div>
+            
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    <img src="https://via.placeholder.com/150" alt="Photo de profil">
+                </div>
+                
+                <div class="profile-info">
+                    <h3>Informations de contact</h3>
+                    <div class="info-group">
+                        <label>Nom et Prénom</label>
+                        <p id="profile-name">Mamadou Djouldé Bah</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Email</label>
+                        <p id="profile-email">mamadou.bah@email.com</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Téléphone</label>
+                        <p id="profile-phone">+224 620 00 00 00</p>
+                    </div>
+
+                    <div class="health-preferences">
+                        <h3>Préférences de santé</h3>
+                        <div class="preference-list" id="health-preferences-list">
+                            <span class="preference-item">Diabète</span>
+                            <span class="preference-item">Hypertension</span>
+                        </div>
+                    </div>
+
+                    <a href="#" class="edit-btn">
+                        <i class="fas fa-edit"></i> Modifier le profil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-section about">
+                <h3>À Propos de nous</h3>
+                <p>Conseils Santé Guinée est une initiative dédiée à la promotion d'une meilleure nutrition et d'une vie plus saine pour la population guinéenne.</p>
+            </div>
+            <div class="footer-section links">
+                <h3>Liens Utiles</h3>
+                <ul>
+                    <li><a href="#">Analyse Alimentaire</a></li>
+                    <li><a href="#">Magazines Santé</a></li>
+                    <li><a href="#">Vendeurs Certifiés</a></li>
+                    <li><a href="#">Conditions d'utilisation</a></li>
+                    <li><a href="#">Politique de Confidentialité</a></li>
+                </ul>
+            </div>
+            <div class="footer-section contact">
+                <h3>Contactez-nous</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Conakry, Guinée</p>
+                <p><i class="fas fa-envelope"></i> contact@conseilsanteguinee.com</p>
+                <p><i class="fas fa-phone"></i> +224 620 00 00 00</p>
+            </div>
+            <div class="footer-section social">
+                <h3>Suivez-nous</h3>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Conseils Santé Guinée. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Le code JavaScript pour la gestion du profil serait ici
+        // En l'absence d'une base de données, ces données sont des exemples
+        const user = {
+            name: "Mamadou Djouldé Bah",
+            email: "mamadou.bah@email.com",
+            phone: "+224 620 00 00 00",
+            healthConditions: ["Diabète", "Hypertension"]
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('profile-name').innerText = user.name;
+            document.getElementById('profile-email').innerText = user.email;
+            document.getElementById('profile-phone').innerText = user.phone;
+
+            const preferencesList = document.getElementById('health-preferences-list');
+            preferencesList.innerHTML = '';
+            user.healthConditions.forEach(condition => {
+                const item = document.createElement('span');
+                item.className = 'preference-item';
+                item.innerText = condition;
+                preferencesList.appendChild(item);
+            });
+        });
+    </script>
+</body>
+</html>

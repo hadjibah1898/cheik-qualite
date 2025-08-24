@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produits Locaux Certifiés - Conseils Santé Guinée</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .main-content {
+            flex-grow: 1;
+        }
+
+        /* Styles du Header */
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            color: white;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .guinea-flag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 40px;
+            height: 25px;
+            background: linear-gradient(to bottom, 
+                #ce1126 0%, 
+                #ce1126 33%, 
+                #fcd116 33%, 
+                #fcd116 66%, 
+                #009e49 66%, 
+                #009e49 100%);
+            border-radius: 3px;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+
+        .header-nav {
+            margin-top: 20px;
+        }
+
+        .header-nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .header-nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .header-nav ul li a:hover {
+            color: #fcd116;
+        }
+        
+        /* Styles de la Page de Produits */
+        .promo-banner {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            text-align: center;
+            padding: 60px 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-top: 30px;
+        }
+
+        .promo-banner h2 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .promo-banner p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .search-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-top: 30px;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-bar .input-group {
+            flex: 1;
+            min-width: 200px;
+            position: relative;
+        }
+
+        .search-bar input, .search-bar select, .search-bar button {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .search-bar button {
+            background: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .search-bar button:hover {
+            background: #2980b9;
+        }
+        
+        .sellers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .seller-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            position: relative;
+            transition: transform 0.3s ease;
+            border: 1px solid #eee;
+        }
+        
+        .seller-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .seller-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #f39c12;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .seller-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .seller-header h3 {
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .seller-location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+        
+        .seller-rating {
+            color: #f39c12;
+        }
+        
+        .seller-products {
+            padding: 20px;
+        }
+        
+        .seller-products h4 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .product-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .product-tag {
+            background: #e8f4fc;
+            color: #3498db;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        
+        .contact-btn {
+            display: block;
+            width: calc(100% - 40px);
+            margin: 20px;
+            padding: 12px;
+            background: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-btn:hover {
+            background: #27ae60;
+        }
+
+        .how-to-publish {
+            background: #eaf6ff;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .how-to-publish h2 {
+            text-align: center;
+            font-size: 2rem;
+            color: #3498db;
+            margin-bottom: 30px;
+        }
+
+        .conditions-list {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .condition-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+            text-align: center;
+            width: 100%;
+            max-width: 300px;
+            transition: transform 0.3s ease;
+        }
+
+        .condition-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .condition-card i {
+            font-size: 3rem;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+
+        .condition-card h4 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .condition-card p {
+            color: #555;
+        }
+
+        /* Styles du Footer */
+        .site-footer {
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: #f5f7fa;
+            padding: 60px 20px 20px;
+            width: 100%;
+            margin-top: 40px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid #3e5066;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .footer-section h3 {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: #3498db;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        .footer-section p, .footer-section li {
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section a {
+            color: #f5f7fa;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: #3498db;
+        }
+
+        .footer-section.contact p {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .social-icons a {
+            color: #f5f7fa;
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            transform: translateY(-5px);
+            color: #3498db;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        @media (max-width: 768px) {
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-section h3 {
+                display: block;
+                text-align: center;
+            }
+
+            .social-icons {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="guinea-flag"></div>
+        <h1><i class="fas fa-heartbeat"></i> Conseils Santé Guinée</h1>
+        <p>Analysez les aliments pour diabétiques, hypertendus et drépanocytaires</p>
+        
+        <nav class="header-nav">
+            <ul>
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="login.html">Connexion</a></li>
+                <li><a href="produits-locaux.html">Produits Locaux</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="main-content">
+        <div class="container">
+            <section class="promo-banner">
+                <h2>L'excellence de nos terroirs</h2>
+                <p>Découvrez et soutenez les produits locaux guinéens, certifiés pour votre santé et votre sécurité.</p>
+            </section>
+            
+            <section class="search-section">
+                <div class="search-bar">
+                    <div class="input-group">
+                        <input type="text" id="search-product" placeholder="Rechercher un produit (ex: Fonio, Ananas...)">
+                    </div>
+                    <div class="input-group">
+                        <select id="search-region">
+                            <option value="">Toutes les régions</option>
+                            <option value="conakry">Conakry</option>
+                            <option value="kindia">Kindia</option>
+                            <option value="labe">Labé</option>
+                            <option value="kankan">Kankan</option>
+                            <option value="n'zerekore">N'Zérékoré</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <button type="button" id="search-btn"><i class="fas fa-search"></i> Rechercher</button>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="sellers-section">
+                <h2 class="section-title" style="margin-top: 30px;"><i class="fas fa-store"></i> Vendeurs Certifiés</h2>
+                <div class="sellers-grid" id="sellers-grid">
+                    <div class="seller-card" data-location="kindia">
+                        <div class="seller-badge"><i class="fas fa-star"></i> Top vendeur</div>
+                        <div class="seller-header">
+                            <h3>La Ferme Bio de Kindia</h3>
+                            <div class="seller-location"><i class="fas fa-map-marker-alt"></i> Kindia, Guinée</div>
+                            <div class="seller-rating">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i> 4.5 (87 avis)
+                            </div>
+                        </div>
+                        <div class="seller-products">
+                            <h4><i class="fas fa-seedling"></i> Produits certifiés</h4>
+                            <div class="product-tags">
+                                <span class="product-tag">Fonio bio</span>
+                                <span class="product-tag">Fruits locaux</span>
+                                <span class="product-tag">Légumes frais</span>
+                            </div>
+                        </div>
+                        <button class="contact-btn"><i class="fas fa-phone"></i> Contacter</button>
+                    </div>
+                    <div class="seller-card" data-location="conakry">
+                        <div class="seller-header">
+                            <h3>Marché Santé de Conakry</h3>
+                            <div class="seller-location"><i class="fas fa-map-marker-alt"></i> Conakry, Guinée</div>
+                            <div class="seller-rating">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i> 5.0 (42 avis)
+                            </div>
+                        </div>
+                        <div class="seller-products">
+                            <h4><i class="fas fa-seedling"></i> Produits certifiés</h4>
+                            <div class="product-tags">
+                                <span class="product-tag">Poisson frais</span>
+                                <span class="product-tag">Huile de palme bio</span>
+                                <span class="product-tag">Noix de cajou</span>
+                            </div>
+                        </div>
+                        <button class="contact-btn"><i class="fas fa-phone"></i> Contacter</button>
+                    </div>
+                    <div class="seller-card" data-location="labe">
+                        <div class="seller-badge"><i class="fas fa-bolt"></i> Livraison rapide</div>
+                        <div class="seller-header">
+                            <h3>Produits du Terroir</h3>
+                            <div class="seller-location"><i class="fas fa-map-marker-alt"></i> Labé, Guinée</div>
+                            <div class="seller-rating">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i> 4.9 (65 avis)
+                            </div>
+                        </div>
+                        <div class="seller-products">
+                            <h4><i class="fas fa-seedling"></i> Produits certifiés</h4>
+                            <div class="product-tags">
+                                <span class="product-tag">Patate douce</span>
+                                <span class="product-tag">Moringa</span>
+                                <span class="product-tag">Arachides</span>
+                            </div>
+                        </div>
+                        <button class="contact-btn"><i class="fas fa-phone"></i> Contacter</button>
+                    </div>
+                    <div class="seller-card" data-location="kankan">
+                        <div class="seller-header">
+                            <h3>Le Grenier du Mandingue</h3>
+                            <div class="seller-location"><i class="fas fa-map-marker-alt"></i> Kankan, Guinée</div>
+                            <div class="seller-rating">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i> 4.7 (38 avis)
+                            </div>
+                        </div>
+                        <div class="seller-products">
+                            <h4><i class="fas fa-seedling"></i> Produits certifiés</h4>
+                            <div class="product-tags">
+                                <span class="product-tag">Mangues séchées</span>
+                                <span class="product-tag">Riz de N'Zérékoré</span>
+                                <span class="product-tag">Beurre de karité</span>
+                            </div>
+                        </div>
+                        <button class="contact-btn"><i class="fas fa-phone"></i> Contacter</button>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="how-to-publish">
+                <h2>Comment publier mes produits ?</h2>
+                <div class="conditions-list">
+                    <div class="condition-card">
+                        <i class="fas fa-user-check"></i>
+                        <h4>1. Avoir un compte</h4>
+                        <p>Créez un profil producteur et fournissez vos informations de contact.</p>
+                    </div>
+                    <div class="condition-card">
+                        <i class="fas fa-certificate"></i>
+                        <h4>2. Obtenir une certification</h4>
+                        <p>Faites certifier vos produits par l'ONCQ (Office National de Contrôle Qualité) pour garantir la sécurité et la santé de nos citoyens.</p>
+                    </div>
+                    <div class="condition-card">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h4>3. Publier vos produits</h4>
+                        <p>Une fois certifié, listez vos produits, votre localisation et vos coordonnées pour être visible par les acheteurs.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-section about">
+                <h3>À Propos de nous</h3>
+                <p>Conseils Santé Guinée est une initiative dédiée à la promotion d'une meilleure nutrition et d'une vie plus saine pour la population guinéenne.</p>
+            </div>
+            <div class="footer-section links">
+                <h3>Liens Utiles</h3>
+                <ul>
+                    <li><a href="#aliments-tab">Analyse Alimentaire</a></li>
+                    <li><a href="#magazines-tab">Magazines Santé</a></li>
+                    <li><a href="#vendeurs-tab">Vendeurs Certifiés</a></li>
+                    <li><a href="#">Conditions d'utilisation</a></li>
+                    <li><a href="#">Politique de Confidentialité</a></li>
+                </ul>
+            </div>
+            <div class="footer-section contact">
+                <h3>Contactez-nous</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Conakry, Guinée</p>
+                <p><i class="fas fa-envelope"></i> contact@conseilsanteguinee.com</p>
+                <p><i class="fas fa-phone"></i> +224 620 00 00 00</p>
+            </div>
+            <div class="footer-section social">
+                <h3>Suivez-nous</h3>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Conseils Santé Guinée. Tous droits réservés.</p>
+        </div>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchBtn = document.getElementById('search-btn');
+            const searchProductInput = document.getElementById('search-product');
+            const searchRegionSelect = document.getElementById('search-region');
+            const sellersGrid = document.getElementById('sellers-grid');
+            
+            const sellers = [
+                {
+                    name: "La Ferme Bio de Kindia",
+                    location: "kindia",
+                    region: "Kindia, Guinée",
+                    rating: "4.5 (87 avis)",
+                    tags: ["Fonio bio", "Fruits locaux", "Légumes frais"],
+                    isTopSeller: true
+                },
+                {
+                    name: "Marché Santé de Conakry",
+                    location: "conakry",
+                    region: "Conakry, Guinée",
+                    rating: "5.0 (42 avis)",
+                    tags: ["Poisson frais", "Huile de palme bio", "Noix de cajou"]
+                },
+                {
+                    name: "Produits du Terroir",
+                    location: "labe",
+                    region: "Labé, Guinée",
+                    rating: "4.9 (65 avis)",
+                    tags: ["Patate douce", "Moringa", "Arachides"],
+                    isFastDelivery: true
+                },
+                {
+                    name: "Le Grenier du Mandingue",
+                    location: "kankan",
+                    region: "Kankan, Guinée",
+                    rating: "4.7 (38 avis)",
+                    tags: ["Mangues séchées", "Riz de N'Zérékoré", "Beurre de karité"]
+                },
+                {
+                    name: "Les Jardins de Mamou",
+                    location: "mamou",
+                    region: "Mamou, Guinée",
+                    rating: "4.8 (53 avis)",
+                    tags: ["Bananes plantain", "Légumes feuilles", "Fruits saisonniers"]
+                },
+                {
+                    name: "Coopérative de N'Zérékoré",
+                    location: "n'zerekore",
+                    region: "N'Zérékoré, Guinée",
+                    rating: "4.6 (22 avis)",
+                    tags: ["Café local", "Cacao", "Huile de palme"]
+                }
+            ];
+            
+            // Fonction pour afficher les vendeurs
+            function renderSellers(filteredSellers) {
+                sellersGrid.innerHTML = '';
+                if (filteredSellers.length === 0) {
+                    sellersGrid.innerHTML = '<p style="text-align: center; font-style: italic; color: #7f8c8d; grid-column: 1 / -1;">Aucun vendeur ne correspond à votre recherche.</p>';
+                    return;
+                }
+                filteredSellers.forEach(seller => {
+                    const sellerCard = document.createElement('div');
+                    sellerCard.className = 'seller-card';
+                    sellerCard.dataset.location = seller.location;
+                    
+                    const tagsHtml = seller.tags.map(tag => <span class="product-tag">${tag}</span>).join('');
+                    const badgeHtml = seller.isTopSeller ? <div class="seller-badge"><i class="fas fa-star"></i> Top vendeur</div> : 
+                                      seller.isFastDelivery ? <div class="seller-badge"><i class="fas fa-bolt"></i> Livraison rapide</div> : '';
+                    const ratingStars = '<i class="fas fa-star"></i>'.repeat(Math.floor(parseFloat(seller.rating))) +
+                                        (parseFloat(seller.rating) % 1 !== 0 ? '<i class="fas fa-star-half-alt"></i>' : '');
+                    
+                    sellerCard.innerHTML = `
+                        ${badgeHtml}
+                        <div class="seller-header">
+                            <h3>${seller.name}</h3>
+                            <div class="seller-location"><i class="fas fa-map-marker-alt"></i> ${seller.region}</div>
+                            <div class="seller-rating">${ratingStars} ${seller.rating}</div>
+                        </div>
+                        <div class="seller-products">
+                            <h4><i class="fas fa-seedling"></i> Produits certifiés</h4>
+                            <div class="product-tags">${tagsHtml}</div>
+                        </div>
+                        <button class="contact-btn"><i class="fas fa-phone"></i> Contacter</button>
+                    `;
+                    sellersGrid.appendChild(sellerCard);
+                });
+            }
+            
+            // Fonction de recherche
+            function searchSellers() {
+                const searchTerm = searchProductInput.value.toLowerCase().trim();
+                const selectedRegion = searchRegionSelect.value.toLowerCase();
+                
+                const filteredSellers = sellers.filter(seller => {
+                    const matchesProduct = searchTerm === '' || seller.tags.some(tag => tag.toLowerCase().includes(searchTerm));
+                    const matchesRegion = selectedRegion === '' || seller.location === selectedRegion;
+                    return matchesProduct && matchesRegion;
+                });
+                
+                renderSellers(filteredSellers);
+            }
+
+            // Gérer la localisation de l'utilisateur
+            function localizeAndSearch() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(position => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        // Simuler une recherche de localisation par région (API de géolocalisation réelle serait nécessaire)
+                        const userRegion = "conakry"; // Exemple basé sur la simulation
+                        searchRegionSelect.value = userRegion;
+                        searchSellers();
+                    }, error => {
+                        console.error("Erreur de géolocalisation :", error);
+                        // Recherche par défaut si la géolocalisation est refusée
+                        searchSellers();
+                    });
+                } else {
+                    console.error("La géolocalisation n'est pas supportée par ce navigateur.");
+                    searchSellers();
+                }
+            }
+            
+            // Événements
+            searchBtn.addEventListener('click', searchSellers);
+            searchProductInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchSellers();
+                }
+            });
+            searchRegionSelect.addEventListener('change', searchSellers);
+            
+            // Chargement initial des vendeurs, avec tentative de géolocalisation
+            localizeAndSearch();
+
+            // Ajouter un écouteur sur les boutons de contact
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('contact-btn')) {
+                    alert('Les informations de contact du vendeur sont affichées.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>À Propos de nous - Conseils Santé Guinée</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .main-content {
+            flex-grow: 1;
+        }
+
+        /* Styles du Header (réutilisé) */
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            color: white;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .guinea-flag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 40px;
+            height: 25px;
+            background: linear-gradient(to bottom, 
+                #ce1126 0%, 
+                #ce1126 33%, 
+                #fcd116 33%, 
+                #fcd116 66%, 
+                #009e49 66%, 
+                #009e49 100%);
+            border-radius: 3px;
+        }
+        
+        header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        header p { font-size: 1.2rem; max-width: 800px; margin: 0 auto; opacity: 0.9; }
+
+        .header-nav { margin-top: 20px; }
+        .header-nav ul { list-style: none; display: flex; justify-content: center; gap: 30px; }
+        .header-nav ul li a { color: white; text-decoration: none; font-size: 1.1rem; font-weight: 500; transition: color 0.3s ease; }
+        .header-nav ul li a:hover { color: #fcd116; }
+
+        /* Styles de la page À Propos */
+        .about-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-top: 30px;
+        }
+
+        .about-section h2 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .about-section .divider {
+            border-bottom: 3px solid #3498db;
+            width: 80px;
+            margin: -10px auto 30px;
+        }
+        
+        .mission-vision {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .mission-vision-card {
+            background: #eaf6ff;
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 5px solid #3498db;
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .mission-vision-card h3 {
+            font-size: 1.8rem;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+
+        .mission-vision-card p {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: #555;
+        }
+        
+        .team-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .team-section h3 {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .team-section .team-member {
+            display: inline-block;
+            margin: 0 20px;
+            text-align: center;
+        }
+        
+        .team-section .team-member img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid #3498db;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+        
+        .team-member p {
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .team-member span {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        .partners-section {
+            text-align: center;
+        }
+
+        .partners-section h3 {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .partners-logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .partners-logos img {
+            height: 80px;
+            object-fit: contain;
+            filter: grayscale(100%);
+            transition: all 0.3s ease;
+        }
+        
+        .partners-logos img:hover {
+            filter: grayscale(0%);
+            transform: scale(1.1);
+        }
+
+        /* Pied de page (réutilisé) */
+        .site-footer {
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: #f5f7fa;
+            padding: 60px 20px 20px;
+            width: 100%;
+            margin-top: 40px;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid #3e5066;
+        }
+
+        .footer-section { flex: 1; min-width: 200px; }
+        .footer-section h3 { font-size: 1.4rem; margin-bottom: 20px; color: #3498db; border-bottom: 2px solid #3498db; padding-bottom: 10px; display: inline-block; }
+        .footer-section p, .footer-section li { font-size: 1rem; line-height: 1.8; }
+        .footer-section ul { list-style: none; }
+        .footer-section a { color: #f5f7fa; text-decoration: none; transition: color 0.3s ease; }
+        .footer-section a:hover { color: #3498db; }
+        .footer-section.contact p { display: flex; align-items: center; gap: 10px; }
+        .social-icons { display: flex; gap: 15px; margin-top: 10px; }
+        .social-icons a { color: #f5f7fa; font-size: 1.5rem; transition: transform 0.3s ease; }
+        .social-icons a:hover { transform: translateY(-5px); color: #3498db; }
+        .footer-bottom { text-align: center; padding-top: 20px; font-size: 0.9rem; color: #7f8c8d; }
+        
+        @media (max-width: 768px) {
+            .footer-container { flex-direction: column; text-align: center; }
+            .footer-section h3 { display: block; text-align: center; }
+            .social-icons { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="guinea-flag"></div>
+        <h1><i class="fas fa-info-circle"></i> À Propos de nous</h1>
+        <p>Notre mission : Promouvoir une Guinée en meilleure santé</p>
+        
+        <nav class="header-nav">
+            <ul>
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="profil-utilisateur.html">Mon Profil</a></li>
+                <li><a href="soumission-produit.html">Soumettre un Produit</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="main-content container">
+        <section class="about-section">
+            <h2>Notre Initiative</h2>
+            <div class="divider"></div>
+            <div class="mission-vision">
+                <div class="mission-vision-card">
+                    <h3><i class="fas fa-bullseye"></i> Notre Mission</h3>
+                    <p>Faciliter l'accès à une information fiable sur l'alimentation et la santé, en rendant les données de l'Office National de la Qualité et du Contrôle (ONCQ) accessibles au grand public. Nous visons à permettre à chaque Guinéen de faire des choix alimentaires éclairés pour prévenir les maladies chroniques.</p>
+                </div>
+                <div class="mission-vision-card">
+                    <h3><i class="fas fa-seedling"></i> Notre Vision</h3>
+                    <p>Construire une plateforme numérique de référence en Guinée qui responsabilise les consommateurs et encourage les producteurs locaux à se conformer aux normes de qualité. Nous rêvons d'une Guinée où l'accès à l'information de santé n'est plus un privilège mais un droit pour tous.</p>
+                </div>
+            </div>
+            
+            <section class="team-section">
+                <h3>L'équipe du Projet</h3>
+                <div class="team-member">
+                    <img src="https://via.placeholder.com/150" alt="Mamadou Djouldé Bah">
+                    <p>Mamadou Djouldé Bah</p>
+                    <span>Chef de Projet / Développeur</span>
+                </div>
+                </section>
+            
+            <section class="partners-section">
+                <h3>Nos Partenaires</h3>
+                <div class="partners-logos">
+                    <img src="https://via.placeholder.com/150x80?text=ONCQ" alt="Logo ONCQ">
+                    <img src="https://via.placeholder.com/150x80?text=Ministère+de+la+Santé" alt="Logo Ministère de la Santé">
+                    <img src="https://via.placeholder.com/150x80?text=Partenaire+3" alt="Logo Partenaire 3">
+                </div>
+            </section>
+        </section>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-section about">
+                <h3>À Propos de nous</h3>
+                <p>Conseils Santé Guinée est une initiative dédiée à la promotion d'une meilleure nutrition et d'une vie plus saine pour la population guinéenne.</p>
+            </div>
+            <div class="footer-section links">
+                <h3>Liens Utiles</h3>
+                <ul>
+                    <li><a href="#">Analyse Alimentaire</a></li>
+                    <li><a href="#">Magazines Santé</a></li>
+                    <li><a href="#">Vendeurs Certifiés</a></li>
+                    <li><a href="#">Conditions d'utilisation</a></li>
+                    <li><a href="#">Politique de Confidentialité</a></li>
+                </ul>
+            </div>
+            <div class="footer-section contact">
+                <h3>Contactez-nous</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Conakry, Guinée</p>
+                <p><i class="fas fa-envelope"></i> contact@conseilsanteguinee.com</p>
+                <p><i class="fas fa-phone"></i> +224 620 00 00 00</p>
+            </div>
+            <div class="footer-section social">
+                <h3>Suivez-nous</h3>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Conseils Santé Guinée. Tous droits réservés.</p>
+        </div>
+    </footer>
+</body>
+</html>

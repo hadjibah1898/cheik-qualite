@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord Admin - Conseils Santé Guinée</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .main-content {
+            flex-grow: 1;
+        }
+
+        /* Styles du Header */
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            color: white;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .guinea-flag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 40px;
+            height: 25px;
+            background: linear-gradient(to bottom, 
+                #ce1126 0%, 
+                #ce1126 33%, 
+                #fcd116 33%, 
+                #fcd116 66%, 
+                #009e49 66%, 
+                #009e49 100%);
+            border-radius: 3px;
+        }
+        
+        header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        header p { font-size: 1.2rem; max-width: 800px; margin: 0 auto; opacity: 0.9; }
+
+        .header-nav { margin-top: 20px; }
+        .header-nav ul { list-style: none; display: flex; justify-content: center; gap: 30px; }
+        .header-nav ul li a { color: white; text-decoration: none; font-size: 1.1rem; font-weight: 500; transition: color 0.3s ease; }
+        .header-nav ul li a:hover { color: #fcd116; }
+
+        /* Styles du Tableau de bord */
+        .dashboard-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-top: 30px;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .dashboard-header h2 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+        }
+        
+        .dashboard-header p {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .stat-card {
+            background: #eaf6ff;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 5px solid #3498db;
+        }
+
+        .stat-card h3 {
+            font-size: 1.2rem;
+            color: #555;
+        }
+
+        .stat-card p {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #3498db;
+        }
+
+        .dashboard-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .dashboard-section h3 {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th, table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table thead {
+            background: #ecf0f1;
+            color: #2c3e50;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .status-pending { background-color: #f39c12; }
+        .status-approved { background-color: #2ecc71; }
+        .status-rejected { background-color: #e74c3c; }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: #3498db;
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+
+        .action-btn.delete { color: #e74c3c; }
+
+        /* Pied de page (réutilisé) */
+        .site-footer {
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: #f5f7fa;
+            padding: 60px 20px 20px;
+            width: 100%;
+            margin-top: 40px;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid #3e5066;
+        }
+
+        .footer-section { flex: 1; min-width: 200px; }
+        .footer-section h3 { font-size: 1.4rem; margin-bottom: 20px; color: #3498db; border-bottom: 2px solid #3498db; padding-bottom: 10px; display: inline-block; }
+        .footer-section p, .footer-section li { font-size: 1rem; line-height: 1.8; }
+        .footer-section ul { list-style: none; }
+        .footer-section a { color: #f5f7fa; text-decoration: none; transition: color 0.3s ease; }
+        .footer-section a:hover { color: #3498db; }
+        .footer-section.contact p { display: flex; align-items: center; gap: 10px; }
+        .social-icons { display: flex; gap: 15px; margin-top: 10px; }
+        .social-icons a { color: #f5f7fa; font-size: 1.5rem; transition: transform 0.3s ease; }
+        .social-icons a:hover { transform: translateY(-5px); color: #3498db; }
+        .footer-bottom { text-align: center; padding-top: 20px; font-size: 0.9rem; color: #7f8c8d; }
+        
+        @media (max-width: 768px) {
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            .footer-section h3 {
+                display: block;
+                text-align: center;
+            }
+            .social-icons {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="guinea-flag"></div>
+        <h1><i class="fas fa-chart-line"></i> Tableau de Bord Administrateur</h1>
+        <p>Gérez les produits, les utilisateurs et les alertes du site</p>
+        
+        <nav class="header-nav">
+            <ul>
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="profil-utilisateur.html">Mon Profil</a></li>
+                <li><a href="login.html">Déconnexion</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="main-content container">
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <h2>Bienvenue, Admin !</h2>
+                <p>Aperçu de l'activité du site et actions à prendre</p>
+            </div>
+            
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <h3>Produits en attente</h3>
+                    <p id="pending-count">5</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Vendeurs certifiés</h3>
+                    <p id="certified-count">42</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Utilisateurs enregistrés</h3>
+                    <p id="user-count">150</p>
+                </div>
+            </div>
+
+            <div class="dashboard-section">
+                <h3><i class="fas fa-clock"></i> Produits en attente de validation</h3>
+                <div class="table-container">
+                    <table id="products-table">
+                        <thead>
+                            <tr>
+                                <th>Nom du produit</th>
+                                <th>Vendeur</th>
+                                <th>Catégorie</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="dashboard-section">
+                <h3><i class="fas fa-exclamation-triangle"></i> Gérer les alertes ONCQ</h3>
+                <form id="add-alert-form">
+                    <div class="form-group">
+                        <label for="alert-title">Titre de l'alerte</label>
+                        <input type="text" id="alert-title" required style="width:100%; padding:10px; margin-top:5px; border-radius:5px; border:1px solid #ccc;">
+                    </div>
+                    <div class="form-group" style="margin-top:15px;">
+                        <label for="alert-message">Message de l'alerte</label>
+                        <textarea id="alert-message" rows="4" required style="width:100%; padding:10px; margin-top:5px; border-radius:5px; border:1px solid #ccc;"></textarea>
+                    </div>
+                    <button type="submit" style="margin-top:20px; background:#e74c3c; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer;"><i class="fas fa-bullhorn"></i> Publier l'alerte</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-section about">
+                <h3>À Propos de nous</h3>
+                <p>Conseils Santé Guinée est une initiative dédiée à la promotion d'une meilleure nutrition et d'une vie plus saine pour la population guinéenne.</p>
+            </div>
+            <div class="footer-section links">
+                <h3>Liens Utiles</h3>
+                <ul>
+                    <li><a href="#">Analyse Alimentaire</a></li>
+                    <li><a href="#">Magazines Santé</a></li>
+                    <li><a href="#">Vendeurs Certifiés</a></li>
+                    <li><a href="#">Conditions d'utilisation</a></li>
+                    <li><a href="#">Politique de Confidentialité</a></li>
+                </ul>
+            </div>
+            <div class="footer-section contact">
+                <h3>Contactez-nous</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Conakry, Guinée</p>
+                <p><i class="fas fa-envelope"></i> contact@conseilsanteguinee.com</p>
+                <p><i class="fas fa-phone"></i> +224 620 00 00 00</p>
+            </div>
+            <div class="footer-section social">
+                <h3>Suivez-nous</h3>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Conseils Santé Guinée. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const products = [
+                { id: 1, name: "Huile de palmiste", vendor: "Producteur Mamadou", category: "Alimentaire", status: "pending" },
+                { id: 2, name: "Savon de ménage", vendor: "Société GIP", category: "Hygiène", status: "approved" },
+                { id: 3, name: "Fonio Bio", vendor: "Coopérative Kindia", category: "Alimentaire", status: "pending" },
+                { id: 4, name: "Jus de gingembre", vendor: "Néné Bio", category: "Boisson", status: "rejected" },
+            ];
+
+            const productsTableBody = document.querySelector("#products-table tbody");
+            const pendingCountEl = document.getElementById("pending-count");
+            
+            function renderTable() {
+                productsTableBody.innerHTML = '';
+                const pendingProducts = products.filter(p => p.status === 'pending');
+                pendingCountEl.innerText = pendingProducts.length;
+
+                pendingProducts.forEach(product => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${product.name}</td>
+                        <td>${product.vendor}</td>
+                        <td>${product.category}</td>
+                        <td>
+                            <button class="action-btn approve-btn" data-id="${product.id}" title="Approuver"><i class="fas fa-check"></i></button>
+                            <button class="action-btn delete-btn" data-id="${product.id}" title="Rejeter"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    `;
+                    productsTableBody.appendChild(row);
+                });
+            }
+
+            function handleAction(event) {
+                const targetBtn = event.target.closest('.action-btn');
+                if (!targetBtn) return;
+
+                const productId = parseInt(targetBtn.dataset.id);
+                const actionType = targetBtn.classList.contains('approve-btn') ? 'Approuvé' : 'Rejeté';
+                
+                // Simuler la validation
+                alert(`Produit ID ${productId} a été ${actionType} ! (Démo)`);
+                
+                // Retirer le produit de la liste des produits en attente
+                const productIndex = products.findIndex(p => p.id === productId);
+                if (productIndex !== -1) {
+                    products.splice(productIndex, 1);
+                    renderTable();
+                }
+            }
+            
+            productsTableBody.addEventListener('click', handleAction);
+
+            // Simuler la soumission d'une alerte
+            const addAlertForm = document.getElementById('add-alert-form');
+            addAlertForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const title = document.getElementById('alert-title').value;
+                const message = document.getElementById('alert-message').value;
+                alert(`Nouvelle alerte publiée ! Titre : "${title}", Message : "${message}"`);
+                addAlertForm.reset();
+            });
+
+            renderTable();
+        });
+    </script>
+</body>
+</html>

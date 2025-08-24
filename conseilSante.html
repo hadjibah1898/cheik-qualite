@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conseil Santé Guinée - Analyse Alimentaire</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="style.css" type="text/css" media="all" />
+</head>
+<body>
+    <div class="container">
+        <header><div class="guinea-flag"></div>
+    
+    
+    
+    
+            <div class="guinea-flag"></div>
+            <h1><i class="fas fa-heartbeat"></i> Conseils Santé Guinée</h1>
+            <p>Analysez les aliments pour diabétiques, hypertendus et drépanocytaires</p>
+            <nav class="header-nav">
+        <ul>
+            <li><a href="#aliments-tab" class="nav-link">Accueil</a></li>
+            <li><a href="#magazines-tab" class="nav-link">Magazines</a></li>
+            <li><a href="#vendeurs-tab" class="nav-link">Vendeurs</a></li>
+        </ul>
+    </nav>
+        </header>
+        
+        <div class="nav-tabs">
+            <div class="nav-tab active" data-tab="aliments">Aliments</div>
+            <div class="nav-tab" data-tab="magazines">Magazines Santé</div>
+            <div class="nav-tab" data-tab="vendeurs">Vendeurs Certifiés</div>
+        </div>
+        
+        <!-- Section Aliments -->
+        <div class="tab-content active" id="aliments-tab">
+            <section class="search-section">
+                <div class="search-box">
+                    
+                        
+                    </button>
+                    <input type="text" id="product-search" placeholder="Entrez un aliment ou scannez un produit...">
+                    <button id="search-btn"><i class="fas fa-search"></i> Analyser</button>
+                </div>
+                <p class="examples">Exemples: Fonio, Banane plantain, Poisson fumé, Sauce d'arachide</p>
+            </section>
+            
+            <section class="result-section" id="result-section">
+                <div class="product-header">
+                    <div class="product-image">
+                        <i class="fas fa-apple-alt" id="product-icon"></i>
+                    </div>
+                    <div class="product-info">
+                        <h2 id="product-name">Produit</h2>
+                        <p id="product-description">Description du produit</p>
+                    </div>
+                </div>
+                
+                <div class="health-indicators">
+                    <div class="indicator diabetic">
+                        <h3><i class="fas fa-syringe"></i> Diabète</h3>
+                        <p>Charge glycémique et teneur en sucre</p>
+                        <div class="status-container">
+                            <div class="status-indicator recommended" id="diabetic-indicator">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="status-text recommended" id="diabetic-text">Recommandé</div>
+                        </div>
+                    </div>
+                    
+                    <div class="indicator hypertension">
+                        <h3><i class="fas fa-heartbeat"></i> Hypertension</h3>
+                        <p>Teneur en sodium et graisses saturées</p>
+                        <div class="status-container">
+                            <div class="status-indicator recommended" id="hypertension-indicator">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="status-text recommended" id="hypertension-text">Recommandé</div>
+                        </div>
+                    </div>
+                    
+                    <div class="indicator drepanocytosis">
+                        <h3><i class="fas fa-dna"></i> Drépanocytose</h3>
+                        <p>Teneur en fer et propriétés hydratantes</p>
+                        <div class="status-container">
+                            <div class="status-indicator recommended" id="drepanocytosis-indicator">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="status-text recommended" id="drepanocytosis-text">Recommandé</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <!-- Section Magazines Santé -->
+        <div class="tab-content" id="magazines-tab">
+            <section class="magazines-section">
+                <h2 class="section-title"><i class="fas fa-newspaper"></i> Magazines et Articles Santé</h2>
+                
+                <div class="magazines-grid">
+                    <div class="magazine-card">
+                        <div class="magazine-badge">Nouveau</div>
+                        <div class="magazine-image">
+                            <i class="fas fa-heartbeat"></i>
+                        </div>
+                        <div class="magazine-info">
+                            <h3>Vivre avec le diabète en Guinée</h3>
+                            <p>Découvrez comment gérer votre diabète avec les ressources locales et les aliments traditionnels guinéens.</p>
+                            <div class="magazine-date">
+                                <span><i class="fas fa-calendar"></i> 15 Oct 2023</span>
+                                <span><i class="fas fa-clock"></i> 8 min</span>
+                            </div>
+                        </div>
+                        <button class="read-more">Lire l'article</button>
+                    </div>
+                    
+                    <div class="magazine-card">
+                        <div class="magazine-image" style="background:linear-gradient(45deg, #e74c3c, #f39c12);">
+                            <i class="fas fa-apple-alt"></i>
+                        </div>
+                        <div class="magazine-info">
+                            <h3>L'alimentation anti-hypertension</h3>
+                            <p>Les meilleurs aliments locaux pour réduire naturellement votre tension artérielle sans médicaments.</p>
+                            <div class="magazine-date">
+                                <span><i class="fas fa-calendar"></i> 2 Oct 2023</span>
+                                <span><i class="fas fa-clock"></i> 6 min</span>
+                            </div>
+                        </div>
+                        <button class="read-more">Lire l'article</button>
+                    </div>
+                    
+                    <div class="magazine-card">
+                        <div class="magazine-badge">Populaire</div>
+                        <div class="magazine-image" style="background:linear-gradient(45deg, #2ecc71, #3498db);">
+                            <i class="fas fa-dna"></i>
+                        </div>
+                        <div class="magazine-info">
+                            <h3>Drépanocytose : Nutrition et Prévention</h3>
+                            <p>Comment adapter votre alimentation pour prévenir les crises drépanocytaires avec des produits locaux.</p>
+                            <div class="magazine-date">
+                                <span><i class="fas fa-calendar"></i> 25 Sept 2023</span>
+                                <span><i class="fas fa-clock"></i> 10 min</span>
+                            </div>
+                        </div>
+                        <button class="read-more">Lire l'article</button>
+                    </div>
+                    
+                    <div class="magazine-card">
+                        <div class="magazine-image" style="background:linear-gradient(45deg, #9b59b6, #3498db);">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <div class="magazine-info">
+                            <h3>Le Fonio, l'or nutritionnel guinéen</h3>
+                            <p>Découvrez pourquoi cette céréale traditionnelle est un super aliment pour toutes les conditions de santé.</p>
+                            <div class="magazine-date">
+                                <span><i class="fas fa-calendar"></i> 18 Sept 2023</span>
+                                <span><i class="fas fa-clock"></i> 7 min</span>
+                            </div>
+                        </div>
+                        <button class="read-more">Lire l'article</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <!-- Section Vendeurs Certifiés -->
+        <div class="tab-content" id="vendeurs-tab">
+            <section class="sellers-section">
+                <h2 class="section-title"><i class="fas fa-store"></i> Vendeurs Certifiés</h2>
+                
+                <div class="certification-banner">
+                    <i class="fas fa-certificate"></i>
+                    <div>
+                        <h3>Certification ONCQ</h3>
+                        <p>Tous nos vendeurs sont certifiés par l'Office National de Contrôle Qualité de Guinée</p>
+                    </div>
+                </div>
+                
+                <div class="sellers-grid">
+                    <div class="seller-card">
+                        <div class="seller-badge">
+                            <i class="fas fa-star"></i> Top vendeur
+                        </div>
+                        <div class="seller-header">
+                            <h3>La Ferme Bio de Kindia</h3>
+                            <div class="seller-location">
+                                <i class="fas fa-map-marker-alt"></i> Kindia, Guinée
+                            </div>
+                            <div class="seller-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                                4.5 (87 avis)
+                            </div>
+                        </div>
+                        
+                        <div class="seller-products">
+                            <h4><i class="fas fa-seedling"></i> Produits certifiés</h4>
+                            <div class="product-tags">
+                                <span class="product-tag">Fonio bio</span>
+                                <span class="product-tag">Fruits locaux</span>
+                                <span class="product-tag">Légumes frais</span>
+                                <span class="product-tag">Miel pur</span>
+                            </div>
+                        </div>
+                        
+                        <button class="contact-btn">
+                            <i class="fas fa-phone"></i> Contacter
+                        </button>
+                    </div>
+                    
+                    <div class="seller-card">
+                        <div class="seller-header">
+                            <h3>Marché Santé de Conakry</h3>
+                            <div class="seller-location">
+                                <i class="fas fa-map-marker-alt"></i> Conakry, Guinée
+                            </div>
+                            <div class="seller-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                5.0 (42 avis)
+                            </div>
+                        </div>
+                        
+                        <div class="seller-products">
+                            <h4><i class="fas fa-seedling"></i> Produits certifiés</h4>
+                            <div class="product-tags">
+                                <span class="product-tag">Poisson frais</span>
+                                <span class="product-tag">Huile de palme bio</span>
+                                <span class="product-tag">Noix de cajou</span>
+                                <span class="product-tag">Feuilles de baobab</span>
+                            </div>
+                        </div>
+                        
+                        <button class="contact-btn">
+                            <i class="fas fa-phone"></i> Contacter
+                        </button>
+                    </div>
+                    
+                    <div class="seller-card">
+                        <div class="seller-badge">
+                            <i class="fas fa-bolt"></i> Livraison rapide
+                        </div>
+                        <div class="seller-header">
+                            <h3>Produits du Terroir</h3>
+                            <div class="seller-location">
+                                <i class="fas fa-map-marker-alt"></i> Labé, Guinée
+                            </div>
+                            <div class="seller-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                4.9 (65 avis)
+                            </div>
+                        </div>
+                        
+                        <div class="seller-products">
+                            <h4><i class="fas fa-seedling"></i> Produits certifiés</h4>
+                            <div class="product-tags">
+                                <span class="product-tag">Patate douce</span>
+                                <span class="product-tag">Moringa</span>
+                                <span class="product-tag">Arachides</span>
+                                <span class="product-tag">Gingembre bio</span>
+                            </div>
+                        </div>
+                        
+                        <button class="contact-btn">
+                            <i class="fas fa-phone"></i> Contacter
+                        </button>
+                    </div>
+                    
+                    <div class="seller-card">
+                        <div class="seller-header">
+                            <h3>Les Jardins de Mamou</h3>
+                            <div class="seller-location">
+                                <i class="fas fa-map-marker-alt"></i> Mamou, Guinée
+                            </div>
+                            <div class="seller-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                4.8 (53 avis)
+                            </div>
+                        </div>
+                        
+                        <div class="seller-products">
+                            <h4><i class="fas fa-seedling"></i> Produits certifiés</h4>
+                            <div class="product-tags">
+                                <span class="product-tag">Bananes plantain</span>
+                                <span class="product-tag">Légumes feuilles</span>
+                                <span class="product-tag">Fruits saisonniers</span>
+                                <span class="product-tag">Miel de forêt</span>
+                            </div>
+                        </div>
+                        
+                        <button class="contact-btn">
+                            <i class="fas fa-phone"></i> Contacter
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <div class="footer-note">
+            <p><i class="fas fa-info-circle"></i> Ces conseils ne remplacent pas une consultation médicale. Consultez toujours un professionnel de santé pour des recommandations personnalisées.</p>
+        </div>
+    </div>
+    
+    <!-- Chatbot -->
+    <div class="chatbot-icon" id="chatbot-icon">
+        <i class="fas fa-robot"></i>
+    </div>
+    
+    <div class="chatbot-container chatbot-closed" id="chatbot-container">
+        <div class="chatbot-header" id="chatbot-header">
+            <h3><i class="fas fa-robot"></i> Assistant Santé Guinée</h3>
+            <i class="fas fa-times" id="close-chatbot"></i>
+        </div>
+        <div class="chatbot-messages" id="chatbot-messages">
+            <div class="message bot-message">
+                <div class="message-sender">Assistant Santé</div>
+                <div class="message-content">
+                    Bonjour! 👋 Je suis votre assistant santé. Comment puis-je vous aider aujourd'hui? 
+                    Vous pouvez me poser des questions sur:
+                    - Les aliments adaptés aux diabétiques
+                    - Les produits recommandés pour l'hypertension
+                    - La nutrition pour les personnes drépanocytaires
+                    - Ou tout autre sujet santé en Guinée!
+                </div>
+            </div>
+        </div>
+        <div class="chatbot-input">
+            <input type="text" id="chatbot-input" placeholder="Posez votre question ici...">
+            <button id="send-message"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div><footer class="site-footer">
+    <div class="footer-container">
+        <div class="footer-section about">
+            <h3>À Propos de nous</h3>
+            <p>Conseils Santé Guinée est une initiative dédiée à la promotion d'une meilleure nutrition et d'une vie plus saine pour la population guinéenne.</p>
+        </div>
+        <div class="footer-section links">
+            <h3>Liens Utiles</h3>
+            <ul>
+                <li><a href="#aliments-tab">Analyse Alimentaire</a></li>
+                <li><a href="#magazines-tab">Magazines Santé</a></li>
+                <li><a href="#vendeurs-tab">Vendeurs Certifiés</a></li>
+                <li><a href="#">Conditions d'utilisation</a></li>
+                <li><a href="#">Politique de Confidentialité</a></li>
+            </ul>
+        </div>
+        <div class="footer-section contact">
+            <h3>Contactez-nous</h3>
+            <p><i class="fas fa-map-marker-alt"></i> Conakry, Guinée</p>
+            <p><i class="fas fa-envelope"></i> contact@conseilsanteguinee.com</p>
+            <p><i class="fas fa-phone"></i> +224 620 00 00 00</p>
+        </div>
+        <div class="footer-section social">
+            <h3>Suivez-nous</h3>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 Conseils Santé Guinée. Tous droits réservés.</p>
+    </div>
+</footer>
+
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Éléments DOM
+            const cameraBtn = document.getElementById('camera-btn');
+            const searchBtn = document.getElementById('search-btn');
+            const productSearch = document.getElementById('product-search');
+            const resultSection = document.getElementById('result-section');
+            const productName = document.getElementById('product-name');
+            const productDescription = document.getElementById('product-description');
+            const productIcon = document.getElementById('product-icon');
+            const navTabs = document.querySelectorAll('.nav-tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            // Éléments du chatbot
+            const chatbotIcon = document.getElementById('chatbot-icon');
+            const chatbotContainer = document.getElementById('chatbot-container');
+            const closeChatbot = document.getElementById('close-chatbot');
+            const chatbotMessages = document.getElementById('chatbot-messages');
+            const chatbotInput = document.getElementById('chatbot-input');
+            const sendMessageBtn = document.getElementById('send-message');
+            
+            // Base de données des produits (simulée)
+            const products = [
+                {
+                    name: "Fonio",
+                    description: "Céréale traditionnelle sans gluten",
+                    icon: "fas fa-seedling",
+                    diabetic: "recommended",
+                    hypertension: "recommended",
+                    drepanocytosis: "recommended"
+                },
+                {
+                    name: "Banane plantain",
+                    description: "Fruit riche en potassium",
+                    icon: "fas fa-apple-alt",
+                    diabetic: "moderate",
+                    hypertension: "recommended",
+                    drepanocytosis: "recommended"
+                },
+                {
+                    name: "Poisson fumé",
+                    description: "Source de protéines mais riche en sel",
+                    icon: "fas fa-fish",
+                    diabetic: "recommended",
+                    hypertension: "not-recommended",
+                    drepanocytosis: "moderate"
+                },
+                {
+                    name: "Sauce d'arachide",
+                    description: "Plat traditionnel protéiné",
+                    icon: "fas fa-utensil-spoon",
+                    diabetic: "moderate",
+                    hypertension: "moderate",
+                    drepanocytosis: "recommended"
+                }
+            ];
+            
+            // Base de connaissances du chatbot
+            const chatbotKnowledge = [
+                {
+                    keywords: ["bonjour", "salut", "coucou"],
+                    response: "Bonjour! 👋 Comment puis-je vous aider aujourd'hui?"
+                },
+                {
+                    keywords: ["diabète", "diabétique", "glycémie"],
+                    response: "Pour les personnes diabétiques, je recommande de privilégier les aliments à faible index glycémique comme le fonio, les légumes verts et les légumineuses. Évitez les sucres ajoutés et les aliments transformés. Vous pouvez utiliser notre vérificateur de produits pour savoir si un aliment est adapté."
+                },
+                {
+                    keywords: ["hypertension", "tension", "pression"],
+                    response: "Pour l'hypertension, il est important de réduire la consommation de sel. Privilégiez les aliments riches en potassium comme la banane plantain, les épinards et les patates douces. Évitez les aliments en conserve et les plats préparés qui sont souvent très salés."
+                },
+                {
+                    keywords: ["drépanocytose", "drépanocytaire", "anémie"],
+                    response: "Pour les personnes drépanocytaires, maintenir une bonne hydratation est essentiel. Consommez des aliments riches en acide folique comme les légumes verts à feuilles et les légumineuses. Évitez les aliments riches en fer héminique comme la viande rouge. Le fonio et les fruits riches en vitamine C sont excellents."
+                },
+                {
+                    keywords: ["fonio", "céréale"],
+                    response: "Le fonio est une céréale traditionnelle guinéenne exceptionnelle! 🌾 Elle est sans gluten, riche en fibres, avec un index glycémique bas. Parfaite pour les diabétiques, elle contient aussi du fer et du calcium bénéfiques pour les drépanocytaires. C'est l'un des aliments les plus recommandés dans notre base."
+                },
+                {
+                    keywords: ["merci", "remercier"],
+                    response: "Je vous en prie! N'hésitez pas si vous avez d'autres questions. 😊"
+                },
+                {
+                    keywords: ["contact", "vendeur", "acheter"],
+                    response: "Vous pouvez trouver des vendeurs certifiés dans la section 'Vendeurs Certifiés' de l'application. Tous nos partenaires sont vérifiés par l'Office National de Contrôle Qualité de Guinée pour garantir des produits de qualité."
+                },
+                {
+                    keywords: ["magazine", "article", "lire"],
+                    response: "Nous avons une section dédiée aux magazines santé avec des articles rédigés par nos experts. Vous y trouverez des conseils pratiques adaptés au contexte guinéen. Accédez-y via l'onglet 'Magazines Santé'."
+                }
+            ];
+            
+            // Fonction pour rechercher un produit
+            function searchProduct(searchTerm) {
+                const term = searchTerm.trim().toLowerCase();
+                
+                if (term === "") {
+                    alert("Veuillez entrer un nom de produit");
+                    return;
+                }
+                
+                // Trouver le produit correspondant
+                const product = products.find(p => p.name.toLowerCase().includes(term));
+                
+                if (product) {
+                    // Afficher les résultats
+                    productName.textContent = product.name;
+                    productDescription.textContent = product.description;
+                    productIcon.className = product.icon;
+                    
+                    // Mettre à jour les statuts
+                    updateStatus("diabetic", product.diabetic);
+                    updateStatus("hypertension", product.hypertension);
+                    updateStatus("drepanocytosis", product.drepanocytosis);
+                    
+                    // Afficher la section de résultats
+                    resultSection.style.display = 'block';
+                    
+                    // Faire défiler jusqu'aux résultats
+                    resultSection.scrollIntoView({ behavior: 'smooth' });
+                    
+                    // Activer l'onglet aliments
+                    navTabs.forEach(tab => tab.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    document.querySelector('.nav-tab[data-tab="aliments"]').classList.add('active');
+                    document.getElementById('aliments-tab').classList.add('active');
+                } else {
+                    alert("Produit non trouvé dans notre base de données. Essayez un autre produit.");
+                }
+            }
+            
+            // Fonction pour mettre à jour l'affichage des statuts
+            function updateStatus(condition, status) {
+                const indicator = document.getElementById(`${condition}-indicator`);
+                const textElement = document.getElementById(`${condition}-text`);
+                
+                // Réinitialiser les classes
+                indicator.className = "status-indicator";
+                textElement.className = "status-text";
+                
+                // Appliquer la classe appropriée
+                if (status === "recommended") {
+                    indicator.classList.add("recommended");
+                    textElement.classList.add("recommended");
+                    textElement.textContent = "Recommandé";
+                    indicator.innerHTML = '<i class="fas fa-check"></i>';
+                } else if (status === "moderate") {
+                    indicator.classList.add("moderate");
+                    textElement.classList.add("moderate");
+                    textElement.textContent = "Consommation modérée";
+                    indicator.innerHTML = '<i class="fas fa-exclamation"></i>';
+                } else {
+                    indicator.classList.add("not-recommended");
+                    textElement.classList.add("not-recommended");
+                    textElement.textContent = "Non recommandé";
+                    indicator.innerHTML = '<i class="fas fa-times"></i>';
+                }
+            }
+            
+            // Fonctions du chatbot
+            function toggleChatbot() {
+                chatbotContainer.classList.toggle('chatbot-closed');
+            }
+            
+            function addMessage(sender, text) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className =` message ${sender}-message`;
+                
+                const senderDiv = document.createElement('div');
+                senderDiv.className = 'message-sender';
+                senderDiv.textContent = sender === 'user' ? 'Vous' : 'Assistant Santé';
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'message-content';
+                contentDiv.textContent = text;
+                
+                messageDiv.appendChild(senderDiv);
+                messageDiv.appendChild(contentDiv);
+                
+                chatbotMessages.appendChild(messageDiv);
+                
+                // Faire défiler vers le bas
+                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+            }
+            
+            function getBotResponse(userMessage) {
+                userMessage = userMessage.toLowerCase();
+                
+                // Vérifier si c'est une salutation
+                if (userMessage.includes('bonjour') || userMessage.includes('salut')) {
+                    return "Bonjour! 👋 Comment puis-je vous aider aujourd'hui?";
+                }
+                
+                // Chercher une réponse dans la base de connaissances
+                for (const item of chatbotKnowledge) {
+                    for (const keyword of item.keywords) {
+                        if (userMessage.includes(keyword)) {
+                            return item.response;
+                        }
+                    }
+                }
+                
+                // Réponse par défaut
+                return "Je suis désolé, je n'ai pas bien compris votre question. Pourriez-vous la reformuler? Vous pouvez me demander des conseils sur le diabète, l'hypertension, la drépanocytose, ou sur des aliments spécifiques comme le fonio.";
+            }
+            
+            function sendMessage() {
+                const message = chatbotInput.value.trim();
+                if (message === '') return;
+                
+                // Ajouter le message de l'utilisateur
+                addMessage('user', message);
+                
+                // Réinitialiser le champ de saisie
+                chatbotInput.value = '';
+                
+                // Simuler un délai de réponse du bot
+                setTimeout(() => {
+                    const botResponse = getBotResponse(message);
+                    addMessage('bot', botResponse);
+                }, 1000);
+            }
+            
+            // Gestion des événements
+            searchBtn.addEventListener('click', function() {
+                searchProduct(productSearch.value);
+            });
+            
+            // Permettre la recherche avec la touche Entrée
+            productSearch.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchProduct(productSearch.value);
+                }
+            });
+            
+            // Navigation par onglets
+            navTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const targetTab = this.dataset.tab;
+                    
+                    // Retirer la classe active de tous les onglets et contenus
+                    navTabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Ajouter la classe active à l'onglet sélectionné
+                    this.classList.add('active');
+                    
+                    // Afficher le contenu correspondant
+                    document.getElementById(`${targetTab}-tab`).classList.add('active');
+                });
+            });
+            
+            // Animation des boutons "Lire l'article"
+            document.querySelectorAll('.read-more').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert("Ouverture de l'article complet...");
+                });
+            });
+            
+            // Animation des boutons "Contacter"
+            document.querySelectorAll('.contact-btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert("Ouverture des informations de contact...");
+                });
+            });
+            
+            // Événements du chatbot
+            chatbotIcon.addEventListener('click', toggleChatbot);
+            closeChatbot.addEventListener('click', toggleChatbot);
+            chatbotHeader.addEventListener('click', toggleChatbot);
+            
+            sendMessageBtn.addEventListener('click', sendMessage);
+            chatbotInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // Message de bienvenue du chatbot
+            setTimeout(() => {
+                addMessage('bot', "Bienvenue sur Conseils Santé Guinée! Je suis votre assistant virtuel. Posez-moi vos questions sur la nutrition, les aliments adaptés au diabète, à l'hypertension ou à la drépanocytose.");
+            }, 2000);
+            
+            // Exemple de recherche au chargement
+            setTimeout(() => {
+                productSearch.value = "Fonio";
+                searchProduct("Fonio");
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
