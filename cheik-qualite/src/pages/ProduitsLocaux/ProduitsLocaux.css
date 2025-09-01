@@ -129,6 +129,11 @@ header p {
     border-radius: 50px;
     font-size: 1rem;
     outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.search-bar input:focus, .search-bar select:focus {
+    border-color: #3498db;
 }
 
 .search-bar button {
@@ -159,23 +164,31 @@ header p {
     background: white;
     border-radius: 15px;
     overflow: hidden;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
     position: relative;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 1px solid #eee;
     display: flex;
     flex-direction: column;
 }
 
+.seller-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-bottom: 1px solid #f0f0f0;
+}
+
 .seller-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
 }
 
 .seller-badge {
     position: absolute;
     top: 15px;
     left: 15px;
-    background: #f39c12;
+    background: #e74c3c;
     color: white;
     padding: 5px 15px;
     border-radius: 20px;
@@ -194,6 +207,7 @@ header p {
 .seller-header h3 {
     margin-bottom: 5px;
     color: #2c3e50;
+    font-size: 1.5rem;
 }
 
 .seller-location {
@@ -202,57 +216,77 @@ header p {
     gap: 8px;
     color: #7f8c8d;
     margin-bottom: 10px;
+    font-size: 0.95rem;
 }
 
 .seller-rating {
     color: #f39c12;
+    font-size: 1.1rem;
 }
 
 .seller-products {
     padding: 20px;
     flex-grow: 1;
+    background-color: #fcfcfc; /* Light background for product tags section */
+    border-top: 1px solid #f0f0f0;
 }
 
 .seller-products h4 {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     color: #2c3e50;
     display: flex;
     align-items: center;
     gap: 8px;
+    font-size: 1.1rem;
 }
 
 .product-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 12px;
+    justify-content: center; /* Center the tags */
 }
 
 .product-tag {
-    background: #e8f4fc;
-    color: #3498db;
-    padding: 5px 15px;
-    border-radius: 20px;
-    font-size: 0.85rem;
+    background: linear-gradient(45deg, #3498db, #2ecc71); /* Vibrant gradient */
+    color: white;
+    padding: 8px 18px;
+    border-radius: 25px; /* More pill-shaped */
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+    border: 1px solid rgba(255,255,255,0.3); /* Subtle border */
+    cursor: default; /* Indicate not clickable */
+}
+
+.product-tag:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 123, 255, 0.3);
 }
 
 .contact-btn {
     display: block;
     width: calc(100% - 40px);
     margin: 20px 20px 20px 20px;
-    padding: 12px;
+    padding: 14px;
     background: #2ecc71;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     text-align: center;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
     margin-top: auto;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 10px rgba(46, 204, 113, 0.2);
 }
 
 .contact-btn:hover {
     background: #27ae60;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(46, 204, 113, 0.3);
 }
 
 /* How to Publish Section */
@@ -405,5 +439,101 @@ header p {
 
     .social-icons {
         justify-content: center;
+    }
+
+    /* Responsive adjustments for sellers-grid and product-tags */
+    .sellers-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .seller-card {
+        padding-bottom: 20px; /* Adjust padding for smaller screens */
+    }
+
+    .seller-header h3 {
+        font-size: 1.3rem;
+    }
+
+    .seller-location {
+        font-size: 0.9rem;
+    }
+
+    .seller-rating {
+        font-size: 1rem;
+    }
+
+    .seller-products h4 {
+        font-size: 1rem;
+    }
+
+    .product-tag {
+        font-size: 0.85rem;
+        padding: 6px 15px;
+    }
+
+    .contact-btn {
+        font-size: 1rem;
+        padding: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .promo-banner h2 {
+        font-size: 2.2rem;
+    }
+
+    .promo-banner p {
+        font-size: 1rem;
+    }
+
+    .search-bar input, .search-bar select, .search-bar button {
+        padding: 12px 15px;
+        font-size: 0.9rem;
+    }
+
+    .seller-header h3 {
+        font-size: 1.2rem;
+    }
+
+    .seller-location {
+        font-size: 0.85rem;
+    }
+
+    .seller-rating {
+        font-size: 0.9rem;
+    }
+
+    .seller-products h4 {
+        font-size: 0.9rem;
+    }
+
+    .product-tag {
+        font-size: 0.8rem;
+        padding: 5px 12px;
+    }
+
+    .contact-btn {
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+
+    .how-to-publish h2 {
+        font-size: 1.8rem;
+    }
+
+    .condition-card {
+        padding: 20px;
+    }
+
+    .condition-card i {
+        font-size: 2.5rem;
+    }
+
+    .condition-card h4 {
+        font-size: 1.1rem;
+    }
+
+    .condition-card p {
+        font-size: 0.9rem;
     }
 }

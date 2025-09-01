@@ -10,24 +10,7 @@ const Chatbot = () => {
         }
     ]);
     const [chatbotInput, setChatbotInput] = useState('');
-    const [chatbotKnowledge, setChatbotKnowledge] = useState([]); // State to store fetched knowledge
     const [error, setError] = useState('');
-
-    useEffect(() => {
-        const fetchChatbotKnowledge = async () => {
-            try {
-                const response = await fetch('http://localhost:5000/api/chatbot-knowledge');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch chatbot knowledge');
-                }
-                const data = await response.json();
-                setChatbotKnowledge(data);
-            } catch (err) {
-                setError(err.message);
-            }
-        };
-        fetchChatbotKnowledge();
-    }, []);
 
     const handleSendMessage = async () => {
         const message = chatbotInput.trim();

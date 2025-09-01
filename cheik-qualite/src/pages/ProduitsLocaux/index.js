@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import './ProduitsLocaux.css';
-import ContactModal from './components/ContactModal'; // Import the ContactModal component
+import ContactModal from './components/ContactModal.js'; // Import the ContactModal component
 
 const ProduitsLocaux = () => {
-    const [producers, setProducers] = useState([]); // Change sellers to producers
-    const [filteredProducers, setFilteredProducers] = useState([]); // Change filteredSellers to filteredProducers
+    
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedRegion, setSelectedRegion] = useState('');
-    const [showModal, setShowModal] = useState(false); // State for modal visibility
-    const [selectedProducer, setSelectedProducer] = useState(null); // State for selected producer to contact
+    const [showModal, setShowModal] = useState(false);
+    const [selectedProducer, setSelectedProducer] = useState(null);
+    const [producers, setProducers] = useState([]);
+    const [filteredProducers, setFilteredProducers] = useState([]);
 
     useEffect(() => {
         const fetchProducers = async () => {
@@ -32,7 +33,7 @@ const ProduitsLocaux = () => {
     useEffect(() => {
         const lowercasedSearchTerm = searchTerm.toLowerCase();
         const filtered = producers.filter(producer => { // Change sellers to producers
-            const matchesProduct = lowercasedSearchTerm === '' || producer.tags.some(tag => tag.toLowerCase().includes(lowercasedSearchTerm));
+            const matchesProduct = lowercasedSearchTerm === '' || (producer.tags && producer.tags.some(tag => tag && tag.toLowerCase().includes(lowercasedSearchTerm)));
             const matchesRegion = selectedRegion === '' || producer.location === selectedRegion;
             return matchesProduct && matchesRegion;
         });
@@ -88,8 +89,9 @@ const ProduitsLocaux = () => {
                     {filteredProducers.length > 0 ? (
                         filteredProducers.map((producer, index) => (
                             <div className="seller-card" key={index}>
-                                {producer.isTopSeller && <div className="seller-badge"><i className="fas fa-star"></i> Top vendeur</div>}
-                                {producer.isFastDelivery && <div className="seller-badge"><i className="fas fa-bolt"></i> Livraison rapide</div>}
+                                <img src={producer.image} alt={producer.name} className="seller-image" />
+                                
+                                
                                 <div className="seller-header">
                                     <h3>{producer.name}</h3>
                                     <div className="seller-location"><i className="fas fa-map-marker-alt"></i> {producer.region}</div>

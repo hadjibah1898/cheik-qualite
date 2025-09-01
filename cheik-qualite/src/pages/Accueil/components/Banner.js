@@ -1,0 +1,71 @@
+import React, { useState, useEffect } from 'react';
+import './Banner.css';
+
+const images = [
+    'https://picsum.photos/1920/1080?random=1', 
+    'https://picsum.photos/1920/1080?random=2', 
+    'https://picsum.photos/1920/1080?random=3', 
+    'https://picsum.photos/1920/1080?random=4' 
+];
+
+const Banner = () => {
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+        }, 5000); // Change image every 5 seconds
+
+        return () => clearTimeout(timer);
+    }, [currentImageIndex]);
+
+    const goToPrevious = () => {
+        setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
+    };
+
+    const goToNext = () => {
+        setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+    };
+
+    const goToSlide = (index) => {
+        setCurrentImageIndex(index);
+    };
+
+    return (
+        <section 
+            className="banner-section" 
+            id="banner" 
+        >
+            <div className="banner-background-slider">
+                {images.map((image, index) => (
+                    <div
+                        key={index}
+                        className={`banner-background ${index === currentImageIndex ? 'active' : ''}`}
+                        style={{ 
+                            backgroundImage: `url('${image}')`
+                        }}
+                    />
+                ))}
+            </div>
+            <div className="banner-overlay"></div>
+            <div className="banner-content">
+                <h1>Bienvenue sur la Plateforme de Qualité Guinéenne</h1>
+                <p>Votre source de confiance pour la vérification des produits et le soutien à l'économie locale.</p>
+                <a href="#verification" className="banner-cta-button">Vérifier un produit</a>
+            </div>
+            <button className="carousel-control prev" onClick={goToPrevious}>&#10094;</button>
+            <button className="carousel-control next" onClick={goToNext}>&#10095;</button>
+            <div className="carousel-dots">
+                {images.map((_, index) => (
+                    <span
+                        key={index}
+                        className={`dot ${index === currentImageIndex ? 'active' : ''}`}
+                        onClick={() => goToSlide(index)}
+                    ></span>
+                ))}
+            </div>
+        </section>
+    );
+};
+
+export default Banner;

@@ -1,11 +1,20 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import { MongoClient, ObjectId } from 'mongodb';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer'; // Import Nodemailer
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
+import multer from 'multer';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key'; // Should be in .env in production
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+  console.error("FATAL ERROR: JWT_SECRET is not defined in .env file.");
+  process.exit(1);
+}
 
 // Middleware to verify JWT
 const authenticateToken = (req, res, next) => {
@@ -21,32 +30,98 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
+const authorizeAdmin = (req, res, next) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Forbidden: Admins only' });
+  }
+  next();
+};
+
 const app = express();
 const port = 5000;
 
-const url = 'mongodb+srv://mouhamaddjoulde1998:lmCujlEw957U3P0e@clients.uxjtons.mongodb.net/cheikqualite';
+const url = process.env.DATABASE_URL;
+if (!url) {
+  console.error("FATAL ERROR: DATABASE_URL is not defined in .env file.");
+  process.exit(1);
+}
 const client = new MongoClient(url);
 
 const dbName = 'cheik-qualite';
 let db;
 
+app.use(helmet());
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static('uploads')); // Serve static files from the uploads directory
 
-client.connect().then(() => {
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // Limit each IP to 10 requests per windowMs
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  message: 'Too many requests from this IP, please try again after 15 minutes',
+});
+
+// Multer configuration for certificates
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/certificates/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+const upload = multer({ storage: storage });
+
+// Multer configuration for magazines
+const magazineStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/magazines/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+const uploadMagazine = multer({ storage: magazineStorage });
+
+// Multer configuration for product images
+const productStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/products/'); // New directory for product images
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+const uploadProduct = multer({ storage: productStorage });
+
+const startServer = async () => {
+  try {
+    await client.connect();
     console.log('Connecté à MongoDB');
     db = client.db(dbName);
-}).catch(err => {
+
+    app.listen(port, () => {
+      console.log(`Le serveur backend est démarré sur http://localhost:${port}`);
+    });
+  } catch (err) {
     console.error('Erreur de connexion à MongoDB', err);
     process.exit(1);
-});
+  }
+};
+
+startServer();
 
 app.get('/', (req, res) => {
   res.send('Bonjour depuis le backend !');
 });
 
 // Auth Routes
-app.post('/api/auth/register', async (req, res) => {
+app.post('/api/auth/register', authLimiter, async (req, res) => {
   try {
     const { username, password } = req.body;
 
@@ -70,12 +145,12 @@ app.post('/api/auth/register', async (req, res) => {
   }
 });
 
-app.post('/api/auth/login', async (req, res) => {
+app.post('/api/auth/login', authLimiter, async (req, res) => {
   try {
     const { username, password } = req.body;
 
     if (!username || !password) {
-      return res.status(400).json({ message: 'Nom d\'utilisateur et mot de passe requis.' });
+      return res.status(400).json({ message: 'Nom d\'utilisateur et mot de passe incorrect.' });
     }
 
     const usersCollection = db.collection('users');
@@ -98,19 +173,62 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
+
 // CRUD Routes for Products (Protected)
-app.post('/api/products', authenticateToken, async (req, res) => {
+app.post('/api/products', authenticateToken, authorizeAdmin, uploadProduct.single('productImage'), async (req, res) => {
   try {
-    const newProduct = req.body;
+    const { name, description, category } = req.body; // Assuming these fields from the form
+    const productImagePath = req.file ? req.file.path : null;
+
+    if (!name || !description || !category) {
+      return res.status(400).json({ message: 'Nom, description et catégorie du produit sont requis.' });
+    }
+
+    const newProduct = {
+      name,
+      description,
+      category,
+      imageUrl: productImagePath ? `/${productImagePath.replace(/\\/g, '/')}` : null, // Store relative path
+      createdAt: new Date(),
+      // Add other fields as needed, e.g., producerId, barcode, etc.
+    };
+
     const result = await db.collection('products').insertOne(newProduct);
-    res.status(201).json(result.ops[0]);
+    res.status(201).json({ message: 'Produit ajouté avec succès', product: newProduct });
   } catch (error) {
     console.error('Erreur lors de la création du produit:', error);
     res.status(500).json({ message: 'Erreur serveur' });
   }
 });
 
-app.put('/api/products/:id', authenticateToken, async (req, res) => {
+// New CRUD Route for Local Products (Protected)
+app.post('/api/local-products-submission', authenticateToken, authorizeAdmin, uploadProduct.single('productImage'), async (req, res) => {
+  try {
+    const { productName, description, category } = req.body; // Assuming these fields from the form
+    const productImagePath = req.file ? req.file.path : null;
+
+    if (!productName || !description || !category || !productImagePath) {
+      return res.status(400).json({ message: 'Nom, description, catégorie et image du produit sont requis.' });
+    }
+
+    const newLocalProduct = {
+      name: productName,
+      description,
+      category,
+      imageUrl: `/${productImagePath.replace(/\\/g, '/')}`,
+      badge: 'Certifié ONCQ', // Default badge for local products
+      createdAt: new Date(),
+    };
+
+    const result = await db.collection('local_products').insertOne(newLocalProduct);
+    res.status(201).json({ message: 'Produit local ajouté avec succès', product: newLocalProduct });
+  } catch (error) {
+    console.error('Erreur lors de la création du produit local:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+app.put('/api/products/:id', authenticateToken, authorizeAdmin, async (req, res) => {
   try {
     const productId = req.params.id;
     const updatedProduct = req.body;
@@ -128,7 +246,7 @@ app.put('/api/products/:id', authenticateToken, async (req, res) => {
   }
 });
 
-app.delete('/api/products/:id', authenticateToken, async (req, res) => {
+app.delete('/api/products/:id', authenticateToken, authorizeAdmin, async (req, res) => {
   try {
     const productId = req.params.id;
     const result = await db.collection('products').deleteOne({ _id: new ObjectId(productId) });
@@ -143,7 +261,7 @@ app.delete('/api/products/:id', authenticateToken, async (req, res) => {
 });
 
 // CRUD Routes for Health Advice (Protected)
-app.post('/api/health-advice', authenticateToken, async (req, res) => {
+app.post('/api/health-advice', authenticateToken, authorizeAdmin, async (req, res) => {
   try {
     const newAdvice = req.body;
     const result = await db.collection('health_advice').insertOne(newAdvice);
@@ -154,7 +272,7 @@ app.post('/api/health-advice', authenticateToken, async (req, res) => {
   }
 });
 
-app.put('/api/health-advice/:id', authenticateToken, async (req, res) => {
+app.put('/api/health-advice/:id', authenticateToken, authorizeAdmin, async (req, res) => {
   try {
     const adviceId = req.params.id;
     const updatedAdvice = req.body;
@@ -172,7 +290,7 @@ app.put('/api/health-advice/:id', authenticateToken, async (req, res) => {
   }
 });
 
-app.delete('/api/health-advice/:id', authenticateToken, async (req, res) => {
+app.delete('/api/health-advice/:id', authenticateToken, authorizeAdmin, async (req, res) => {
   try {
     const adviceId = req.params.id;
     const result = await db.collection('health_advice').deleteOne({ _id: new ObjectId(adviceId) });
@@ -186,8 +304,124 @@ app.delete('/api/health-advice/:id', authenticateToken, async (req, res) => {
   }
 });
 
+// Certificate Submission Route
+app.post('/api/certificates', authenticateToken, authorizeAdmin, upload.fields([
+  { name: 'certificate', maxCount: 1 },
+  { name: 'productImages', maxCount: 5 }
+]), async (req, res) => {
+  try {
+    const { productName, productType, barcode, batchNumber, origin, description, oncqNumber, validityPeriod } = req.body;
+    
+    const certificatePath = req.files.certificate ? req.files.certificate[0].path : null;
+    const productImagePaths = req.files.productImages ? req.files.productImages.map(file => file.path) : [];
+
+    if (!certificatePath) {
+      return res.status(400).json({ message: 'Certificate file is required.' });
+    }
+
+    const newCertificate = {
+      productName,
+      productType,
+      barcode,
+      batchNumber,
+      origin,
+      description,
+      oncqNumber,
+      validityPeriod,
+      certificatePath,
+      productImagePaths,
+      submissionDate: new Date()
+    };
+
+    const result = await db.collection('certificates').insertOne(newCertificate);
+    res.status(201).json({ message: 'Certificate submitted successfully', certificateId: result.insertedId });
+  } catch (error) {
+    console.error('Error submitting certificate:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Route to add a new magazine
+app.post('/api/magazines', authenticateToken, authorizeAdmin, uploadMagazine.fields([
+  { name: 'coverImage', maxCount: 1 },
+  { name: 'pdfFile', maxCount: 1 }
+]), async (req, res) => {
+  try {
+    const { title, description } = req.body;
+    const coverImagePath = req.files.coverImage ? req.files.coverImage[0].path : null;
+    const pdfFilePath = req.files.pdfFile ? req.files.pdfFile[0].path : null;
+
+    if (!title || !description || !coverImagePath || !pdfFilePath) {
+      return res.status(400).json({ message: 'All fields are required.' });
+    }
+
+    const newMagazine = {
+      title,
+      description,
+      coverImageUrl: coverImagePath,
+      pdfUrl: pdfFilePath,
+      createdAt: new Date()
+    };
+
+    const result = await db.collection('magazines').insertOne(newMagazine);
+    res.status(201).json({ message: 'Magazine added successfully', magazineId: result.insertedId });
+  } catch (error) {
+    console.error('Error adding magazine:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Route to create a new alert
+app.post('/api/alerts', authenticateToken, authorizeAdmin, async (req, res) => {
+  try {
+    const { title, message } = req.body;
+
+    if (!title || !message) {
+      return res.status(400).json({ message: 'Title and message are required.' });
+    }
+
+    const newAlert = {
+      title,
+      message,
+      createdAt: new Date()
+    };
+
+    const result = await db.collection('alerts').insertOne(newAlert);
+    res.status(201).json({ message: 'Alert created successfully', alertId: result.insertedId });
+  } catch (error) {
+    console.error('Error creating alert:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// Route to delete an alert
+app.delete('/api/alerts/:id', authenticateToken, authorizeAdmin, async (req, res) => {
+  try {
+    const alertId = req.params.id;
+    const result = await db.collection('alerts').deleteOne({ _id: new ObjectId(alertId) });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: 'Alerte non trouvée.' });
+    }
+    res.json({ message: 'Alerte supprimée avec succès.' });
+  } catch (error) {
+    console.error('Erreur lors de la suppression de l\'alerte:', error);
+    res.status(500).json({ message: 'Erreur serveur.' });
+  }
+});
+
 
 // API Routes
+app.get('/api/alerts', async (req, res) => {
+  try {
+    const alerts = await db.collection('alerts').find({}).sort({ createdAt: -1 }).toArray();
+    res.json(alerts);
+  } catch (error) {
+    console.error('Error fetching alerts:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
 app.get('/api/products', async (req, res) => {
   try {
     const products = await db.collection('products').find({}).toArray();
@@ -318,12 +552,22 @@ app.get('/api/chatbot-knowledge', async (req, res) => {
   }
 });
 
+app.get('/api/local-products', async (req, res) => {
+  try {
+    const localProducts = await db.collection('local_products').find({}).toArray();
+    res.json(localProducts);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des produits locaux:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
 app.post('/api/chatbot', async (req, res) => {
   try {
     const userMessage = req.body.message.toLowerCase();
     const chatbotKnowledge = await db.collection('chatbot').find({}).toArray();
 
-    let response = "Désolé, je n'ai pas compris votre question. Pouvez-vous reformuler ?";
+    let response = "Désolé, je n\'ai pas compris votre question. Pouvez-vous reformuler ?";
 
     for (const entry of chatbotKnowledge) {
       if (entry.keywords.some(keyword => userMessage.includes(keyword))) {
@@ -342,8 +586,8 @@ app.post('/api/chatbot', async (req, res) => {
 const transporter = nodemailer.createTransport({
     service: 'gmail', // You can use other services or SMTP
     auth: {
-        user: process.env.EMAIL_USER || 'your_email@gmail.com', // Use environment variables for security
-        pass: process.env.EMAIL_PASS || 'your_email_password' // Use environment variables for security
+        user: process.env.EMAIL_USER, // Use environment variables for security
+        pass: process.env.EMAIL_PASS // Use environment variables for security
     }
 });
 
@@ -356,14 +600,14 @@ app.post('/api/send-scan-link', async (req, res) => {
     }
 
     const mailOptions = {
-        from: process.env.EMAIL_USER || 'your_email@gmail.com',
+        from: process.env.EMAIL_USER,
         to: email,
         subject: 'Votre lien de scan direct pour Cheik Qualité',
         html: `<p>Bonjour,</p>
                <p>Cliquez sur le lien ci-dessous pour scanner un produit instantanément :</p>
                <p><a href="${scanLink}">${scanLink}</a></p>
                <p>Cordialement,</p>
-               <p>L'équipe Cheik Qualité</p>`
+               <p>L\'équipe Cheik Qualité</p>`
     };
 
     try {
@@ -372,7 +616,7 @@ app.post('/api/send-scan-link', async (req, res) => {
     } catch (error) {
         console.error('Erreur lors de l\'envoi de l\'e-mail:', error);
         res.status(500).json({ message: 'Erreur lors de l\'envoi de l\'e-mail.' });
-    }
+  }
 });
 
 app.post('/api/contact-producer', async (req, res) => {
@@ -387,10 +631,10 @@ app.post('/api/contact-producer', async (req, res) => {
     to: producerEmail,
     subject: 'Nouveau message de Cheik Qualité',
     html: `<p>Bonjour,</p>
-           <p>Vous avez reçu un nouveau message d'un utilisateur de Cheik Qualité :</p>
+           <p>Vous avez reçu un nouveau message d\'un utilisateur de Cheik Qualité :</p>
            <p>${message}</p>
            <p>Cordialement,</p>
-           <p>L'équipe Cheik Qualité</p>`
+           <p>L\'équipe Cheik Qualité</p>`
   };
 
   try {
@@ -402,6 +646,27 @@ app.post('/api/contact-producer', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Le serveur backend est démarré sur http://localhost:${port}`);
+app.post('/api/contact', async (req, res) => {
+  const { email, message } = req.body;
+
+  if (!email || !message) {
+    return res.status(400).json({ message: 'Email et message sont requis.' });
+  }
+
+  const mailOptions = {
+    from: email,
+    to: process.env.EMAIL_USER,
+    subject: 'Nouveau message de contact de Cheik Qualité',
+    html: `<p>Vous avez reçu un nouveau message de : ${email}</p>
+           <p>${message}</p>`
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ message: 'Message envoyé avec succès !' });
+  } catch (error) {
+    console.error('Erreur lors de l\'envoi de l\'e-mail:', error);
+    res.status(500).json({ message: 'Erreur lors de l\'envoi de l\'e-mail.' });
+  }
 });
+

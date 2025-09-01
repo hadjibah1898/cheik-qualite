@@ -1,0 +1,28 @@
+
+.unauthorized-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 70vh; /* Adjust as needed */
+  text-align: center;
+  padding: 2rem;
+  background-color: #f8d7da; /* Light red background */
+  color: #721c24; /* Dark red text */
+  border: 1px solid #f5c6cb;
+  border-radius: 8px;
+  margin: 2rem auto;
+  max-width: 600px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.unauthorized-container h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #dc3545; /* Red */
+}
+
+.unauthorized-container p {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}

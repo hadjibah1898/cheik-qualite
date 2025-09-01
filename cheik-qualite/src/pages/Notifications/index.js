@@ -13,9 +13,9 @@ const Notifications = () => {
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/notifications');
+                const response = await fetch('/api/alerts'); // Changed from /api/notifications
                 if (!response.ok) {
-                    throw new Error('Failed to fetch notifications');
+                    throw new Error('Failed to fetch alerts');
                 }
                 const data = await response.json();
                 setNotifications(data);
@@ -24,6 +24,27 @@ const Notifications = () => {
             }
         };
         fetchNotifications();
+
+        // Mark alerts as read when Notifications component is viewed
+        const markAlertsAsRead = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/alerts/mark-as-read', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                if (!response.ok) {
+                    console.error('Failed to mark alerts as read');
+                }
+            } catch (err) {
+                console.error('Error marking alerts as read:', err);
+            }
+        };
+        markAlertsAsRead();
+
     }, []);
 
     const handleSettingChange = (e) => {

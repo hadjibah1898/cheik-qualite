@@ -1,6 +1,7 @@
 import { MongoClient } from 'mongodb';
 import { products as healthAdvice, chatbotKnowledge } from '../cheik-qualite/src/data/conseilSanteData.js';
 import { mockDatabase as products } from '../cheik-qualite/src/data/products.js';
+import { producers } from '../cheik-qualite/src/data/producersData.js';
 
 const url = 'mongodb+srv://mouhamaddjoulde1998:lmCujlEw957U3P0e@clients.uxjtons.mongodb.net/cheikqualite';
 const client = new MongoClient(url);
@@ -28,6 +29,12 @@ async function main() {
   await productsCollection.deleteMany({});
   await productsCollection.insertMany(products);
   console.log('Produits importés');
+
+  // Producers
+  const producersCollection = db.collection('producers');
+  await producersCollection.deleteMany({});
+  await producersCollection.insertMany(producers);
+  console.log('Producteurs importés');
 
   return 'Terminé.';
 }

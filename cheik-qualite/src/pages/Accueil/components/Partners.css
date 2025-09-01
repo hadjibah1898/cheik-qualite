@@ -1,0 +1,27 @@
+.partners-section {
+    background-color: #fff;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.partners-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.partner-logo img {
+    max-width: 160px;
+    filter: grayscale(100%);
+    opacity: 0.7;
+    transition: filter 0.4s ease, opacity 0.4s ease;
+}
+
+.partner-logo img:hover {
+    filter: grayscale(0%);
+    opacity: 1;
+}

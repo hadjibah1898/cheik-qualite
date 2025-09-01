@@ -1,0 +1,90 @@
+.add-magazine-form-container {
+    background-color: #f9f9f9;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    margin-top: 20px;
+}
+
+.add-magazine-form-container h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 1.8rem;
+}
+
+.add-magazine-form .form-group {
+    margin-bottom: 15px;
+}
+
+.add-magazine-form .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+}
+
+.add-magazine-form .form-group input[type='text'],
+.add-magazine-form .form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.add-magazine-form .form-group input[type='text']:focus,
+.add-magazine-form .form-group textarea:focus {
+    border-color: #3498db;
+    outline: none;
+}
+
+.add-magazine-form .form-group input[type='file'] {
+    display: none; /* Hide the default file input */
+}
+
+.file-input-wrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: white;
+    overflow: hidden;
+}
+
+.custom-file-upload {
+    flex-grow: 1;
+    padding: 12px;
+    cursor: pointer;
+    background-color: #e6f7ff; /* Light blue background */
+    color: #555;
+    text-align: left;
+    transition: background-color 0.3s ease;
+}
+
+.custom-file-upload:hover {
+    background-color: #cceeff; /* Slightly darker blue on hover */
+}
+
+.add-magazine-form .submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(to right, #3498db, #2980b9);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.add-magazine-form .submit-btn:hover {
+    background: linear-gradient(to right, #2980b9, #3498db);
+}
+
+.add-magazine-form .submit-btn:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+}

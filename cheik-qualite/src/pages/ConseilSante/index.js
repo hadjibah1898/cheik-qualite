@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import './ConseilSante.css';
-import { products } from '../../data/conseilSanteData';
-import AlimentsTab from './components/AlimentsTab';
-import MagazinesTab from './components/MagazinesTab';
-import VendeursTab from './components/VendeursTab';
-import Chatbot from '../../components/Chatbot/Chatbot';
+import { products } from '../../data/conseilSanteData.js';
+import AlimentsTab from './components/AlimentsTab.js';
+import MagazinesTab from './components/MagazinesTab.js';
+import VendeursTab from './components/VendeursTab.js';
+import Chatbot from '../../components/Chatbot/Chatbot.js';
 
 const ConseilSante = () => {
     const [activeTab, setActiveTab] = useState('aliments');

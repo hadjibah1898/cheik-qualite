@@ -1,41 +1,97 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import { QRCodeSVG } from 'qrcode.react';
+import { NavLink } from 'react-router-dom';
 import './Accueil.css';
-import { mockDatabase } from '../../data/products';
-import { localProducts } from '../../data/localProducts';
-import ProductCard from './components/ProductCard';
+import { mockDatabase } from '../../data/products.js'; // Keep for reference if needed, but will be replaced
+import { localProducts } from '../../data/localProducts.js';
+import ProductCard from './components/ProductCard.js';
+import { toast } from 'react-toastify';
+
+// Imports for new components
+import Banner from './components/Banner.js';
+import About from './components/About.js';
+import News from './components/News.js';
+import Testimonials from './components/Testimonials.js';
+import Partners from './components/Partners.js';
 
 const Accueil = () => {
     const [productQuery, setProductQuery] = useState('');
     const [email, setEmail] = useState('');
     const [result, setResult] = useState(null);
     const [showScanner, setShowScanner] = useState(false);
+    const [alerts, setAlerts] = useState([]);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const scannerRef = useRef(null);
 
-    const simulateResponse = (query) => {
-        let product = null;
-        if (!isNaN(query) && query.length >= 8) {
-            product = mockDatabase.find(p => p.barcode === query);
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        setIsAuthenticated(!!token);
+
+        const fetchAlerts = async () => {
+            try {
+                const response = await fetch('/api/alerts');
+                const data = await response.json();
+                if (response.ok) {
+                    setAlerts(data);
+                } else {
+                    console.error('Failed to fetch alerts');
+                }
+            } catch (error) {
+                console.error('Error fetching alerts:', error);
+            }
+        };
+
+        fetchAlerts();
+    }, []);
+
+    const verifyProduct = async (query) => {
+        if (!query) {
+            setResult(null);
+            toast.error("Veuillez entrer un code ou un nom de produit.");
+            return;
         }
-        if (!product) {
-            const normalizedQuery = query.toLowerCase();
-            product = mockDatabase.find(p => p.name && p.name.toLowerCase().includes(normalizedQuery));
+
+        try {
+            const response = await fetch('/api/products/verify', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setResult(data); // Assuming data contains product details including status
+                if (data.status === 'conforme') {
+                    toast.success("Produit certifié et conforme !");
+                } else if (data.status === 'non_conforme') {
+                    toast.warn("Avertissement : Produit non conforme.");
+                } else {
+                    toast.info("Statut du produit indéterminé.");
+                }
+            } else {
+                // Handle cases where product is not found or other errors
+                setResult({ status: "inconnu", name: query }); // Set status to unknown
+                toast.error(`Erreur: ${data.message || 'Produit non trouvé ou erreur de vérification.'}`);
+            }
+        } catch (error) {
+            console.error('Erreur lors de la vérification du produit:', error);
+            setResult({ status: "inconnu", name: query }); // Set status to unknown on network error
+            toast.error('Erreur de connexion au serveur lors de la vérification du produit.');
         }
-        if (!product) {
-            product = mockDatabase.find(p => p.status === "inconnu");
-        }
-        setResult(product);
     };
 
     const handleSearch = (e) => {
         e.preventDefault();
-        simulateResponse(productQuery);
+        verifyProduct(productQuery);
     };
 
     const handleEmailSubmit = async (e) => { // Added 'async'
         e.preventDefault();
-        const link = window.location.origin + window.location.pathname + '?action=scan';
+        const link = process.env.REACT_APP_FRONTEND_URL + window.location.pathname + '?action=scan';
 
         try {
             const response = await fetch('http://localhost:5000/api/send-scan-link', { // Assuming backend runs on port 5000
@@ -49,13 +105,14 @@ const Accueil = () => {
             const data = await response.json();
 
             if (response.ok) {
-                alert(data.message); // Show success message from backend
+                toast.success(data.message); // Show success message from backend
+                setEmail(''); // Clear the email input on success
             } else {
-                alert(`Erreur: ${data.message || 'Quelque chose s\'est mal passé.'}`); // Show error message from backend
+                toast.error(`Erreur: ${data.message || 'Quelque chose s\'est mal passé.'}`); // Show error message from backend
             }
         } catch (error) {
             console.error('Erreur lors de l\'envoi du lien de scan:', error);
-            alert('Erreur lors de la connexion au serveur.');
+            toast.error('Erreur lors de la connexion au serveur.');
         }
     };
 
@@ -65,7 +122,7 @@ const Accueil = () => {
     
     const simulateScanForPC = (code) => {
         setProductQuery(code);
-        simulateResponse(code);
+        verifyProduct(code); // Call the new verifyProduct function
         setShowScanner(false);
     }
 
@@ -79,7 +136,7 @@ const Accueil = () => {
 
             const onScanSuccess = (decodedText, decodedResult) => {
                 setProductQuery(decodedText);
-                simulateResponse(decodedText);
+                verifyProduct(decodedText); // Call the new verifyProduct function
                 scanner.clear();
                 setShowScanner(false);
             };
@@ -114,7 +171,9 @@ const Accueil = () => {
 
     return (
         <>
-            <section className="section-box">
+            <Banner />
+
+            <section className="section-box" id="verification">
                 <h2 className="section-title">Vérifier la Certification d'un Produit</h2>
                 <div className="verification-container">
                     <div className="verification-form-container">
@@ -126,7 +185,7 @@ const Accueil = () => {
                             <input type="text" value={productQuery} onChange={(e) => setProductQuery(e.target.value)} placeholder="Entrez le code ou le nom du produit..." required />
                             <div className="button-group">
                                 <button type="submit" className="search-btn"><i className="fas fa-search"></i> Rechercher</button>
-                                <button type="button" className="camera-btn" onClick={toggleCamera}><i className="fas fa-camera"></i> {showScanner ? 'Stopper le Scan' : 'Scan par Caméra'}</button>
+                                <button type="button" className="camera-btn" onClick={toggleCamera}><i className="fas fa-camera"></i> {showScanner ? 'Stopper le Scan' : 'Scan par Caméra'} </button>
                             </div>
                         </form>
                     </div>
@@ -163,7 +222,7 @@ const Accueil = () => {
                 {result && (
                     <div id="result-container">
                         <div className={`result-box result-${result.status === 'conforme' ? 'success' : (result.status === 'non_conforme' ? 'danger' : 'info')}`}>
-                            <img src={result.imageUrl} alt={`Photo du produit ${result.status}`} className="result-image" />
+                            <img src={result.imageUrl} alt={`Produit ${result.status}`} className="result-image" />
                             <h3>{result.status === 'conforme' ? '✅ Produit Certifié et Conforme' : (result.status === 'non_conforme' ? '❌ Avertissement : Produit Non Conforme' : '⚠ Statut Indéterminé')}</h3>
                             <p><strong>Nom du produit :</strong> {result.name}</p>
                             {result.status === 'conforme' &&
@@ -172,7 +231,7 @@ const Accueil = () => {
                                     <p><strong>Numéro de lot :</strong> {result.lotNumber}</p>
                                     <p><strong>Producteur :</strong> {result.producer}</p>
                                     <p><strong>Numéro de certification :</strong> {result.certification}</p>
-                                    <p>Ce produit respecte les normes de l\'ONCQ.</p>
+                                    <p>Ce produit respecte les normes de l'ONCQ.</p>
                                 </>
                             }
                             {result.status === 'non_conforme' &&
@@ -197,6 +256,9 @@ const Accueil = () => {
                 )}
             </section>
 
+            <News />
+            <Testimonials />
+
             <section className="section-box local-products-section">
                 <h2 className="section-title">Découvrez nos Produits Locaux Certifiés</h2>
                 <p style={{textAlign:'center', marginBottom: '20px'}}>Soutenons l\'économie guinéenne en consommant des produits du terroir, sûrs et de qualité.</p>
@@ -206,6 +268,9 @@ const Accueil = () => {
                     ))}
                 </div>
             </section>
+
+            <Partners />
+            <About />
         </>
     );
 };

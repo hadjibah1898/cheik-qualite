@@ -9,6 +9,8 @@ const Profil = () => {
     const [editMode, setEditMode] = useState(false);
     const [formData, setFormData] = useState({}); // To hold changes during editing
     const [selectedFile, setSelectedFile] = useState(null); // For profile picture upload
+    const [message, setMessage] = useState(null); // For success/error messages
+    const [messageType, setMessageType] = useState(null); // 'success' or 'error'
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -50,6 +52,8 @@ const Profil = () => {
         if (editMode) {
             setFormData(user);
             setSelectedFile(null); // Clear selected file when exiting edit mode
+            setMessage(null); // Clear messages when exiting edit mode
+            setMessageType(null); // Clear message type
         }
     };
 
@@ -81,10 +85,14 @@ const Profil = () => {
     };
 
     const handleSave = async () => {
+        setMessage(null); // Clear previous messages
+        setMessageType(null); // Clear previous message type
+
         try {
             const token = localStorage.getItem('token');
             if (!token) {
-                // Handle case where token is not found
+                setMessage("Vous n'êtes pas authentifié. Veuillez vous connecter.");
+                setMessageType('error');
                 return;
             }
 
@@ -103,7 +111,8 @@ const Profil = () => {
                 });
 
                 if (!uploadResponse.ok) {
-                    throw new Error('Failed to upload profile picture');
+                    const errorData = await uploadResponse.json();
+                    throw new Error(errorData.message || 'Échec du téléchargement de limage de profil.');
                 }
 
                 const uploadData = await uploadResponse.json();
@@ -121,16 +130,20 @@ const Profil = () => {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to update user profile');
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Échec de la mise à jour du profil utilisateur.');
             }
 
             const updatedUser = await response.json();
             setUser(updatedUser);
             setEditMode(false);
             setSelectedFile(null); // Clear selected file after successful save
+            setMessage('Profil mis à jour avec succès !');
+            setMessageType('success');
         } catch (error) {
             console.error('Error updating user profile:', error);
-            // Handle error
+            setMessage(error.message || 'Une erreur inattendue est survenue.');
+            setMessageType('error');
         }
     };
 
@@ -138,10 +151,16 @@ const Profil = () => {
         setFormData(user); // Revert changes
         setEditMode(false);
         setSelectedFile(null); // Clear selected file on cancel
+        setMessage(null); // Clear messages on cancel
+        setMessageType(null); // Clear message type
     };
 
     if (loading) {
-        return <div className="profile-container">Chargement du profil...</div>;
+        return (
+            <div className="profile-container loading">
+                <span className="loading-spinner"></span> Chargement du profil...
+            </div>
+        );
     }
 
     return (
@@ -152,11 +171,22 @@ const Profil = () => {
                     <p>Votre tableau de bord personnel</p>
                 </div>
                 
+                {message && (
+                    <div className={`form-message ${messageType}`}>
+                        {messageType === 'success' && <i className="fas fa-check-circle"></i>}
+                        {messageType === 'error' && <i className="fas fa-exclamation-circle"></i>}
+                        {message}
+                    </div>
+                )}
+
                 <div className="profile-card">
                     <div className="profile-avatar">
-                        <img src={user.profilePictureUrl || "https://via.placeholder.com/150"} alt="Photo de profil" />
+                        <img src={user.profilePictureUrl || "https://via.placeholder.com/150"} alt="Profil" />
                         {editMode && (
-                            <input type="file" accept="image/*" onChange={handleFileChange} />
+                            <label htmlFor="profile-picture-upload" className="file-upload-label">
+                                <i className="fas fa-camera"></i> Changer la photo
+                                <input type="file" id="profile-picture-upload" accept="image/*" onChange={handleFileChange} />
+                            </label>
                         )}
                     </div>
                     
@@ -219,9 +249,9 @@ const Profil = () => {
                                 <button onClick={handleCancel} className="cancel-btn">Annuler</button>
                             </div>
                         ) : (
-                            <a href="#" onClick={handleEditToggle} className="edit-btn">
+                            <button onClick={handleEditToggle} className="edit-btn">
                                 <i className="fas fa-edit"></i> Modifier le profil
-                            </a>
+                            </button>
                         )}
                     </div>
                 </div>

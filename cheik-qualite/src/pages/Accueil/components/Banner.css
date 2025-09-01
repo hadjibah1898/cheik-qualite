@@ -1,0 +1,138 @@
+.banner-section {
+    position: relative;
+    color: white;
+    padding: 100px 20px;
+    text-align: center;
+    border-bottom: 5px solid #28a745;
+    overflow: hidden;
+    min-height: 450px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.banner-background-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.banner-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 1.0s ease-in-out;
+}
+
+.banner-background.active {
+    opacity: 1;
+}
+
+.banner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 2;
+}
+
+.banner-content {
+    position: relative;
+    z-index: 3;
+}
+
+.banner-content h1 {
+    font-size: 2.8rem;
+    margin-bottom: 20px;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+}
+
+.banner-content p {
+    font-size: 1.3rem;
+    margin-bottom: 30px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.banner-cta-button {
+    background-color: #28a745;
+    color: white;
+    padding: 15px 35px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    display: inline-block;
+}
+
+.banner-cta-button:hover {
+    background-color: #218838;
+    transform: translateY(-3px);
+}
+
+/* Carousel Controls */
+.carousel-control {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 2rem;
+    z-index: 4;
+    transition: background-color 0.3s ease;
+}
+
+.carousel-control:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.carousel-control.prev {
+    left: 10px;
+    border-radius: 0 5px 5px 0;
+}
+
+.carousel-control.next {
+    right: 10px;
+    border-radius: 5px 0 0 5px;
+}
+
+/* Carousel Dots */
+.carousel-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 4;
+    display: flex;
+    gap: 10px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.dot.active {
+    background-color: white;
+    transform: scale(1.2);
+}

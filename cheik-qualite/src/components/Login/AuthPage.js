@@ -40,9 +40,13 @@ const AuthPage = () => {
       const decodedToken = JSON.parse(atob(token.split('.')[1]));
       const userRole = decodedToken.role || 'user';
 
-      if (userRole === 'admin') navigate('/admin');
-      else if (userRole === 'agent') navigate('/agent-dashboard');
-      else navigate('/');
+      if (userRole === 'admin') {
+        window.location.href = '/admin';
+      } else if (userRole === 'agent') {
+        window.location.href = '/agent-dashboard';
+      } else {
+        window.location.href = '/';
+      }
     } catch (err) {
       setError(err.message);
     }
@@ -70,9 +74,9 @@ const AuthPage = () => {
         throw new Error(data.message || 'Échec de l’inscription');
       }
 
-            const { token } = await response.json(); // Assuming backend returns token on registration
+      const { token } = await response.json(); // Assuming backend returns token on registration
       localStorage.setItem('token', token);
-      navigate('/profil'); // Redirect to profile page
+      window.location.href = '/profil'; // Redirect to profile page
     } catch (err) {
       setError(err.message);
     }

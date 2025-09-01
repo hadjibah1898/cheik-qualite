@@ -1,46 +1,137 @@
-/* Styles du Header */
+/* Header - Modern French Style */
 header {
     text-align: center;
-    padding: 30px 20px;
-    background: linear-gradient(to right, #3498db, #2c3e50);
+    padding: 25px 20px;
+    background-color: #2c3e50; /* Deep navy blue */
     color: white;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     position: relative;
-    overflow: hidden;
+    border-bottom: 1px solid #4a5a6a; /* Subtle border */
+}
+
+/* Logo */
+.logo-text {
+    font-family: Georgia, 'Times New Roman', Times, serif; /* Elegant serif font */
+    font-size: 2.5rem; /* Slightly smaller */
+    font-weight: 600;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+}
+
+.logo-q { color: #2ecc71; }
+.logo-s { color: #3498db; }
+.logo-l { color: #e67e22; }
+.logo-guinee {
+    color: #ffffff;
+    margin-left: 10px;
+    font-weight: 400; /* Lighter weight for the tagline part */
+}
+
+header p {
+    font-size: 1.1rem;
+    max-width: 800px;
+    margin: 0 auto;
+    opacity: 0.8;
+    font-weight: 300; /* Lighter font */
+    letter-spacing: 0.5px;
+}
+
+/* Navigation */
+.header-nav {
+    margin-top: 25px;
+}
+
+.header-nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 45px; /* Increased spacing */
+    padding: 0;
+}
+
+.header-nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 400; /* Lighter font */
+    letter-spacing: 1px; /* Increased letter spacing */
+    text-transform: uppercase; /* Uppercase for a chic style */
+    padding: 10px 0;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.header-nav ul li a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background-color: #fcd116; /* Muted gold accent */
+    transition: width 0.3s ease;
+}
+
+.header-nav ul li a:hover,
+.header-nav ul li a.active {
+    color: #fcd116; /* Highlight color */
+}
+
+.header-nav ul li a:hover::after,
+.header-nav ul li a.active::after {
+    width: 100%;
+}
+
+/* Header Top Right - Icons */
+.header-top-right {
+    position: absolute;
+    top: 25px;
+    right: 30px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.notification-icon {
+    position: relative;
+    color: white;
+    font-size: 1.4rem;
+    transition: color 0.3s ease;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.notification-icon:hover {
+    color: #fcd116;
+}
+
+.profile-icon-btn {
+    color: white;
+    font-size: 1.4rem;
+    transition: color 0.3s ease;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.profile-icon-btn:hover {
+    color: #fcd116;
 }
 
 .guinea-flag {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 40px;
+    width: 30px;
     height: 25px;
-    background: linear-gradient(to bottom, 
-        #ce1126 0%, 
-        #ce1126 33%, 
-        #fcd116 33%, 
-        #fcd116 66%, 
-        #009e49 66%, 
-        #009e49 100%);
+    background: linear-gradient(to right, #ce1126 0%, #ce1126 33%, #fcd116 33%, #fcd116 66%, #009e49 66%, #009e49 100%);
     border-radius: 3px;
 }
 
-header h1 { font-size: 2.8rem; margin-bottom: 10px; }
-header p { font-size: 1.2rem; max-width: 800px; margin: 0 auto; opacity: 0.9; }
-
-.header-nav { margin-top: 20px; }
-.header-nav ul { list-style: none; display: flex; justify-content: center; gap: 30px; padding: 0; }
-.header-nav ul li a { color: white; text-decoration: none; font-size: 1.1rem; font-weight: 500; transition: color 0.3s ease; }
-.header-nav ul li a:hover, .header-nav ul li a.active { color: #fcd116; }
-
 /* Styles du bouton hamburger */
 .hamburger-btn {
-    display: none; /* Caché par défaut */
+    display: none;
     position: absolute;
-    top: 25px;
+    top: 50%;
     left: 20px;
+    transform: translateY(-50%);
     background: transparent;
     border: none;
     color: white;
@@ -49,29 +140,91 @@ header p { font-size: 1.2rem; max-width: 800px; margin: 0 auto; opacity: 0.9; }
     z-index: 100;
 }
 
+/* Profile Dropdown */
+.profile-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 15px);
+    right: 0;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    z-index: 100;
+    min-width: 180px;
+    overflow: hidden;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-menu ul {
+    list-style: none;
+    padding: 5px 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.dropdown-menu ul li a,
+.dropdown-menu ul li .logout-btn-dropdown {
+    color: #333;
+    padding: 12px 20px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+    width: 100%;
+    border: none;
+    background: none;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-menu ul li a:hover,
+.dropdown-menu ul li .logout-btn-dropdown:hover {
+    background-color: #f5f5f5;
+}
+
+.logout-btn-dropdown {
+    cursor: pointer;
+    color: #e74c3c;
+}
+
+/* Blinking animation for notifications */
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.2; }
+    100% { opacity: 1; }
+}
+
+.blink-animation {
+    animation: blink 1s infinite;
+}
+
+.notification-dot {
+    position: absolute;
+    top: 0px; /* Adjust as needed */
+    right: -5px; /* Adjust as needed */
+    width: 10px;
+    height: 10px;
+    background-color: #e74c3c; /* Red dot */
+    border-radius: 50%;
+    animation: blink 1s infinite; /* Make the dot blink as well */
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-    .hamburger-btn {
-        display: block;
-    }
-
-    .header-nav ul {
-        display: none;
-        flex-direction: column;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        background: linear-gradient(135deg, #3498db, #2c3e50);
-        padding-top: 100px;
-        gap: 20px;
-        transition: transform 0.5s ease-in-out;
-        transform: translateX(-100%);
-        z-index: 50; /* Ensure it's above other content but below the button */
-    }
-
-    .header-nav.active ul {
-        display: flex;
-        transform: translateX(0);
-    }
+    .hamburger-btn { display: block; }
+    .header-nav ul { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; width: 100%; background: #2c3e50; padding: 20px 0; gap: 0; }
+    .header-nav.active ul { display: flex; }
+    .header-nav ul li a { padding: 15px 20px; }
+    .header-nav ul li a::after { display: none; } /* Hide line on mobile */
+    .header-top-right { top: 25px; right: 20px; transform: none; }
 }

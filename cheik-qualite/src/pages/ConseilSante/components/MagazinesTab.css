@@ -1,0 +1,161 @@
+.magazines-tab {
+  padding: 40px 20px;
+  background-color: #f8f9fa;
+  min-height: calc(100vh - var(--header-height, 0px) - var(--footer-height, 0px)); /* Adjust based on actual header/footer height */
+}
+
+.magazines-tab h2 {
+  color: #212529;
+  margin-bottom: 40px;
+  text-align: center;
+  font-size: 2.5em;
+  font-weight: 700;
+}
+
+.search-bar-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.magazine-search-input {
+  width: 100%;
+  max-width: 500px;
+  padding: 12px 20px;
+  border: 1px solid #ced4da;
+  border-radius: 25px;
+  font-size: 1em;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.magazine-search-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+  outline: none;
+}
+
+.magazines-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  justify-content: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.magazine-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  text-align: center;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.magazine-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.magazine-image {
+  width: 100%;
+  max-width: 180px;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  object-fit: cover;
+}
+
+.magazine-card h3 {
+  color: #007bff;
+  margin-bottom: 12px;
+  font-size: 1.4em;
+  font-weight: 600;
+}
+
+.magazine-card p {
+  color: #495057;
+  font-size: 1em;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  flex-grow: 1;
+}
+
+.magazine-link {
+  display: inline-block;
+  background-color: #007bff;
+  color: #fff;
+  padding: 12px 25px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+
+.magazine-link:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
+}
+
+.no-results {
+  text-align: center;
+  color: #6c757d;
+  font-size: 1.2em;
+  margin-top: 30px;
+  width: 100%; /* Ensure it takes full width in the grid */
+  grid-column: 1 / -1; /* Span across all columns in the grid */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .magazines-tab h2 {
+    font-size: 2em;
+  }
+
+  .magazines-list {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+
+  .magazine-card {
+    padding: 20px;
+  }
+
+  .magazine-card h3 {
+    font-size: 1.2em;
+  }
+
+  .magazine-card p {
+    font-size: 0.9em;
+  }
+
+  .magazine-link {
+    padding: 10px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .magazines-tab {
+    padding: 20px 15px;
+  }
+
+  .magazines-tab h2 {
+    font-size: 1.8em;
+    margin-bottom: 30px;
+  }
+
+  .magazines-list {
+    grid-template-columns: 1fr;
+  }
+
+  .magazine-search-input {
+    padding: 10px 15px;
+  }
+}
