@@ -3,6 +3,7 @@ import './Admin.css';
 import AddMagazineForm from './components/AddMagazineForm.js';
 import SoumissionCertificat from './components/SoumissionCertificat.js';
 import SoumissionProduit from './components/SoumissionProduit.js'; // Import the new component
+import SoumissionProduitLocal from './components/SoumissionProduitLocal.js'; // Import the new component
 import { toast } from 'react-toastify';
 
 const Admin = () => {
@@ -23,6 +24,7 @@ const Admin = () => {
         users: 150
     });
     const [alertsList, setAlertsList] = useState([]); // New state for alerts
+    const [localProductsList, setLocalProductsList] = useState([]); // New state for local products
 
     useEffect(() => {
         const pendingProducts = products.filter(p => p.status === 'pending').length;
@@ -33,6 +35,13 @@ const Admin = () => {
     useEffect(() => {
         if (activeView === 'alerts') {
             fetchAlerts();
+        }
+    }, [activeView]);
+
+    // New useEffect for fetching local products
+    useEffect(() => {
+        if (activeView === 'viewLocalProducts') {
+            fetchLocalProducts();
         }
     }, [activeView]);
 
@@ -53,6 +62,26 @@ const Admin = () => {
         } catch (error) {
             console.error('Error fetching alerts:', error);
             toast.error('Erreur de connexion au serveur pour les alertes.');
+        }
+    };
+
+    const fetchLocalProducts = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('/api/local-products', {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setLocalProductsList(data);
+            } else {
+                toast.error('Erreur lors de la récupération des produits locaux.');
+            }
+        } catch (error) {
+            console.error('Error fetching local products:', error);
+            toast.error('Erreur de connexion au serveur pour les produits locaux.');
         }
     };
 
@@ -148,7 +177,7 @@ const Admin = () => {
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                     />
                                 </div>
-                                <button className="add-button" onClick={() => setActiveView('products')}>Ajouter un produit</button>
+                                
                             </div>
                             <div className="table-container">
                                 <table id="productTable">
@@ -242,6 +271,44 @@ const Admin = () => {
                 return <SoumissionCertificat />;
             case 'products':
                 return <SoumissionProduit />;
+            case 'localProducts':
+                return <SoumissionProduitLocal onProductAdded={fetchLocalProducts} />;
+            case 'viewLocalProducts':
+                return (
+                    <div className="dashboard-section">
+                        <h3>Produits Locaux Soumis</h3>
+                        {localProductsList.length > 0 ? (
+                            <div className="table-container">
+                                <table id="localProductsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Nom du Produit</th>
+                                            <th>Catégorie</th>
+                                            <th>Description</th>
+                                            <th>Date de Soumission</th>
+                                            <th>Image</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {localProductsList.map(product => (
+                                            <tr key={product._id}>
+                                                <td>{product.name}</td>
+                                                <td>{product.category}</td>
+                                                <td>{product.description}</td>
+                                                <td>{new Date(product.createdAt).toLocaleDateString()}</td>
+                                                <td>
+                                                    {product.imageUrl && <img src={`http://localhost:5000${product.imageUrl}`} alt={product.name} style={{ width: '50px', height: '50px', objectFit: 'cover' }} />}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            <p style={{ textAlign: 'center', marginTop: '1rem' }}>Aucun produit local soumis pour le moment.</p>
+                        )}
+                    </div>
+                );
             default:
                 return <h2>Dashboard</h2>;
         }
@@ -262,6 +329,8 @@ const Admin = () => {
                     <li><a href="#" className={`sidebar-item ${activeView === 'alerts' ? 'active' : ''}`} onClick={() => setActiveView('alerts')}>Gérer les alertes</a></li>
                     <li><a href="#" className={`sidebar-item ${activeView === 'magazines' ? 'active' : ''}`} onClick={() => setActiveView('magazines')}>Gérer les magazines</a></li>
                     <li><a href="#" className={`sidebar-item ${activeView === 'certificates' ? 'active' : ''}`} onClick={() => setActiveView('certificates')}>Soumettre un certificat</a></li>
+                    <li><a href="#" className={`sidebar-item ${activeView === 'localProducts' ? 'active' : ''}`} onClick={() => setActiveView('localProducts')}>Soumettre un produit local</a></li>
+                    <li><a href="#" className={`sidebar-item ${activeView === 'viewLocalProducts' ? 'active' : ''}`} onClick={() => setActiveView('viewLocalProducts')}>Voir les produits locaux</a></li>
                 </ul>
             </nav>
 

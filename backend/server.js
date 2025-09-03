@@ -8,6 +8,7 @@ import nodemailer from 'nodemailer'; // Import Nodemailer
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import multer from 'multer';
+import fetch from 'node-fetch';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -434,15 +435,34 @@ app.get('/api/products', async (req, res) => {
 
 app.get('/api/products/:barcode', async (req, res) => {
   try {
-    const barcode = req.params.barcode;
-    const product = await db.collection('products').findOne({ barcode: barcode });
-    if (product) {
-      res.json(product);
-    } else {
-      res.status(404).json({ message: 'Produit non trouvé' });
+    const { barcode } = req.params; // 'barcode' is the identifier from the scan
+
+    // Search ONLY in 'certificates' collection by barcode or ONCQ number
+    const certificate = await db.collection('certificates').findOne({
+      $or: [
+        { barcode: barcode },
+        { oncqNumber: barcode } // The scanned code could be an ONCQ number
+      ]
+    });
+
+    if (certificate) {
+      // Map certificate fields to look like a product for the frontend
+      const productFromCert = {
+        name: certificate.productName,
+        brand: certificate.origin, // Assuming origin is the brand
+        compliant: true, // If a certificate is found, it's considered compliant
+        info: certificate.description,
+        source: 'certificates', // Add a source to be explicit
+        certificateData: certificate 
+      };
+      return res.json(productFromCert);
     }
+
+    // If not found, return 404
+    return res.status(404).json({ message: 'Cet identifiant ne correspond à aucun certificat valide.' });
+
   } catch (error) {
-    console.error('Erreur lors de la récupération du produit par code-barres:', error);
+    console.error('Erreur lors de la vérification du certificat:', error);
     res.status(500).json({ message: 'Erreur serveur' });
   }
 });
@@ -506,6 +526,54 @@ app.get('/api/products/search-all', async (req, res) => {
   } catch (error) {
     console.error('Erreur lors de la recherche de tous les produits:', error);
     res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+app.get('/api/openfoodfacts/search', async (req, res) => {
+  try {
+    const searchTerm = req.query.q;
+    if (!searchTerm) {
+      return res.status(400).json({ message: 'Terme de recherche manquant.' });
+    }
+
+    const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(searchTerm)}&json=1`;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data.products && data.products.length > 0) {
+      const formattedProducts = data.products.map(product => {
+        const nutriments = product.nutriments || {};
+        return {
+          name: product.product_name || 'Nom inconnu',
+          description: product.generic_name || product.brands || 'Description non disponible',
+          imageUrl: product.image_url || null,
+          // Simplified health indicators based on common nutrient values (per 100g)
+          // These are examples and should be refined based on actual medical guidelines
+          diabetic: nutriments['sugars_100g'] !== undefined ? (nutriments['sugars_100g'] > 10 ? 'high' : 'low') : 'unknown',
+          hypertension: nutriments['salt_100g'] !== undefined ? (nutriments['salt_100g'] > 1.5 ? 'high' : 'low') : 'unknown',
+          drepanocytosis: nutriments['iron_100g'] !== undefined ? (nutriments['iron_100g'] > 0.005 ? 'high' : 'low') : 'unknown', // Example: high iron for drepanocytosis
+          nutriments: { // Include all available nutriments for detailed display on frontend
+            energy: nutriments['energy-kj_100g'] || nutriments['energy-kcal_100g'],
+            fat: nutriments['fat_100g'],
+            saturated_fat: nutriments['saturated-fat_100g'],
+            carbohydrates: nutriments['carbohydrates_100g'],
+            sugars: nutriments['sugars_100g'],
+            fiber: nutriments['fiber_100g'],
+            proteins: nutriments['proteins_100g'],
+            salt: nutriments['salt_100g'],
+            sodium: nutriments['sodium_100g'],
+            iron: nutriments['iron_100g'],
+            // Add more nutriments as needed
+          }
+        };
+      });
+      res.json(formattedProducts);
+    } else {
+      res.json([]); // No products found
+    }
+  } catch (error) {
+    console.error('Erreur lors de la recherche Open Food Facts:', error);
+    res.status(500).json({ message: 'Erreur serveur lors de la recherche Open Food Facts' });
   }
 });
 
@@ -578,6 +646,28 @@ app.post('/api/chatbot', async (req, res) => {
     res.json({ response: response });
   } catch (error) {
     console.error('Erreur lors du traitement du message du chatbot:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// Route to verify product certification
+app.get('/api/certificates/verify/:identifier', async (req, res) => {
+  try {
+    const identifier = req.params.identifier;
+    const certificate = await db.collection('certificates').findOne({
+      $or: [
+        { barcode: identifier },
+        { oncqNumber: identifier }
+      ]
+    });
+
+    if (certificate) {
+      res.json({ isCertified: true, certificate });
+    } else {
+      res.status(404).json({ isCertified: false, message: 'Produit non certifié ou identifiant inconnu.' });
+    }
+  } catch (error) {
+    console.error('Erreur lors de la vérification du certificat:', error);
     res.status(500).json({ message: 'Erreur serveur' });
   }
 });

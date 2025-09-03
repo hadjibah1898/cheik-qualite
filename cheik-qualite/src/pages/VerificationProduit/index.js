@@ -11,10 +11,10 @@ const VerificationProduit = () => {
   useEffect(() => {
     const scanner = new Html5QrcodeScanner('reader', {
       qrbox: {
-        width: 250,
-        height: 250,
+        width: 300, // Increased size
+        height: 300, // Increased size
       },
-      fps: 5,
+      fps: 10, // Increased FPS
     });
 
     const success = (result) => {
@@ -38,7 +38,8 @@ const VerificationProduit = () => {
     try {
       const response = await fetch(`http://localhost:5000/api/products/${barcode}`);
       if (!response.ok) {
-        throw new Error('Produit non trouvé');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Produit non trouvé');
       }
       const data = await response.json();
       setProductInfo(data);
@@ -70,6 +71,8 @@ const VerificationProduit = () => {
   return (
     <div className="verification-container">
       <h1>Vérification des Produits</h1>
+
+      <p className="scan-instruction">Veuillez centrer le code QR dans le viseur.</p>
       <div id="reader"></div>
 
       <form onSubmit={handleSearch} className="search-form">
@@ -90,6 +93,7 @@ const VerificationProduit = () => {
           <p><strong>Marque :</strong> {productInfo.brand}</p>
           <p><strong>Conformité :</strong> {productInfo.compliant ? 'Conforme' : 'Non conforme'}</p>
           <p><strong>Informations :</strong> {productInfo.info}</p>
+          {productInfo.source === 'certificates' && <p><small>(Source: Certificat ONCQ)</small></p>}
         </div>
       )}
     </div>

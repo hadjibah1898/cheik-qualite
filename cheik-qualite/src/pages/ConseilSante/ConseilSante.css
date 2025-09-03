@@ -11,7 +11,7 @@ body {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
 }
 
@@ -243,6 +243,7 @@ body {
 .status-indicator.recommended { background: #27ae60; }
 .status-indicator.moderate { background: #f39c12; }
 .status-indicator.not-recommended { background: #c0392b; }
+.status-indicator.unknown { background: #95a5a6; } /* Grey for unknown status */
 
 .status-text {
     font-size: 1.05rem;
@@ -254,6 +255,7 @@ body {
 .status-text.recommended { background: rgba(46, 204, 113, 0.2); color: #27ae60; }
 .status-text.moderate { background: rgba(241, 196, 15, 0.2); color: #f39c12; }
 .status-text.not-recommended { background: rgba(231, 76, 60, 0.2); color: #c0392b; }
+.status-text.unknown { background: rgba(149, 165, 166, 0.2); color: #7f8c8d; } /* Lighter grey for unknown text */
 
 .no-results-aliment {
     text-align: center;

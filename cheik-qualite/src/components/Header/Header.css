@@ -129,15 +129,14 @@ header p {
 .hamburger-btn {
     display: none;
     position: absolute;
-    top: 50%;
+    top: 25px;
     left: 20px;
-    transform: translateY(-50%);
     background: transparent;
     border: none;
     color: white;
     font-size: 2rem;
     cursor: pointer;
-    z-index: 100;
+    z-index: 1001;
 }
 
 /* Profile Dropdown */
@@ -223,7 +222,7 @@ header p {
 @media (max-width: 768px) {
     .hamburger-btn { display: block; }
     .header-nav ul { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; width: 100%; background: #2c3e50; padding: 20px 0; gap: 0; }
-    .header-nav.active ul { display: flex; }
+    .header-nav.active ul { display: flex; z-index: 1000; }
     .header-nav ul li a { padding: 15px 20px; }
     .header-nav ul li a::after { display: none; } /* Hide line on mobile */
     .header-top-right { top: 25px; right: 20px; transform: none; }

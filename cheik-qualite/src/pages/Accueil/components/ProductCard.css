@@ -40,4 +40,25 @@
     border-radius: 20px;
     font-size: 0.8rem;
     font-weight: 600;
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+.contact-btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.contact-btn:hover {
+    background-color: #2980b9;
+}
+
+.contact-btn i {
+    margin-right: 8px;
 }

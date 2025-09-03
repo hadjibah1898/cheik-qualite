@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Html5QrcodeScanner, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { QRCodeSVG } from 'qrcode.react';
 import { NavLink } from 'react-router-dom';
 import './Accueil.css';
@@ -53,33 +53,38 @@ const Accueil = () => {
         }
 
         try {
-            const response = await fetch('/api/products/verify', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ query }),
-            });
-
+            const response = await fetch(`http://localhost:5000/api/certificates/verify/${query}`);
             const data = await response.json();
 
             if (response.ok) {
-                setResult(data); // Assuming data contains product details including status
-                if (data.status === 'conforme') {
-                    toast.success("Produit certifié et conforme !");
-                } else if (data.status === 'non_conforme') {
-                    toast.warn("Avertissement : Produit non conforme.");
-                } else {
-                    toast.info("Statut du produit indéterminé.");
-                }
+                // Product is certified
+                setResult({
+                    status: 'conforme',
+                    name: data.certificate.productName,
+                    type: data.certificate.productType,
+                    lotNumber: data.certificate.batchNumber,
+                    producer: data.certificate.origin, // Assuming origin is producer
+                    certification: data.certificate.oncqNumber,
+                    imageUrl: data.certificate.productImagePaths && data.certificate.productImagePaths.length > 0 ? data.certificate.productImagePaths[0] : null,
+                    qrData: data.certificate.oncqNumber // Or a more complex QR data
+                });
+                toast.success("Produit certifié et conforme !");
+            } else if (response.status === 404) {
+                // Product not found or not certified
+                setResult({
+                    status: "inconnu",
+                    name: query,
+                    message: data.message || "Produit non trouvé ou non certifié."
+                });
+                toast.warn(data.message || "Produit non trouvé ou non certifié.");
             } else {
-                // Handle cases where product is not found or other errors
-                setResult({ status: "inconnu", name: query }); // Set status to unknown
-                toast.error(`Erreur: ${data.message || 'Produit non trouvé ou erreur de vérification.'}`);
+                // Other errors
+                setResult({ status: "inconnu", name: query });
+                toast.error(`Erreur: ${data.message || 'Erreur lors de la vérification du produit.'}`);
             }
         } catch (error) {
             console.error('Erreur lors de la vérification du produit:', error);
-            setResult({ status: "inconnu", name: query }); // Set status to unknown on network error
+            setResult({ status: "inconnu", name: query });
             toast.error('Erreur de connexion au serveur lors de la vérification du produit.');
         }
     };
@@ -128,20 +133,39 @@ const Accueil = () => {
 
     useEffect(() => {
         if (showScanner) {
+            const config = {
+                fps: 10,
+                qrbox: 250,
+                formatsToSupport: [
+                    Html5QrcodeSupportedFormats.QR_CODE,
+                    Html5QrcodeSupportedFormats.EAN_13,
+                    Html5QrcodeSupportedFormats.EAN_8,
+                    Html5QrcodeSupportedFormats.UPC_A,
+                    Html5QrcodeSupportedFormats.UPC_E,
+                    Html5QrcodeSupportedFormats.CODE_128,
+                    Html5QrcodeSupportedFormats.CODE_39,
+                    Html5QrcodeSupportedFormats.ITF,
+                ]
+            };
             const scanner = new Html5QrcodeScanner(
                 "interactive",
-                { fps: 10, qrbox: 250 },
-                false
+                config,
+                true // verbose
             );
 
             const onScanSuccess = (decodedText, decodedResult) => {
                 setProductQuery(decodedText);
-                verifyProduct(decodedText); // Call the new verifyProduct function
+                verifyProduct(decodedText);
                 scanner.clear();
                 setShowScanner(false);
             };
 
-            scanner.render(onScanSuccess);
+            const onScanFailure = (error) => {
+                // handle scan failure, usually better to ignore and keep scanning.
+                // console.warn(`Code scan error = ${error}`);
+            };
+
+            scanner.render(onScanSuccess, onScanFailure);
             scannerRef.current = scanner;
         } else {
             if (scannerRef.current) {
@@ -207,8 +231,8 @@ const Accueil = () => {
                     <div id="scanner-container" style={{textAlign:'center', position: 'relative'}}>
                         <div id="interactive" className="viewport"></div>
                         <div id="scan-frame"></div>
-                        <p id="camera-message" style={{marginTop: '10px', color: '#555'}}>
-                            {isMobile ? "Pointez la caméra sur le code-barres." : "Pointez la webcam sur un code-barres, ou cliquez sur l'image ci-dessous pour simuler un scan."}
+                        <p id="camera-message" style={{marginTop: '10px', color: '#555', fontWeight: 'bold'}}>
+                            {isMobile ? "Pointez la caméra sur le code-barres ou le QR code. Assurez-vous d'un bon éclairage." : "Pointez la webcam sur un code-barres ou un QR code. Assurez-vous d'un bon éclairage, ou cliquez sur l'image ci-dessous pour simuler un scan."}
                         </p>
                         {!isMobile && (
                             <div id="pc-barcode-sim">
@@ -245,6 +269,7 @@ const Accueil = () => {
                                 <>
                                     <p>La requête <strong>{productQuery}</strong> ne figure pas dans notre base de données.</p>
                                     <p>Cela peut signifier que le produit n\'est pas certifié ou que l\'information n\'est pas encore disponible.</p>
+                                    <p style={{marginTop: '15px'}}>Si vous pensez que ce produit devrait être certifié, vous pouvez <NavLink to="/soumission-certificat" className="link-button">soumettre un certificat</NavLink>.</p>
                                 </>
                             }
                             <div style={{marginTop: '15px'}}>

@@ -10,6 +10,7 @@ const ProduitsLocaux = () => {
     const [selectedProducer, setSelectedProducer] = useState(null);
     const [producers, setProducers] = useState([]);
     const [filteredProducers, setFilteredProducers] = useState([]);
+    const [localProducts, setLocalProducts] = useState([]); // New state for local products
 
     useEffect(() => {
         const fetchProducers = async () => {
@@ -29,6 +30,23 @@ const ProduitsLocaux = () => {
 
         fetchProducers();
     }, []); // Empty dependency array means this runs once on mount
+
+    // New useEffect for fetching local products
+    useEffect(() => {
+        const fetchLocalProducts = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/api/local-products');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch local products');
+                }
+                const data = await response.json();
+                setLocalProducts(data);
+            } catch (error) {
+                console.error('Error fetching local products:', error);
+            }
+        };
+        fetchLocalProducts();
+    }, []); // Empty dependency array to run once on mount
 
     useEffect(() => {
         const lowercasedSearchTerm = searchTerm.toLowerCase();
@@ -80,6 +98,27 @@ const ProduitsLocaux = () => {
                     <div className="input-group">
                         <button type="button"><i className="fas fa-search"></i> Rechercher</button>
                     </div>
+                </div>
+            </section>
+
+            <section className="local-products-section">
+                <h2 className="section-title" style={{marginTop: '30px'}}><i className="fas fa-leaf"></i> Nos Produits Locaux Certifiés</h2>
+                <div className="products-grid">
+                    {localProducts.length > 0 ? (
+                        localProducts.map((product) => (
+                            <div className="product-card" key={product._id}>
+                                <img src={`http://localhost:5000${product.imageUrl}`} alt={product.name} className="product-image" />
+                                <div className="product-info">
+                                    <h3>{product.name}</h3>
+                                    <p className="product-category">{product.category}</p>
+                                    <p className="product-description">{product.description}</p>
+                                    {product.badge && <span className="product-badge">{product.badge}</span>}
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <p style={{textAlign: 'center', fontStyle: 'italic', color: '#7f8c8d', gridColumn: '1 / -1'}}>Aucun produit local disponible pour le moment.</p>
+                    )}
                 </div>
             </section>
             
