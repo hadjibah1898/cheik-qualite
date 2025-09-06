@@ -3,8 +3,8 @@ import { Html5QrcodeScanner, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { QRCodeSVG } from 'qrcode.react';
 import { NavLink } from 'react-router-dom';
 import './Accueil.css';
-import { mockDatabase } from '../../data/products.js'; // Keep for reference if needed, but will be replaced
-import { localProducts } from '../../data/localProducts.js';
+
+
 import ProductCard from './components/ProductCard.js';
 import { toast } from 'react-toastify';
 
@@ -20,30 +20,26 @@ const Accueil = () => {
     const [email, setEmail] = useState('');
     const [result, setResult] = useState(null);
     const [showScanner, setShowScanner] = useState(false);
-    const [alerts, setAlerts] = useState([]);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [products, setProducts] = useState([]);
     const scannerRef = useRef(null);
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        setIsAuthenticated(!!token);
-
-        const fetchAlerts = async () => {
+        const fetchLocalProducts = async () => {
             try {
-                const response = await fetch('/api/alerts');
-                const data = await response.json();
-                if (response.ok) {
-                    setAlerts(data);
-                } else {
-                    console.error('Failed to fetch alerts');
+                const response = await fetch('http://localhost:5000/api/local-products'); // Assuming this endpoint
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
+                const data = await response.json();
+                setProducts(data);
             } catch (error) {
-                console.error('Error fetching alerts:', error);
+                console.error("Error fetching local products:", error);
+                toast.error("Erreur lors du chargement des produits locaux.");
             }
         };
 
-        fetchAlerts();
-    }, []);
+        fetchLocalProducts();
+    }, []); // Empty dependency array means this runs once on mount
 
     const verifyProduct = async (query) => {
         if (!query) {
@@ -285,10 +281,10 @@ const Accueil = () => {
             <Testimonials />
 
             <section className="section-box local-products-section">
-                <h2 className="section-title">Découvrez nos Produits Locaux Certifiés</h2>
+                <h2 className="section-title">LES PRODUIT LOCAU EXISTANT</h2>
                 <p style={{textAlign:'center', marginBottom: '20px'}}>Soutenons l\'économie guinéenne en consommant des produits du terroir, sûrs et de qualité.</p>
                 <div className="local-products-grid">
-                    {localProducts.map(product => (
+                    {products.slice(-6).map(product => (
                         <ProductCard key={product.id} product={product} />
                     ))}
                 </div>

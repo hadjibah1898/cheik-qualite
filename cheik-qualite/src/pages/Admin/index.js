@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Admin.css';
 import AddMagazineForm from './components/AddMagazineForm.js';
+import AddDieteticianForm from './components/AddDieteticianForm.js'; // Import the new component
 import SoumissionCertificat from './components/SoumissionCertificat.js';
 import SoumissionProduit from './components/SoumissionProduit.js'; // Import the new component
 import SoumissionProduitLocal from './components/SoumissionProduitLocal.js'; // Import the new component
@@ -25,6 +26,7 @@ const Admin = () => {
     });
     const [alertsList, setAlertsList] = useState([]); // New state for alerts
     const [localProductsList, setLocalProductsList] = useState([]); // New state for local products
+    const [users, setUsers] = useState([]);
 
     useEffect(() => {
         const pendingProducts = products.filter(p => p.status === 'pending').length;
@@ -42,6 +44,12 @@ const Admin = () => {
     useEffect(() => {
         if (activeView === 'viewLocalProducts') {
             fetchLocalProducts();
+        }
+    }, [activeView]);
+
+    useEffect(() => {
+        if (activeView === 'users') {
+            fetchUsers();
         }
     }, [activeView]);
 
@@ -82,6 +90,27 @@ const Admin = () => {
         } catch (error) {
             console.error('Error fetching local products:', error);
             toast.error('Erreur de connexion au serveur pour les produits locaux.');
+        }
+    };
+
+    const fetchUsers = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('/api/users', {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setUsers(data);
+                setStats(prevStats => ({...prevStats, users: data.length}));
+            } else {
+                toast.error('Erreur lors de la récupération des utilisateurs.');
+            }
+        } catch (error) {
+            console.error('Error fetching users:', error);
+            toast.error('Erreur de connexion au serveur pour les utilisateurs.');
         }
     };
 
@@ -161,7 +190,7 @@ const Admin = () => {
                                 <div className="stat-value">{stats.certified}</div>
                             </div>
                             <div className="stat-card">
-                                <div className="stat-title"><i className="fas fa-users"></i> Utilisateurs enregistrés</div>
+                                <div className="stat-title"><span><i className="fas fa-users"></i> Utilisateurs enregistrés</span></div>
                                 <div className="stat-value">{stats.users}</div>
                             </div>
                         </div>
@@ -267,6 +296,13 @@ const Admin = () => {
                         <AddMagazineForm />
                     </div>
                 );
+            case 'addDietitian':
+                return (
+                    <div className="dashboard-section">
+                        <h3>Ajouter un Diététicien</h3>
+                        <AddDieteticianForm />
+                    </div>
+                );
             case 'certificates':
                 return <SoumissionCertificat />;
             case 'products':
@@ -325,12 +361,12 @@ const Admin = () => {
 
             <nav className="sidebar">
                 <ul>
-                    <li><a href="#" className={`sidebar-item ${activeView === 'dashboard' ? 'active' : ''}`} onClick={() => setActiveView('dashboard')}>Dashboard</a></li>
-                    <li><a href="#" className={`sidebar-item ${activeView === 'alerts' ? 'active' : ''}`} onClick={() => setActiveView('alerts')}>Gérer les alertes</a></li>
-                    <li><a href="#" className={`sidebar-item ${activeView === 'magazines' ? 'active' : ''}`} onClick={() => setActiveView('magazines')}>Gérer les magazines</a></li>
-                    <li><a href="#" className={`sidebar-item ${activeView === 'certificates' ? 'active' : ''}`} onClick={() => setActiveView('certificates')}>Soumettre un certificat</a></li>
-                    <li><a href="#" className={`sidebar-item ${activeView === 'localProducts' ? 'active' : ''}`} onClick={() => setActiveView('localProducts')}>Soumettre un produit local</a></li>
-                    <li><a href="#" className={`sidebar-item ${activeView === 'viewLocalProducts' ? 'active' : ''}`} onClick={() => setActiveView('viewLocalProducts')}>Voir les produits locaux</a></li>
+                    <li><button type="button" className={`sidebar-item ${activeView === 'dashboard' ? 'active' : ''}`} onClick={() => setActiveView('dashboard')}>Dashboard</button></li>
+                    <li><button type="button" className={`sidebar-item ${activeView === 'alerts' ? 'active' : ''}`} onClick={() => setActiveView('alerts')}>Gérer les alertes</button></li>
+                    <li><button type="button" className={`sidebar-item ${activeView === 'addDietitian' ? 'active' : ''}`} onClick={() => setActiveView('addDietitian')}>Ajouter un diététicien</button></li>
+                    <li><button type="button" className={`sidebar-item ${activeView === 'certificates' ? 'active' : ''}`} onClick={() => setActiveView('certificates')}>Soumettre un certificat</button></li>
+                    <li><button type="button" className={`sidebar-item ${activeView === 'localProducts' ? 'active' : ''}`} onClick={() => setActiveView('localProducts')}>Soumettre un produit local</button></li>
+                    <li><button type="button" className={`sidebar-item ${activeView === 'viewLocalProducts' ? 'active' : ''}`} onClick={() => setActiveView('viewLocalProducts')}>Voir les produits locaux</button></li>
                 </ul>
             </nav>
 

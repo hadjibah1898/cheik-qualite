@@ -5,7 +5,10 @@ const SoumissionProduitLocal = ({ onProductAdded }) => {
     const [formData, setFormData] = useState({
         productName: '',
         category: '',
-        description: ''
+        description: '',
+        region: '',
+        barcode: '',
+        certification: ''
     });
     const [productImage, setProductImage] = useState(null);
     const [imageFileName, setImageFileName] = useState('Sélectionner une image de produit');
@@ -20,8 +23,20 @@ const SoumissionProduitLocal = ({ onProductAdded }) => {
     const handleImageChange = (e) => {
         const selectedFile = e.target.files[0];
         if (selectedFile) {
-            setProductImage(selectedFile);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setProductImage(reader.result); // reader.result will be the Base64 string
+            };
+            reader.readAsDataURL(selectedFile);
             setImageFileName(selectedFile.name);
+        }
+    };
+
+    const handleScan = (fieldName) => {
+        // This is a placeholder for the actual camera scanning functionality
+        const scannedValue = prompt(`Scannez le ${fieldName} (simulation)`);
+        if (scannedValue) {
+            setFormData(prevData => ({ ...prevData, [fieldName]: scannedValue }));
         }
     };
 
@@ -35,11 +50,16 @@ const SoumissionProduitLocal = ({ onProductAdded }) => {
             return;
         }
 
-        const data = new FormData();
-        data.append('productName', formData.productName);
-        data.append('category', formData.category);
-        data.append('description', formData.description);
-        data.append('productImage', productImage);
+        // Send as JSON instead of FormData, as we're sending a Base64 string
+        const dataToSend = {
+            productName: formData.productName,
+            category: formData.category,
+            description: formData.description,
+            region: formData.region,
+            barcode: formData.barcode,
+            certification: formData.certification,
+            productImage: productImage // productImage is now the Base64 string
+        };
 
         try {
             // Assuming the token is stored in localStorage or a similar place after login
@@ -50,9 +70,9 @@ const SoumissionProduitLocal = ({ onProductAdded }) => {
                 return;
             }
 
-            const response = await axios.post('http://localhost:5000/api/local-products-submission', data, {
+            const response = await axios.post('http://localhost:5000/api/local-products-submission', dataToSend, {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
+                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 }
             });
@@ -64,7 +84,10 @@ const SoumissionProduitLocal = ({ onProductAdded }) => {
             setFormData({
                 productName: '',
                 category: '',
-                description: ''
+                description: '',
+                region: '',
+                barcode: '',
+                certification: ''
             });
             setProductImage(null);
             setImageFileName('Sélectionner une image de produit');
@@ -76,7 +99,7 @@ const SoumissionProduitLocal = ({ onProductAdded }) => {
 
         } catch (error) {
             console.error('Erreur lors de la soumission du produit local:', error);
-            setMessage(error.response?.data?.message || 'Erreur lors de l\'ajout du produit local.');
+            setMessage(error.response?.data?.message || 'Erreur lors de lajout du produit local.');
             setMessageType('error');
         }
     };
@@ -110,6 +133,31 @@ const SoumissionProduitLocal = ({ onProductAdded }) => {
                         <option value="cosmetique">Cosmétique</option>
                         <option value="autres">Autres</option>
                     </select>
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="region">Région</label>
+                    <input type="text" id="region" name="region" value={formData.region} onChange={handleChange} />
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="barcode">Numéro de Code-barres</label>
+                    <div style={{ display: 'flex' }}>
+                        <input type="text" id="barcode" name="barcode" value={formData.barcode} onChange={handleChange} style={{ flex: 1 }} />
+                        <button type="button" onClick={() => handleScan('barcode')} className="scan-btn" style={{ marginLeft: '10px' }}>
+                            <i className="fas fa-camera"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="certification">Numéro de Certification</label>
+                    <div style={{ display: 'flex' }}>
+                        <input type="text" id="certification" name="certification" value={formData.certification} onChange={handleChange} style={{ flex: 1 }} />
+                        <button type="button" onClick={() => handleScan('certification')} className="scan-btn" style={{ marginLeft: '10px' }}>
+                            <i className="fas fa-camera"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div className="form-group">

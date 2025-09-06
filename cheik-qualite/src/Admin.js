@@ -1,165 +1,240 @@
 import React, { useState, useEffect } from 'react';
 import './Admin.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChartLine, faBoxes, faExclamationTriangle, faSignOutAlt, faBell, faEnvelope, faCheck, faTrashAlt, faBullhorn } from '@fortawesome/free-solid-svg-icons';
+
+// --- MOCK DATA ---
+// In a real app, this would come from an API
+const initialProducts = [
+    { id: 1, name: "Huile de palmiste", vendor: "Producteur Mamadou", category: "Alimentaire", status: "pending" },
+    { id: 2, name: "Savon de ménage", vendor: "Société GIP", category: "Hygiène", status: "approved" },
+    { id: 3, name: "Fonio Bio", vendor: "Coopérative Kindia", category: "Alimentaire", status: "pending" },
+    { id: 4, name: "Jus de gingembre", vendor: "Néné Bio", category: "Boisson", status: "rejected" },
+    { id: 5, name: "Tissu Lépi", vendor: "Artisanat de Guinée", category: "Artisanat", status: "approved" },
+    { id: 6, name: "Miel de Forêt", vendor: "Api-Guinée", category: "Alimentaire", status: "pending" },
+];
+
+// --- SUB-COMPONENTS ---
+
+const Sidebar = ({ view, setView }) => (
+    <div className="admin-sidebar">
+        <div className="sidebar-header">
+            <h1>ONCQ</h1>
+            <span>Admin</span>
+        </div>
+        <nav className="sidebar-nav">
+            <a href="#dashboard" onClick={() => setView('dashboard')} className={view === 'dashboard' ? 'active' : ''}>
+                <FontAwesomeIcon icon={faChartLine} />
+                <span>Tableau de Bord</span>
+            </a>
+            <a href="#products" onClick={() => setView('products')} className={view === 'products' ? 'active' : ''}>
+                <FontAwesomeIcon icon={faBoxes} />
+                <span>Produits</span>
+            </a>
+            <a href="#alerts" onClick={() => setView('alerts')} className={view === 'alerts' ? 'active' : ''}>
+                <FontAwesomeIcon icon={faExclamationTriangle} />
+                <span>Alertes</span>
+            </a>
+        </nav>
+        <div className="sidebar-footer">
+            <a href="/">
+                <FontAwesomeIcon icon={faSignOutAlt} />
+                <span>Déconnexion</span>
+            </a>
+        </div>
+    </div>
+);
+
+const AdminHeader = ({ adminName }) => (
+    <header className="admin-header">
+        <div className="header-welcome">
+            <h2>Bonjour, {adminName} !</h2>
+            <p>Bienvenue sur votre tableau de bord.</p>
+        </div>
+        <div className="header-profile">
+            <FontAwesomeIcon icon={faEnvelope} className="header-icon" />
+            <FontAwesomeIcon icon={faBell} className="header-icon" />
+            <div className="user-avatar">A</div>
+        </div>
+    </header>
+);
+
+const StatCard = ({ title, value, color }) => (
+    <div className="stat-card" style={{ borderLeftColor: color }}>
+        <h3>{title}</h3>
+        <p>{value}</p>
+    </div>
+);
+
+const DashboardView = ({ stats, pendingProducts, handleProductAction }) => (
+    <>
+        <div className="dashboard-stats">
+            <StatCard title="Produits en attente" value={stats.pending} color="#f39c12" />
+            <StatCard title="Vendeurs Certifiés" value={stats.certified} color="#2ecc71" />
+            <StatCard title="Utilisateurs" value={stats.users} color="#3498db" />
+        </div>
+        <div className="card">
+            <h3>Produits en attente de validation</h3>
+            <div className="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nom du produit</th>
+                            <th>Vendeur</th>
+                            <th>Catégorie</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {pendingProducts.length > 0 ? pendingProducts.map(product => (
+                            <tr key={product.id}>
+                                <td>{product.name}</td>
+                                <td>{product.vendor}</td>
+                                <td>{product.category}</td>
+                                <td>
+                                    <button className="action-btn approve" onClick={() => handleProductAction(product.id, 'approved')} title="Approuver">
+                                        <FontAwesomeIcon icon={faCheck} />
+                                    </button>
+                                    <button className="action-btn reject" onClick={() => handleProductAction(product.id, 'rejected')} title="Rejeter">
+                                        <FontAwesomeIcon icon={faTrashAlt} />
+                                    </button>
+                                </td>
+                            </tr>
+                        )) : (
+                            <tr>
+                                <td colSpan="4">Aucun produit en attente.</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </>
+);
+
+const ProductsView = ({ products }) => (
+    <div className="card">
+        <h3>Tous les Produits</h3>
+        <div className="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nom du produit</th>
+                        <th>Vendeur</th>
+                        <th>Catégorie</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {products.map(product => (
+                        <tr key={product.id}>
+                            <td>{product.name}</td>
+                            <td>{product.vendor}</td>
+                            <td>{product.category}</td>
+                            <td>
+                                <span className={`status-badge status-${product.status}`}>
+                                    {product.status === 'pending' ? 'En attente' : product.status === 'approved' ? 'Approuvé' : 'Rejeté'}
+                                </span>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    </div>
+);
+
+const AlertsView = ({ alertTitle, setAlertTitle, alertMessage, setAlertMessage, handleAlertSubmit }) => (
+    <div className="card">
+        <h3>Gérer les alertes ONCQ</h3>
+        <form id="add-alert-form" onSubmit={handleAlertSubmit}>
+            <div className="form-group">
+                <label htmlFor="alert-title">Titre de l'alerte</label>
+                <input 
+                    type="text" 
+                    id="alert-title" 
+                    value={alertTitle} 
+                    onChange={(e) => setAlertTitle(e.target.value)} 
+                    required 
+                />
+            </div>
+            <div className="form-group">
+                <label htmlFor="alert-message">Message de l'alerte</label>
+                <textarea 
+                    id="alert-message" 
+                    rows="5" 
+                    value={alertMessage} 
+                    onChange={(e) => setAlertMessage(e.target.value)} 
+                    required 
+                ></textarea>
+            </div>
+            <button type="submit" className="submit-btn">
+                <FontAwesomeIcon icon={faBullhorn} /> Publier l'alerte
+            </button>
+        </form>
+    </div>
+);
+
+
+// --- MAIN ADMIN COMPONENT ---
 
 const Admin = () => {
-    const [products, setProducts] = useState([
-        { id: 1, name: "Huile de palmiste", vendor: "Producteur Mamadou", category: "Alimentaire", status: "pending" },
-        { id: 2, name: "Savon de ménage", vendor: "Société GIP", category: "Hygiène", status: "approved" },
-        { id: 3, name: "Fonio Bio", vendor: "Coopérative Kindia", category: "Alimentaire", status: "pending" },
-        { id: 4, name: "Jus de gingembre", vendor: "Néné Bio", category: "Boisson", status: "rejected" },
-    ]);
-
+    const [view, setView] = useState('dashboard');
+    const [products, setProducts] = useState(initialProducts);
     const [alertTitle, setAlertTitle] = useState('');
     const [alertMessage, setAlertMessage] = useState('');
 
     const [stats, setStats] = useState({
         pending: 0,
-        certified: 42, // static value from html
-        users: 150 // static value from html
+        certified: 42,
+        users: 150
     });
 
     useEffect(() => {
-        const pendingProducts = products.filter(p => p.status === 'pending').length;
-        setStats(prevStats => ({...prevStats, pending: pendingProducts}));
+        const pendingProductsCount = products.filter(p => p.status === 'pending').length;
+        setStats(prevStats => ({ ...prevStats, pending: pendingProductsCount }));
     }, [products]);
 
     const handleProductAction = (id, action) => {
-        const product = products.find(p => p.id === id);
-        if (!product) return;
-
-        alert(`Produit ID ${id} a été ${action === 'approved' ? 'Approuvé' : 'Rejeté'} ! (Démo)`);
-
-        // Remove the product from the list of pending products
-        setProducts(products.filter(p => p.id !== id));
+        setProducts(products.map(p => p.id === id ? { ...p, status: action } : p));
+        alert(`Produit ID ${id} a été ${action === 'approved' ? 'Approuvé' : 'Rejeté'} !`);
     };
 
     const handleAlertSubmit = (e) => {
         e.preventDefault();
-        alert(`Nouvelle alerte publiée ! Titre : "${alertTitle}", Message : "${alertMessage}"`);
+        alert(`Nouvelle alerte publiée ! Titre : "${alertTitle}"`);
         setAlertTitle('');
         setAlertMessage('');
     };
 
+    const renderContent = () => {
+        const pendingProducts = products.filter(p => p.status === 'pending');
+
+        switch (view) {
+            case 'dashboard':
+                return <DashboardView stats={stats} pendingProducts={pendingProducts} handleProductAction={handleProductAction} />;
+            case 'products':
+                return <ProductsView products={products} />;
+            case 'alerts':
+                return <AlertsView 
+                            alertTitle={alertTitle} 
+                            setAlertTitle={setAlertTitle} 
+                            alertMessage={alertMessage} 
+                            setAlertMessage={setAlertMessage} 
+                            handleAlertSubmit={handleAlertSubmit} 
+                        />;
+            default:
+                return <DashboardView stats={stats} pendingProducts={pendingProducts} handleProductAction={handleProductAction} />;
+        }
+    };
+
     return (
-        <div className="App">
-            <header>
-                <div className="guinea-flag"></div>
-                <h1><i className="fas fa-chart-line"></i> Tableau de Bord Administrateur</h1>
-                <p>Gérez les produits, les utilisateurs et les alertes du site</p>
-                
-                <nav className="header-nav">
-                    <ul>
-                        <li><a href="/">Accueil</a></li>
-                        <li><a href="/profil">Mon Profil</a></li>
-                        <li><a href="#">Déconnexion</a></li>
-                    </ul>
-                </nav>
-            </header>
-
-            <div className="main-content container">
-                <div className="dashboard-container">
-                    <div className="dashboard-header">
-                        <h2>Bienvenue, Admin !</h2>
-                        <p>Aperçu de l'activité du site et actions à prendre</p>
-                    </div>
-                    
-                    <div className="dashboard-stats">
-                        <div className="stat-card">
-                            <h3>Produits en attente</h3>
-                            <p>{stats.pending}</p>
-                        </div>
-                        <div className="stat-card">
-                            <h3>Vendeurs certifiés</h3>
-                            <p>{stats.certified}</p>
-                        </div>
-                        <div className="stat-card">
-                            <h3>Utilisateurs enregistrés</h3>
-                            <p>{stats.users}</p>
-                        </div>
-                    </div>
-
-                    <div className="dashboard-section">
-                        <h3><i className="fas fa-clock"></i> Produits en attente de validation</h3>
-                        <div className="table-container">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Nom du produit</th>
-                                        <th>Vendeur</th>
-                                        <th>Catégorie</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {products.filter(p => p.status === 'pending').map(product => (
-                                        <tr key={product.id}>
-                                            <td>{product.name}</td>
-                                            <td>{product.vendor}</td>
-                                            <td>{product.category}</td>
-                                            <td>
-                                                <button className="action-btn approve-btn" onClick={() => handleProductAction(product.id, 'approved')} title="Approuver"><i className="fas fa-check"></i></button>
-                                                <button className="action-btn delete-btn" onClick={() => handleProductAction(product.id, 'rejected')} title="Rejeter"><i className="fas fa-trash-alt"></i></button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div className="dashboard-section">
-                        <h3><i className="fas fa-exclamation-triangle"></i> Gérer les alertes ONCQ</h3>
-                        <form id="add-alert-form" onSubmit={handleAlertSubmit}>
-                            <div className="form-group">
-                                <label htmlFor="alert-title">Titre de l'alerte</label>
-                                <input type="text" id="alert-title" value={alertTitle} onChange={(e) => setAlertTitle(e.target.value)} required style={{width:'100%', padding:'10px', margin-top:'5px', borderRadius:'5px', border:'1px solid #ccc'}} />
-                            </div>
-                            <div className="form-group" style={{marginTop:'15px'}}>
-                                <label htmlFor="alert-message">Message de l'alerte</label>
-                                <textarea id="alert-message" rows="4" value={alertMessage} onChange={(e) => setAlertMessage(e.target.value)} required style={{width:'100%', padding:'10px', margin-top:'5px', borderRadius:'5px', border:'1px solid #ccc'}}></textarea>
-                            </div>
-                            <button type="submit" style={{marginTop:'20px', background:'#e74c3c', color:'white', padding:'10px 20px', border:'none', borderRadius:'5px', cursor:'pointer'}}><i className="fas fa-bullhorn"></i> Publier l'alerte</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <footer className="site-footer">
-                <div className="footer-container">
-                    <div className="footer-section about">
-                        <h3>À Propos de nous</h3>
-                        <p>Conseils Santé Guinée est une initiative dédiée à la promotion d'une meilleure nutrition et d'une vie plus saine pour la population guinéenne.</p>
-                    </div>
-                    <div className="footer-section links">
-                        <h3>Liens Utiles</h3>
-                        <ul>
-                            <li><a href="#">Analyse Alimentaire</a></li>
-                            <li><a href="#">Magazines Santé</a></li>
-                            <li><a href="#">Vendeurs Certifiés</a></li>
-                            <li><a href="#">Conditions d'utilisation</a></li>
-                            <li><a href="#">Politique de Confidentialité</a></li>
-                        </ul>
-                    </div>
-                    <div className="footer-section contact">
-                        <h3>Contactez-nous</h3>
-                        <p><i className="fas fa-map-marker-alt"></i> Conakry, Guinée</p>
-                        <p><i className="fas fa-envelope"></i> contact@conseilsanteguinee.com</p>
-                        <p><i className="fas fa-phone"></i> +224 620 00 00 00</p>
-                    </div>
-                    <div className="footer-section social">
-                        <h3>Suivez-nous</h3>
-                        <div className="social-icons">
-                            <a href="#"><i className="fab fa-facebook-f"></i></a>
-                            <a href="#"><i className="fab fa-twitter"></i></a>
-                            <a href="#"><i className="fab fa-instagram"></i></a>
-                            <a href="#"><i className="fab fa-linkedin-in"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div className="footer-bottom">
-                    <p>&copy; 2025 Conseils Santé Guinée. Tous droits réservés.</p>
-                </div>
-            </footer>
+        <div className="admin-panel">
+            <Sidebar view={view} setView={setView} />
+            <main className="admin-main-content">
+                <AdminHeader adminName="Admin" />
+                {renderContent()}
+            </main>
         </div>
     );
 };

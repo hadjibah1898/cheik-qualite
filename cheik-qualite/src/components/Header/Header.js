@@ -9,6 +9,7 @@ const Header = () => {
     const [userRole, setUserRole] = useState(null);
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
+    const navRef = useRef(null);
     const [alertsList, setAlertsList] = useState([]); // State to store alerts
     const [hasAlerts, setHasAlerts] = useState(false); // State to control blinking
 
@@ -61,15 +62,20 @@ const Header = () => {
 
     useEffect(() => {
         const handleClickOutside = (event) => {
+            // Close profile dropdown
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setDropdownOpen(false);
-            };
+            }
+            // Close hamburger menu
+            if (navRef.current && !navRef.current.contains(event.target) && isNavActive) {
+                setIsNavActive(false);
+            }
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [dropdownRef]);
+    }, [dropdownRef, navRef, isNavActive]);
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -107,12 +113,14 @@ const Header = () => {
                 </div>
                  {!isAuthenticated && <div className="guinea-flag"></div>}
             </div>
-            <div className="logo-text">
-                <span className="logo-q">Q</span><span className="logo-s">S</span><span className="logo-l">L</span><span className="logo-guinee"> Guinée</span>
+            <div className="logo-container">
+                <div className="logo-text">
+                    <span className="logo-q">Q</span><span className="logo-s">S</span><span className="logo-l">L</span><span className="logo-guinee"> Guinée</span>
+                </div>
+                <p>Votre guide pour la Qualité, la Santé et les produits Locaux en Guinée</p>
             </div>
-            <p>Votre guide pour la Qualité, la Santé et les produits Locaux en Guinée</p>
             
-                        <nav className={`header-nav ${isNavActive ? 'active' : ''}`} id="header-nav">
+                        <nav ref={navRef} className={`header-nav ${isNavActive ? 'active' : ''}`} id="header-nav">
                 <ul>
                     <li><NavLink to="/" end>Accueil</NavLink></li>
                     <li><NavLink to="/conseils">Conseils</NavLink></li>

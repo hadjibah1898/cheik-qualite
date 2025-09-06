@@ -62,3 +62,13 @@
 .contact-btn i {
     margin-right: 8px;
 }
+
+@media (max-width: 480px) {
+    .product-content h3 {
+        font-size: 1.2rem;
+    }
+
+    .product-content {
+        padding: 15px;
+    }
+}

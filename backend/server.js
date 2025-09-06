@@ -10,12 +10,16 @@ import helmet from 'helmet';
 import multer from 'multer';
 import fetch from 'node-fetch';
 
+
 const JWT_SECRET = process.env.JWT_SECRET;
+const port = 5000; // Déplacé ici pour être initialisé avant utilisation
 
 if (!JWT_SECRET) {
   console.error("FATAL ERROR: JWT_SECRET is not defined in .env file.");
   process.exit(1);
 }
+
+const BACKEND_URL = process.env.BACKEND_URL || `http://localhost:${port}`;
 
 // Middleware to verify JWT
 const authenticateToken = (req, res, next) => {
@@ -39,7 +43,6 @@ const authorizeAdmin = (req, res, next) => {
 };
 
 const app = express();
-const port = 5000;
 
 const url = process.env.DATABASE_URL;
 if (!url) {
@@ -53,7 +56,7 @@ let db;
 
 app.use(helmet());
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
 app.use('/uploads', express.static('uploads')); // Serve static files from the uploads directory
 
 const authLimiter = rateLimit({
@@ -99,6 +102,18 @@ const productStorage = multer.diskStorage({
 });
 
 const uploadProduct = multer({ storage: productStorage });
+
+// Multer configuration for dietitian photos
+const dietitianPhotoStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/dietitians/'); // New directory for dietitian photos
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+const uploadDietitianPhoto = multer({ storage: dietitianPhotoStorage });
 
 const startServer = async () => {
   try {
@@ -203,25 +218,32 @@ app.post('/api/products', authenticateToken, authorizeAdmin, uploadProduct.singl
 });
 
 // New CRUD Route for Local Products (Protected)
-app.post('/api/local-products-submission', authenticateToken, authorizeAdmin, uploadProduct.single('productImage'), async (req, res) => {
+app.post('/api/local-products-submission', authenticateToken, authorizeAdmin, async (req, res) => {
   try {
-    const { productName, description, category } = req.body; // Assuming these fields from the form
-    const productImagePath = req.file ? req.file.path : null;
+    console.log('Requête reçue pour soumission de produit local (Base64).');
+    console.log('req.body:', req.body); // Log form body data
 
-    if (!productName || !description || !category || !productImagePath) {
-      return res.status(400).json({ message: 'Nom, description, catégorie et image du produit sont requis.' });
+    const { productName, description, category, productImage, region, barcode, certification } = req.body; // Get productImage directly from body
+
+    if (!productName || !description || !category || !productImage) { // Check for productImage directly
+      console.log('Validation échouée: champs manquants ou image Base64 manquante.');
+      return res.status(400).json({ message: 'Nom, description, catégorie et image du produit (Base64) sont requis.' });
     }
 
     const newLocalProduct = {
       name: productName,
       description,
       category,
-      imageUrl: `/${productImagePath.replace(/\\/g, '/')}`,
+      region,
+      barcode,
+      certification,
+      imageUrl: productImage, // Store Base64 string directly
       badge: 'Certifié ONCQ', // Default badge for local products
       createdAt: new Date(),
     };
 
     const result = await db.collection('local_products').insertOne(newLocalProduct);
+    console.log('Produit local ajouté avec succès à la base de données.', newLocalProduct);
     res.status(201).json({ message: 'Produit local ajouté avec succès', product: newLocalProduct });
   } catch (error) {
     console.error('Erreur lors de la création du produit local:', error);
@@ -395,6 +417,34 @@ app.post('/api/alerts', authenticateToken, authorizeAdmin, async (req, res) => {
   }
 });
 
+// Route to add a new dietitian
+app.post('/api/dietitians', authenticateToken, authorizeAdmin, uploadDietitianPhoto.single('photo'), async (req, res) => {
+  try {
+    const { name, niveau, specialite, bio, forfait } = req.body;
+    const photoPath = req.file ? req.file.path : null;
+
+    if (!name || !niveau || !specialite || !bio || !forfait) {
+      return res.status(400).json({ message: 'Tous les champs sont requis.' });
+    }
+
+    const newDietitian = {
+      name,
+      niveau,
+      specialite,
+      bio,
+      forfait,
+      photoUrl: photoPath ? `/${photoPath.replace(/\\/g, '/')}` : null,
+      createdAt: new Date(),
+    };
+
+    const result = await db.collection('dietitians').insertOne(newDietitian);
+    res.status(201).json({ message: 'Diététicien ajouté avec succès', dietitian: newDietitian });
+  } catch (error) {
+    console.error('Erreur lors de l\'ajout du diététicien:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
 // Route to delete an alert
 app.delete('/api/alerts/:id', authenticateToken, authorizeAdmin, async (req, res) => {
   try {
@@ -504,10 +554,20 @@ app.get('/api/producers', async (req, res) => {
 
 app.get('/api/notifications', async (req, res) => {
   try {
-    const notifications = await db.collection('notifications').find({}).toArray();
+    const notifications = await db.collection('notifications').find({}).sort({ createdAt: -1 }).toArray();
     res.json(notifications);
   } catch (error) {
     console.error('Erreur lors de la récupération des notifications:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+app.get('/api/users', authenticateToken, authorizeAdmin, async (req, res) => {
+  try {
+    const users = await db.collection('users').find({}).project({ password: 0 }).toArray(); // Exclude password
+    res.json(users);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des utilisateurs:', error);
     res.status(500).json({ message: 'Erreur serveur' });
   }
 });
@@ -630,12 +690,13 @@ app.get('/api/local-products', async (req, res) => {
   }
 });
 
+
 app.post('/api/chatbot', async (req, res) => {
   try {
     const userMessage = req.body.message.toLowerCase();
     const chatbotKnowledge = await db.collection('chatbot').find({}).toArray();
 
-    let response = "Désolé, je n\'ai pas compris votre question. Pouvez-vous reformuler ?";
+    let response = "Désolé, je n'ai pas compris votre question. Pouvez-vous reformuler ?";
 
     for (const entry of chatbotKnowledge) {
       if (entry.keywords.some(keyword => userMessage.includes(keyword))) {

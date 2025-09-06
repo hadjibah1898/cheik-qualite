@@ -220,10 +220,92 @@ header p {
 
 /* Responsive */
 @media (max-width: 768px) {
-    .hamburger-btn { display: block; }
-    .header-nav ul { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; width: 100%; background: #2c3e50; padding: 20px 0; gap: 0; }
-    .header-nav.active ul { display: flex; z-index: 1000; }
-    .header-nav ul li a { padding: 15px 20px; }
-    .header-nav ul li a::after { display: none; } /* Hide line on mobile */
-    .header-top-right { top: 25px; right: 20px; transform: none; }
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 15px;
+    }
+
+    .logo-text {
+        font-size: 1.5rem; /* Smaller font size for logo */
+        margin-bottom: 0;
+        text-align: left;
+    }
+
+    header p {
+       display: none; /* Hide tagline on mobile */
+    }
+
+    .header-nav {
+        margin-top: 0;
+        position: fixed; /* Changed to fixed */
+        top: 0;
+        left: -100%; /* Start off-screen */
+        width: 80%;
+        height: 100%;
+        background: #2c3e50;
+        transition: left 0.3s ease-in-out;
+        z-index: 1000;
+        padding-top: 60px;
+    }
+
+    .header-nav.active {
+        left: 0; /* Slide in */
+    }
+
+    .header-nav ul {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        padding: 0;
+    }
+    
+    .header-nav ul li a {
+        padding: 10px 0;
+        font-size: 1.2rem;
+    }
+
+    .header-nav ul li a::after { 
+        display: none; 
+    }
+
+    .hamburger-btn {
+        display: block;
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 1.8rem;
+        cursor: pointer;
+        z-index: 1001;
+        order: 1; /* Order for flexbox */
+    }
+
+    .header-top-right {
+        position: static; /* Remove absolute positioning */
+        order: 2; /* Order for flexbox */
+        gap: 15px;
+    }
+    
+    .logo-container { /* Assuming you wrap logo-text and p in this */
+      order: 3;
+      flex-grow: 1;
+      text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-text {
+        font-size: 1.3rem;
+    }
+
+    .header-top-right {
+        gap: 10px;
+    }
+
+    .notification-icon,
+    .profile-icon-btn {
+        font-size: 1.1rem;
+    }
 }

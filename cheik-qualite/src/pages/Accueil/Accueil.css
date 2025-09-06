@@ -26,6 +26,10 @@ body {
     padding: 40px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.05);
     margin-top: 30px;
+    max-width: 1600px; /* Increased max-width */
+    margin-left: auto; /* Center the section */
+    margin-right: auto; /* Center the section */
+    width: 100%; /* Ensure it takes full width up to max-width */
 }
 
 .section-title {
@@ -409,3 +413,4 @@ body {
     font-size: 1rem;
     color: #555;
 }
+

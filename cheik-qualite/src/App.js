@@ -16,6 +16,7 @@ import PrivateRoute from './components/PrivateRoute/PrivateRoute.js';
 import SoumissionCertificat from './pages/SoumissionCertificat/index.js'; // Import the new page
 import Unauthorized from './pages/Unauthorized/index.js'; // Import the new Unauthorized page
 import Contact from './pages/Contact/index.js';
+import Chatbot from './components/Chatbot/Chatbot.js';
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
             <Route path="/soumission-certificat" element={<SoumissionCertificat />} /> {/* New admin page */}
           </Route>
         </Routes>
+        <Chatbot />
       </Layout>
     </Router>
   );

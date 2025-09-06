@@ -1,6 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const VendeursTab = () => {
+    const [vendors, setVendors] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchVendors = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/api/health-advice/vendors');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                setVendors(data);
+            } catch (err) {
+                setError(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchVendors();
+    }, []);
+
+    if (loading) {
+        return <div className="tab-content active" id="vendeurs-tab"><p>Chargement des vendeurs certifiés...</p></div>;
+    }
+
+    if (error) {
+        return <div className="tab-content active" id="vendeurs-tab"><p>Erreur: {error.message}</p></div>;
+    }
+
     return (
         <div className="tab-content active" id="vendeurs-tab">
             <section className="sellers-section">
@@ -13,100 +44,28 @@ const VendeursTab = () => {
                     </div>
                 </div>
                 <div className="sellers-grid">
-                    {/* Seller Cards Here */}
-                    <div className="seller-card">
-                        <div className="seller-badge"><i className="fas fa-star"></i> Top vendeur</div>
-                        <div className="seller-header">
-                            <h3>La Ferme Bio de Kindia</h3>
-                            <div className="seller-location"><i className="fas fa-map-marker-alt"></i> Kindia, Guinée</div>
-                            <div className="seller-rating">
-                                <i className="fas fa-star"></i>
-                                <i className="fas fa-star"></i>
-                                <i className="fas fa-star"></i>
-                                <i className="fas fa-star"></i>
-                                <i className="fas fa-star-half-alt"></i> 4.5 (87 avis)
+                    {vendors.map((seller) => (
+                        <div key={seller.id} className="seller-card">
+                            {seller.badge && <div className="seller-badge"><i className="fas fa-star"></i> {seller.badge}</div>}
+                            <div className="seller-header">
+                                <h3>{seller.name}</h3>
+                                <div className="seller-location"><i className="fas fa-map-marker-alt"></i> {seller.location}</div>
+                                <div className="seller-rating">
+                                    {[...Array(Math.floor(seller.rating))].map((_, i) => <i key={i} className="fas fa-star"></i>)}
+                                    {seller.rating % 1 !== 0 && <i className="fas fa-star-half-alt"></i>} {seller.rating} ({seller.reviews} avis)
+                                </div>
                             </div>
-                        </div>
-                        <div className="seller-products">
-                            <h4><i className="fas fa-seedling"></i> Produits certifiés</h4>
-                            <div className="product-tags">
-                                <span className="product-tag">Fonio bio</span>
-                                <span className="product-tag">Fruits locaux</span>
-                                <span className="product-tag">Légumes frais</span>
-                                <span className="product-tag">Miel pur</span>
+                            <div className="seller-products">
+                                <h4><i className="fas fa-seedling"></i> Produits certifiés</h4>
+                                <div className="product-tags">
+                                    {seller.products.map((product, index) => (
+                                        <span key={index} className="product-tag">{product}</span>
+                                    ))}
+                                </div>
                             </div>
+                            <button className="contact-btn">Contacter</button>
                         </div>
-                        <button className="contact-btn">Contacter</button>
-                    </div>
-                    <div className="seller-card">
-                        <div className="seller-header">
-                            <h3>Marché Santé de Conakry</h3>
-                            <div className="seller-location"><i className="fas fa-map-marker-alt"></i> Conakry, Guinée</div>
-                            <div className="seller-rating">
-                                <i className="fas fa-star"></i>
-                                <i className="fas fa-star"></i>
-                                <i className="fas fa-star"></i>
-                                <i className="fas fa-star"></i>
-                                <i className="fas fa-star"></i> 5.0 (42 avis)
-                            </div>
-                        </div>
-                        <div className="seller-products">
-                            <h4><i className="fas fa-seedling"></i> Produits certifiés</h4>
-                            <div className="product-tags">
-                                <span className="product-tag">Poisson frais</span>
-                                <span className="product-tag">Huile de palme bio</span>
-                                <span className="product-tag">Noix de cajou</span>
-                                <span className="product-tag">Feuilles de baobab</span>
-                            </div>
-                        </div>
-                        <button className="contact-btn">Contacter</button>
-                    </div>
-                        <div className="seller-card">
-                        <div className="seller-badge"><i className="fas fa-bolt"></i> Livraison rapide</div>
-                        <div className="seller-header">
-                            <h3>Produits du Terroir</h3>
-                            <div className="seller-location"><i className="fas fa-map-marker-alt"></i> Labé, Guinée</div>
-                            <div className="seller-rating">
-                                <i className="fas fa-star"></i>
-                                <i className="fas fa-star"></i>
-                                <i className="fas fa-star"></i>
-                                <i className="fas fa-star"></i>
-                                <i className="fas fa-star"></i> 4.9 (65 avis)
-                            </div>
-                        </div>
-                        <div className="seller-products">
-                            <h4><i className="fas fa-seedling"></i> Produits certifiés</h4>
-                            <div className="product-tags">
-                                <span className="product-tag">Patate douce</span>
-                                <span className="product-tag">Moringa</span>
-                                <span className="product-tag">Arachides</span>
-                                <span className="product-tag">Gingembre bio</span>
-                            </div>
-                        </div>
-                        <button className="contact-btn">Contacter</button>
-                    </div>
-                        <div className="seller-card">
-                        <div className="seller-header">
-                            <h3>Les Jardins de Mamou</h3>
-                            <div className="seller-location"><i className="fas fa-map-marker-alt"></i> Mamou, Guinée</div>
-                            <div className="seller-rating">
-                                <i className="fas fa-star"></i>
-                                <i className="fas fa-star"></i>
-                                <i className="fas fa-star"></i>
-                                <i className="fas fa-star"></i>
-                                <i className="fas fa-star"></i> 4.8 (53 avis)
-                            </div>
-                        </div>
-                        <div className="seller-products">
-                            <h4><i className="fas fa-seedling"></i> Produits certifiés</h4>
-                            <div className="product-tags">
-                                <span className="product-tag">Bananes plantain</span>
-                                <span className="product-tag">Légumes feuilles</span>
-                                <span className="product-tag">Fruits saisonniers</span>
-                            </div>
-                        </div>
-                        <button className="contact-btn">Contacter</button>
-                    </div>
+                    ))}
                 </div>
             </section>
         </div>

@@ -11,6 +11,28 @@ const ProduitsLocaux = () => {
     const [producers, setProducers] = useState([]);
     const [filteredProducers, setFilteredProducers] = useState([]);
     const [localProducts, setLocalProducts] = useState([]); // New state for local products
+    const [promoPhrase, setPromoPhrase] = useState('');
+
+    const promoPhrases = [
+        "Du champ à l'assiette : la fierté guinéenne.",
+        "Votre soutien, leur avenir. Achetez local.",
+        "La certification : notre pacte de confiance avec vous.",
+        "Goûtez à l'authenticité, savourez la Guinée.",
+        "L'agriculture guinéenne, un trésor à portée de main."
+    ];
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const randomIndex = Math.floor(Math.random() * promoPhrases.length);
+            setPromoPhrase(promoPhrases[randomIndex]);
+        }, 5000); // Change phrase every 5 seconds
+
+        // Set initial phrase
+        const randomIndex = Math.floor(Math.random() * promoPhrases.length);
+        setPromoPhrase(promoPhrases[randomIndex]);
+
+        return () => clearInterval(interval);
+    }, [promoPhrases]);
 
     useEffect(() => {
         const fetchProducers = async () => {
@@ -71,8 +93,7 @@ const ProduitsLocaux = () => {
     return (
         <>
             <section className="promo-banner">
-                <h2>L'excellence de nos terroirs</h2>
-                <p>Découvrez et soutenez les produits locaux guinéens, certifiés pour votre santé et votre sécurité.</p>
+                <h2>{promoPhrase}</h2>
             </section>
             
             <section className="search-section">
@@ -107,7 +128,7 @@ const ProduitsLocaux = () => {
                     {localProducts.length > 0 ? (
                         localProducts.map((product) => (
                             <div className="product-card" key={product._id}>
-                                <img src={`http://localhost:5000${product.imageUrl}`} alt={product.name} className="product-image" />
+                                <img src={product.imageUrl} alt={product.name} className="product-image" />
                                 <div className="product-info">
                                     <h3>{product.name}</h3>
                                     <p className="product-category">{product.category}</p>

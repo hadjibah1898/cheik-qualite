@@ -29,10 +29,10 @@ const Footer = () => {
                 <div className="footer-section social">
                     <h3>Suivez-nous</h3>
                     <div className="social-icons">
-                        <a href="#" aria-label="Facebook"><i className="fab fa-facebook-f"></i></a>
-                        <a href="#" aria-label="Twitter"><i className="fab fa-twitter"></i></a>
-                        <a href="#" aria-label="Instagram"><i className="fab fa-instagram"></i></a>
-                        <a href="#" aria-label="LinkedIn"><i className="fab fa-linkedin-in"></i></a>
+                        <a href="https://example.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i className="fab fa-facebook-f"></i></a>
+                        <a href="https://example.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><i className="fab fa-twitter"></i></a>
+                        <a href="https://example.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i className="fab fa-instagram"></i></a>
+                        <a href="https://example.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i className="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
             </div>

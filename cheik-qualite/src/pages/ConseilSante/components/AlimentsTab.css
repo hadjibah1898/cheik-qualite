@@ -1,0 +1,312 @@
+/* Search Section */
+.search-section {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.search-box {
+    display: flex;
+    max-width: 700px;
+    margin: 0 auto 20px;
+    position: relative;
+}
+
+.search-box input {
+    flex: 1;
+    padding: 15px 20px 15px 20px; /* Adjusted padding */
+    border: 2px solid #3498db;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    outline: none;
+}
+
+/* Removed .search-box button styles as it's no longer used in AlimentsTab */
+
+.examples {
+    text-align: center;
+    color: #7f8c8d;
+    font-style: italic;
+    margin-top: 15px;
+}
+
+/* Result Section (for AlimentsTab) */
+.results-list-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); /* Adjust as needed */
+    gap: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.product-card-aliment {
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card-aliment:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
+
+.product-header-aliment {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.product-image-aliment {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%; /* Make it circular */
+    background: linear-gradient(45deg, #3498db, #2ecc71); /* Gradient background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.8rem;
+    color: white;
+    margin-right: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.product-info-aliment h2 {
+    font-size: 1.9rem;
+    margin-bottom: 8px;
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+.product-info-aliment p {
+    color: #7f8c8d;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.product-brand, .product-category {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 5px;
+}
+
+.product-ingredients, .nutritional-info {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.product-ingredients h3, .nutritional-info h3 {
+    font-size: 1.2rem;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.product-ingredients p {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.6;
+}
+
+.nutritional-info ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nutritional-info li {
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.health-indicators-aliment {
+    display: flex;
+    flex-direction: column; /* Stack indicators vertically */
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.indicator {
+    flex: 1;
+    min-width: unset; /* Override previous min-width */
+    padding: 18px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f8f9fa; /* Slightly different background for indicators */
+}
+
+.indicator::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 8px;
+    height: 100%;
+}
+
+.indicator.diabetic::before { background-color: #3498db; }
+.indicator.hypertension::before { background-color: #e74c3c; }
+.indicator.drepanocytosis::before { background-color: #2ecc71; }
+
+.indicator h3 {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 1.3rem;
+    color: #2c3e50;
+}
+
+.status-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.status-indicator {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    color: white;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.status-indicator.recommended { background: #27ae60; }
+.status-indicator.moderate { background: #f39c12; }
+.status-indicator.not-recommended { background: #c0392b; }
+.status-indicator.unknown { background: #95a5a6; } /* Grey for unknown status */
+
+.status-text {
+    font-size: 1.05rem;
+    font-weight: bold;
+    padding: 6px 15px;
+    border-radius: 50px;
+}
+
+.status-text.recommended { background: rgba(46, 204, 113, 0.2); color: #27ae60; }
+.status-text.moderate { background: rgba(241, 196, 15, 0.2); color: #f39c12; }
+.status-text.not-recommended { background: rgba(231, 76, 60, 0.2); color: #c0392b; }
+.status-text.unknown { background: rgba(149, 165, 166, 0.2); color: #7f8c8d; } /* Lighter grey for unknown text */
+
+.no-results-aliment {
+    text-align: center;
+    color: #6c757d;
+    font-size: 1.3em;
+    margin-top: 40px;
+    grid-column: 1 / -1; /* Span across all columns in the grid */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .search-box { flex-direction: column; }
+    .search-box input { border-radius: 50px; margin-bottom: 10px; }
+    .product-header { flex-direction: column; text-align: center; }
+    .product-image { margin-right: 0; margin-bottom: 20px; }
+    .health-indicators { flex-direction: column; }
+
+    .results-list-section {
+        grid-template-columns: 1fr;
+    }
+
+    .product-card-aliment {
+        padding: 20px;
+    }
+
+    .product-header-aliment {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .product-image-aliment {
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+
+    .product-info-aliment h2 {
+        font-size: 1.6rem;
+    }
+
+    .product-info-aliment p {
+        font-size: 0.9rem;
+    }
+
+    .indicator h3 {
+        font-size: 1.1rem;
+    }
+
+    .status-indicator {
+        width: 55px;
+        height: 55px;
+        font-size: 1.3rem;
+    }
+
+    .status-text {
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-section {
+        padding: 20px;
+    }
+
+    .search-box input {
+        padding: 10px 15px;
+    }
+
+    .product-info-aliment h2 {
+        font-size: 1.4rem;
+    }
+
+    .product-info-aliment p {
+        font-size: 0.85rem;
+    }
+
+    .indicator h3 {
+        font-size: 1rem;
+    }
+
+    .status-indicator {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+
+    .status-text {
+        font-size: 0.9rem;
+    }
+
+    .no-results-aliment {
+        font-size: 1.1em;
+    }
+}
+
+.importance-phrase {
+    text-align: center;
+    color: #34495e; /* Darker color for prominence */
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 20px; /* Space below the phrase */
+}

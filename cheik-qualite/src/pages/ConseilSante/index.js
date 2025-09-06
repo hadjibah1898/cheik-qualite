@@ -3,7 +3,7 @@ import './ConseilSante.css';
 import AlimentsTab from './components/AlimentsTab.js';
 import MagazinesTab from './components/MagazinesTab.js';
 import VendeursTab from './components/VendeursTab.js';
-import Chatbot from '../../components/Chatbot/Chatbot.js';
+
 
 const ConseilSante = () => {
     const [activeTab, setActiveTab] = useState('aliments');
@@ -86,7 +86,7 @@ const ConseilSante = () => {
         <>
             <div className="nav-tabs">
                 <div className={`nav-tab ${activeTab === 'aliments' ? 'active' : ''}`} onClick={() => setActiveTab('aliments')}>Aliments</div>
-                <div className={`nav-tab ${activeTab === 'magazines' ? 'active' : ''}`} onClick={() => setActiveTab('magazines')}>Magazines Santé</div>
+                <div className={`nav-tab ${activeTab === 'magazines' ? 'active' : ''}`} onClick={() => setActiveTab('magazines')}>Prendre rendez-vous</div>
                 <div className={`nav-tab ${activeTab === 'vendeurs' ? 'active' : ''}`} onClick={() => setActiveTab('vendeurs')}>Vendeurs Certifiés</div>
             </div>
 
@@ -98,7 +98,7 @@ const ConseilSante = () => {
                 <p><i className="fas fa-info-circle"></i> Ces conseils ne remplacent pas une consultation médicale. Consultez toujours un professionnel de santé pour des recommandations personnalisées.</p>
             </div>
 
-            <Chatbot />
+            
         </>
     );
 };

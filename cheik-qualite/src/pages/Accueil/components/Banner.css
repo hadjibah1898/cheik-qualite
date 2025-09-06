@@ -136,3 +136,54 @@
     background-color: white;
     transform: scale(1.2);
 }
+
+@media (max-width: 768px) {
+    .banner-section {
+        padding: 60px 20px;
+        min-height: 350px;
+    }
+
+    .banner-content h1 {
+        font-size: 2rem;
+    }
+
+    .banner-content p {
+        font-size: 1.1rem;
+    }
+
+    .banner-cta-button {
+        padding: 12px 25px;
+        font-size: 1rem;
+    }
+
+    .carousel-control {
+        padding: 5px 10px;
+        font-size: 1.5rem;
+    }
+
+    .dot {
+        width: 10px;
+        height: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .banner-section {
+        padding: 40px 15px;
+        min-height: 300px;
+    }
+
+    .banner-content h1 {
+        font-size: 1.8rem;
+    }
+
+    .banner-content p {
+        font-size: 1rem;
+        margin-bottom: 20px;
+    }
+
+    .banner-cta-button {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}
