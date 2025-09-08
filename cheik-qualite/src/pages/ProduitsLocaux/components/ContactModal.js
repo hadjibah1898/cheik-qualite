@@ -14,7 +14,7 @@ const ContactModal = ({ producer, onClose }) => {
 
     try {
       // This endpoint does not exist yet, I will need to create it.
-      const response = await fetch('http://localhost:5000/api/contact-producer', {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/contact-producer`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

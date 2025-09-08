@@ -26,7 +26,7 @@ const Accueil = () => {
     useEffect(() => {
         const fetchLocalProducts = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/local-products'); // Assuming this endpoint
+                const response = await fetch('/api/local-products'); // Assuming this endpoint
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -49,7 +49,7 @@ const Accueil = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:5000/api/certificates/verify/${query}`);
+            const response = await fetch(`/api/certificates/verify/${query}`);
             const data = await response.json();
 
             if (response.ok) {
@@ -92,10 +92,10 @@ const Accueil = () => {
 
     const handleEmailSubmit = async (e) => { // Added 'async'
         e.preventDefault();
-        const link = process.env.REACT_APP_FRONTEND_URL + window.location.pathname + '?action=scan';
+        const link = `${window.location.origin}${window.location.pathname}?action=scan`;
 
         try {
-            const response = await fetch('http://localhost:5000/api/send-scan-link', { // Assuming backend runs on port 5000
+            const response = await fetch('/api/send-scan-link', { // Assuming backend runs on port 5000
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

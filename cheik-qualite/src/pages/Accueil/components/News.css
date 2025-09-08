@@ -58,6 +58,11 @@
 }
 
 .read-more-link {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
     color: #28a745;
     text-decoration: none;
     font-weight: bold;

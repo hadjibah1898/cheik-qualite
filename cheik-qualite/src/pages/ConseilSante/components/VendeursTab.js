@@ -8,7 +8,7 @@ const VendeursTab = () => {
     useEffect(() => {
         const fetchVendors = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/health-advice/vendors');
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/health-advice/vendors`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

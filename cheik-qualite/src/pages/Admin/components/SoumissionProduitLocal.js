@@ -70,7 +70,7 @@ const SoumissionProduitLocal = ({ onProductAdded }) => {
                 return;
             }
 
-            const response = await axios.post('http://localhost:5000/api/local-products-submission', dataToSend, {
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/local-products-submission`, dataToSend, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`

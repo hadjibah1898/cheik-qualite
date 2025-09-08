@@ -765,8 +765,11 @@ app.post('/api/send-scan-link', async (req, res) => {
         await transporter.sendMail(mailOptions);
         res.status(200).json({ message: 'Lien de scan envoyé avec succès !' });
     } catch (error) {
-        console.error('Erreur lors de l\'envoi de l\'e-mail:', error);
-        res.status(500).json({ message: 'Erreur lors de l\'envoi de l\'e-mail.' });
+        console.error('Erreur détaillée lors de l\'envoi de l\'e-mail:', error);
+        res.status(500).json({ 
+            message: 'Erreur lors de l\'envoi de l\'e-mail.',
+            error: error.message
+        });
   }
 });
 

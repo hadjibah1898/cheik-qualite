@@ -25,9 +25,8 @@ const ProductCard = ({ product }) => {
         }
         // Sinon, suppose que c'est un chemin relatif depuis le backend
         // Idéalement, l'URL de base du backend devrait être une variable d'environnement
-        const baseUrl = 'http://localhost:5000';
         const cleanedUrl = url.startsWith('/') ? url : `/${url}`;
-        return `${baseUrl}${cleanedUrl}`;
+        return `${process.env.REACT_APP_BACKEND_URL}${cleanedUrl}`;
     };
 
     return (

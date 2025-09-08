@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import './ProduitsLocaux.css';
 import ContactModal from './components/ContactModal.js'; // Import the ContactModal component
 
@@ -13,13 +13,13 @@ const ProduitsLocaux = () => {
     const [localProducts, setLocalProducts] = useState([]); // New state for local products
     const [promoPhrase, setPromoPhrase] = useState('');
 
-    const promoPhrases = [
+    const promoPhrases = useMemo(() => [
         "Du champ à l'assiette : la fierté guinéenne.",
         "Votre soutien, leur avenir. Achetez local.",
         "La certification : notre pacte de confiance avec vous.",
         "Goûtez à l'authenticité, savourez la Guinée.",
         "L'agriculture guinéenne, un trésor à portée de main."
-    ];
+    ], []);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -57,7 +57,7 @@ const ProduitsLocaux = () => {
     useEffect(() => {
         const fetchLocalProducts = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/local-products');
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/local-products`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch local products');
                 }

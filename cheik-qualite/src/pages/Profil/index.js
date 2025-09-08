@@ -102,17 +102,17 @@ const Profil = () => {
                 const formDataImage = new FormData();
                 formDataImage.append('profilePicture', selectedFile);
 
-                const uploadResponse = await fetch('http://localhost:5000/api/user/upload-profile-picture', {
+                const uploadResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/user/upload-profile-picture`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     },
-                    body: formDataImage,
+                    body: formDataImage
                 });
 
                 if (!uploadResponse.ok) {
                     const errorData = await uploadResponse.json();
-                    throw new Error(errorData.message || 'Échec du téléchargement de limage de profil.');
+                    throw new Error(errorData.message || "Échec du téléchargement de l'image de profil.");
                 }
 
                 const uploadData = await uploadResponse.json();

@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { MongoClient } from 'mongodb';
 import { localProducts } from '../cheik-qualite/src/data/localProducts.js'; // Adjust path as needed
 
-const url = process.env.DATABASE_URL;
+const url = 'mongodb+srv://mouhamaddjoulde1998:lmCujlEw957U3P0e@clients.uxjtons.mongodb.net/cheikqualite';
 const dbName = 'cheik-qualite'; // Your database name
 
 async function importData() {

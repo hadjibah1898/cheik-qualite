@@ -14,7 +14,7 @@ const News = () => {
                             <h3>{newsItem.title}</h3>
                             <p className="news-meta">{new Date(newsItem.date).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                             <p className="news-summary">{newsItem.summary}</p>
-                            <a href="#" className="read-more-link">Lire la suite <i className="fas fa-arrow-right"></i></a>
+                            <button type="button" className="read-more-link">Lire la suite <i className="fas fa-arrow-right"></i></button>
                         </div>
                     </div>
                 ))}

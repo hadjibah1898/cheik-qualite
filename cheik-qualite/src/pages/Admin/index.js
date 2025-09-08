@@ -26,7 +26,7 @@ const Admin = () => {
     });
     const [alertsList, setAlertsList] = useState([]); // New state for alerts
     const [localProductsList, setLocalProductsList] = useState([]); // New state for local products
-    const [users, setUsers] = useState([]);
+        const [, setUsers] = useState([]);
 
     useEffect(() => {
         const pendingProducts = products.filter(p => p.status === 'pending').length;
@@ -333,7 +333,7 @@ const Admin = () => {
                                                 <td>{product.description}</td>
                                                 <td>{new Date(product.createdAt).toLocaleDateString()}</td>
                                                 <td>
-                                                    {product.imageUrl && <img src={`http://localhost:5000${product.imageUrl}`} alt={product.name} style={{ width: '50px', height: '50px', objectFit: 'cover' }} />}
+                                                    {product.imageUrl && <img src={`${process.env.REACT_APP_BACKEND_URL}${product.imageUrl}`} alt={product.name} style={{ width: '50px', height: '50px', objectFit: 'cover' }} />}
                                                 </td>
                                             </tr>
                                         ))}

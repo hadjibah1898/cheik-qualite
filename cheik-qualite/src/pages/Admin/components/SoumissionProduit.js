@@ -50,7 +50,7 @@ const SoumissionProduit = () => {
                 return;
             }
 
-            const response = await axios.post('http://localhost:5000/api/products', data, {
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/products`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${token}`
