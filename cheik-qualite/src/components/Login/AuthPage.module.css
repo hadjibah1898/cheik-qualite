@@ -157,5 +157,23 @@
 
   .left {
     padding: 30px;
+    flex: none; /* Allow content to dictate height */
+  }
+
+  .left h2 {
+    font-size: 28px;
+  }
+
+  .left p {
+    font-size: 14px;
+  }
+
+  .right {
+    padding: 20px;
+    flex: none; /* Allow content to dictate height */
+  }
+
+  .right h3 {
+    font-size: 20px;
   }
 }

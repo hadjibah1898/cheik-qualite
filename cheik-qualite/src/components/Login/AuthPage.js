@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './AuthPage.module.css'; // Updated CSS import
 import { FaFacebookF, FaGoogle, FaTwitter, FaUser, FaLock, FaEye, FaEyeSlash, FaEnvelope, FaPhone } from 'react-icons/fa';
+import { jwtDecode } from 'jwt-decode'; // Correct and safe way to decode JWTs
 
 const AuthPage = () => {
   const [username, setUsername] = useState('');
@@ -15,6 +16,27 @@ const AuthPage = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        const userRole = decodedToken.role || 'user';
+        // Redirect based on role if already logged in
+        if (userRole === 'admin') {
+          navigate('/admin');
+        } else if (userRole === 'agent') {
+          navigate('/agent/dashboard');
+        } else {
+          navigate('/profil');
+        }
+      } catch (error) {
+        console.error("Error decoding token on AuthPage load:", error);
+        localStorage.removeItem('token'); // Clear invalid token
+      }
+    }
+  }, [navigate]);
 
   const togglePasswordVisiblityLogin = () => setPasswordShownLogin(!passwordShownLogin);
   const togglePasswordVisiblityRegister = () => setPasswordShownRegister(!passwordShownRegister);
@@ -37,16 +59,19 @@ const AuthPage = () => {
 
       const { token } = await response.json();
       localStorage.setItem('token', token);
-      const decodedToken = JSON.parse(atob(token.split('.')[1]));
+      
+      const decodedToken = jwtDecode(token);
       const userRole = decodedToken.role || 'user';
 
+      // Redirect based on role
       if (userRole === 'admin') {
-        window.location.href = '/admin';
+        navigate('/admin');
       } else if (userRole === 'agent') {
-        window.location.href = '/agent-dashboard';
+        navigate('/agent/dashboard'); // Corrected route
       } else {
-        window.location.href = '/';
+        navigate('/profil'); // Redirect standard users to their profile
       }
+
     } catch (err) {
       setError(err.message);
     }

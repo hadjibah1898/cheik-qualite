@@ -1,0 +1,30 @@
+.agent-dashboard-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+    min-height: 100vh;
+}
+
+.agent-dashboard-header {
+    background-color: #34495e;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.agent-dashboard-header h1 {
+    margin: 0;
+    font-size: 2em;
+}
+
+.agent-dashboard-header p {
+    margin: 5px 0 0;
+    font-size: 1.1em;
+}
+
+.agent-dashboard-main {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}

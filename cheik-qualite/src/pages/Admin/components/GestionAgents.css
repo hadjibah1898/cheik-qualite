@@ -1,0 +1,122 @@
+.gestion-agents-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.gestion-agents-container h3 {
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.gestion-agents-container p {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.add-agent-btn {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: background-color 0.3s;
+}
+
+.add-agent-btn:hover {
+    background-color: #218838;
+}
+
+.add-agent-form {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+
+.add-agent-form h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.add-agent-form button[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.agents-list table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.agents-list th, .agents-list td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+.agents-list th {
+    background-color: #f2f2f2;
+}
+
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 15px;
+    color: white;
+    font-size: 0.9em;
+}
+
+.status-actif {
+    background-color: #28a745;
+}
+
+.status-inactif {
+    background-color: #dc3545;
+}
+
+.agent-actions .edit-btn,
+.agent-actions .delete-btn {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.agent-actions .edit-btn {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.agent-actions .delete-btn {
+    background-color: #dc3545;
+    color: white;
+}

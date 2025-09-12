@@ -349,43 +349,76 @@ body {
 @media (max-width: 768px) {
     .verification-container {
         flex-direction: column;
+        align-items: center;
     }
 
-    .footer-container {
-        flex-direction: column;
-        text-align: center;
-    }
-    .footer-section h3 {
-        display: block;
-        text-align: center;
-    }
-    .social-icons {
-        justify-content: center;
+    .section-box {
+        padding: 25px 20px; /* Reduce padding on smaller screens */
     }
 
-    .hamburger-btn {
-        display: block;
+    .section-title {
+        font-size: 1.8rem; /* Reduce title font size */
     }
 
-    .header-nav ul {
-        display: none;
-        flex-direction: column;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        background: linear-gradient(135deg, #3498db, #2c3e50);
-        padding-top: 100px;
-        gap: 20px;
-        transition: transform 0.5s ease-in-out;
-        transform: translateX(-100%);
-        z-index: 50; /* Ensure it's above other content but below the button */
-    }
-
-    .header-nav.active ul {
+    .verification-form .button-group {
         display: flex;
-        transform: translateX(0);
+        width: 100%;
+        gap: 10px;
+    }
+
+    .verification-form button {
+        flex: 1; /* Each button will take up half the space */
+        padding-left: 5px; /* Adjust padding for smaller screens */
+        padding-right: 5px;
+        font-size: 0.9rem; /* Adjust font size to fit */
+    }
+
+    .email-form {
+        padding: 20px;
+    }
+
+    .email-form h3 {
+        font-size: 1.3rem;
+    }
+
+    .result-box {
+        padding: 20px;
+    }
+
+    .result-box h3 {
+        font-size: 1.4rem;
+    }
+
+    .result-box .result-image {
+        width: 140px;
+        height: 140px;
+    }
+}
+
+@media (max-width: 480px) {
+    .section-box {
+        padding: 20px 15px;
+    }
+
+    .section-title {
+        font-size: 1.6rem;
+    }
+
+    .result-box h3 {
+        font-size: 1.2rem;
+    }
+
+    .result-box .result-image {
+        width: 100px;
+        height: 100px;
+    }
+
+    .verification-form input[type="text"] {
+        font-size: 1rem;
+    }
+
+    .verification-form button {
+        font-size: 1rem;
     }
 }
 
@@ -412,5 +445,43 @@ body {
 .tip-card p {
     font-size: 1rem;
     color: #555;
+}
+
+@media (max-width: 400px) {
+    .verification-form-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .verification-form-container > p {
+        width: 70%;
+        margin-bottom: 20px;
+        position: relative;
+        left: -30px;
+    }
+
+    .verification-form input[type="text"] {
+        width: 70%;
+        position: relative;
+        left: -30px;
+    }
+
+    .verification-form .button-group {
+        flex-direction: column;
+        width: 70%;
+        align-items: center;
+        position: relative;
+        left: -30px;
+    }
+
+    .verification-form .button-group button {
+        width: 100%;
+    }
+
+    .email-form input,
+    .email-form button {
+        width: 70%;
+    }
 }
 

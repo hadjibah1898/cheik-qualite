@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import './ProduitsLocaux.css';
 import ContactModal from './components/ContactModal.js'; // Import the ContactModal component
 
@@ -10,8 +10,12 @@ const ProduitsLocaux = () => {
     const [selectedProducer, setSelectedProducer] = useState(null);
     const [producers, setProducers] = useState([]);
     const [filteredProducers, setFilteredProducers] = useState([]);
-    const [localProducts, setLocalProducts] = useState([]); // New state for local products
+    const [localProducts, setLocalProducts] = useState([]); // Renamed from localProducts
+    const [filteredLocalProducts, setFilteredLocalProducts] = useState([]); // Renamed from filteredLocalProducts
     const [promoPhrase, setPromoPhrase] = useState('');
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const [loading, setLoading] = useState(false);
 
     const promoPhrases = useMemo(() => [
         "Du champ à l'assiette : la fierté guinéenne.",
@@ -25,7 +29,7 @@ const ProduitsLocaux = () => {
         const interval = setInterval(() => {
             const randomIndex = Math.floor(Math.random() * promoPhrases.length);
             setPromoPhrase(promoPhrases[randomIndex]);
-        }, 5000); // Change phrase every 5 seconds
+        }, 10000); // Change phrase every 10 seconds
 
         // Set initial phrase
         const randomIndex = Math.floor(Math.random() * promoPhrases.length);
@@ -36,49 +40,77 @@ const ProduitsLocaux = () => {
 
     useEffect(() => {
         const fetchProducers = async () => {
-            try {
-                const response = await fetch('http://localhost:5000/api/producers');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch producers');
+            const cachedProducers = sessionStorage.getItem('producers');
+            if (cachedProducers) {
+                const producersData = JSON.parse(cachedProducers);
+                setProducers(producersData);
+                setFilteredProducers(producersData);
+            } else {
+                try {
+                    const response = await fetch('http://localhost:5000/api/producers');
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch producers');
+                    }
+                    const data = await response.json();
+                    setProducers(data);
+                    setFilteredProducers(data);
+                    sessionStorage.setItem('producers', JSON.stringify(data));
+                } catch (error) {
+                    console.error('Error fetching producers:', error);
+                    // Handle error, e.g., display an error message to the user
                 }
-                const data = await response.json();
-                setProducers(data);
-                setFilteredProducers(data); // Initialize filtered producers with all producers
-            } catch (error) {
-                console.error('Error fetching producers:', error);
-                // Handle error, e.g., display an error message to the user
             }
         };
 
         fetchProducers();
     }, []); // Empty dependency array means this runs once on mount
 
-    // New useEffect for fetching local products
-    useEffect(() => {
-        const fetchLocalProducts = async () => {
-            try {
-                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/local-products`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch local products');
-                }
-                const data = await response.json();
-                setLocalProducts(data);
-            } catch (error) {
-                console.error('Error fetching local products:', error);
+    const fetchLocalProducts = useCallback(async (pageNum) => {
+        setLoading(true);
+        try {
+            const response = await fetch(`/api/local-products?page=${pageNum}&limit=10`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch local products');
             }
-        };
-        fetchLocalProducts();
-    }, []); // Empty dependency array to run once on mount
+            const data = await response.json();
+            setLocalProducts(prev => [...prev, ...data.products]);
+            setTotalPages(data.totalPages);
+        } catch (error) {
+            console.error('Error fetching local products:', error);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
 
     useEffect(() => {
+        fetchLocalProducts(page);
+    }, [fetchLocalProducts, page]);
+
+    // Effect for filtering producers (sellers)
+    useEffect(() => {
         const lowercasedSearchTerm = searchTerm.toLowerCase();
-        const filtered = producers.filter(producer => { // Change sellers to producers
+        const filtered = producers.filter(producer => {
             const matchesProduct = lowercasedSearchTerm === '' || (producer.tags && producer.tags.some(tag => tag && tag.toLowerCase().includes(lowercasedSearchTerm)));
             const matchesRegion = selectedRegion === '' || producer.location === selectedRegion;
             return matchesProduct && matchesRegion;
         });
         setFilteredProducers(filtered);
-    }, [searchTerm, selectedRegion, producers]); // Change sellers to producers
+    }, [searchTerm, selectedRegion, producers]);
+
+    // New useEffect for filtering local products
+    useEffect(() => {
+        const lowercasedSearchTerm = searchTerm.toLowerCase();
+        const filtered = localProducts.filter(product => {
+            const matchesName = lowercasedSearchTerm === '' || (product.name && product.name.toLowerCase().includes(lowercasedSearchTerm));
+            const matchesCategory = lowercasedSearchTerm === '' || (product.category && product.category.toLowerCase().includes(lowercasedSearchTerm));
+            // Assuming products also have a region or location property for filtering by region
+            // If not, you might need to adjust this or add a region property to your local products data
+            const matchesRegion = selectedRegion === '' || (product.region && product.region.toLowerCase() === selectedRegion.toLowerCase());
+            
+            return (matchesName || matchesCategory) && matchesRegion;
+        });
+        setFilteredLocalProducts(filtered);
+    }, [searchTerm, selectedRegion, localProducts]);
 
     const handleContact = (producer) => { // Pass producer object to handleContact
         setSelectedProducer(producer);
@@ -90,13 +122,19 @@ const ProduitsLocaux = () => {
         setSelectedProducer(null);
     };
 
+    const loadMore = () => {
+        if (page < totalPages) {
+            setPage(prevPage => prevPage + 1);
+        }
+    };
+
     return (
         <>
-            <section className="promo-banner">
+            <section className="promo-banner fade-in-up">
                 <h2>{promoPhrase}</h2>
             </section>
             
-            <section className="search-section">
+            <section className="search-section fade-in-up delay-1">
                 <div className="search-bar">
                     <div className="input-group">
                         <input 
@@ -122,12 +160,12 @@ const ProduitsLocaux = () => {
                 </div>
             </section>
 
-            <section className="local-products-section">
+            <section className="local-products-section fade-in-up delay-2">
                 <h2 className="section-title" style={{marginTop: '30px'}}><i className="fas fa-leaf"></i> Nos Produits Locaux Certifiés</h2>
                 <div className="products-grid">
-                    {localProducts.length > 0 ? (
-                        localProducts.map((product) => (
-                            <div className="product-card" key={product._id}>
+                    {filteredLocalProducts.length > 0 ? (
+                        filteredLocalProducts.map((product, index) => (
+                            <div className={`product-card fade-in-up delay-${index + 3}`} key={product._id}>
                                 <img src={product.imageUrl} alt={product.name} className="product-image" />
                                 <div className="product-info">
                                     <h3>{product.name}</h3>
@@ -141,14 +179,22 @@ const ProduitsLocaux = () => {
                         <p style={{textAlign: 'center', fontStyle: 'italic', color: '#7f8c8d', gridColumn: '1 / -1'}}>Aucun produit local disponible pour le moment.</p>
                     )}
                 </div>
+                {loading && <p>Chargement...</p>}
+                {!loading && page < totalPages && (
+                    <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                        <button onClick={loadMore} className="load-more-btn">
+                            Charger plus
+                        </button>
+                    </div>
+                )}
             </section>
             
-            <section className="sellers-section">
+            <section className="sellers-section fade-in-up delay-3">
                 <h2 className="section-title" style={{marginTop: '30px'}}><i className="fas fa-store"></i> Vendeurs Certifiés</h2>
                 <div className="sellers-grid">
                     {filteredProducers.length > 0 ? (
                         filteredProducers.map((producer, index) => (
-                            <div className="seller-card" key={index}>
+                            <div className={`seller-card fade-in-up delay-${index + 4}`} key={index}>
                                 <img src={producer.image} alt={producer.name} className="seller-image" />
                                 
                                 
@@ -174,20 +220,20 @@ const ProduitsLocaux = () => {
                 </div>
             </section>
             
-            <section className="how-to-publish">
+            <section className="how-to-publish fade-in-up delay-5">
                 <h2>Comment publier mes produits ?</h2>
                 <div className="conditions-list">
-                    <div className="condition-card">
+                    <div className="condition-card fade-in-up delay-6">
                         <i className="fas fa-user-check"></i>
                         <h4>1. Avoir un compte</h4>
                         <p>Créez un profil producteur et fournissez vos informations de contact.</p>
                     </div>
-                    <div className="condition-card">
+                    <div className="condition-card fade-in-up delay-7">
                         <i className="fas fa-certificate"></i>
                         <h4>2. Obtenir une certification</h4>
                         <p>Faites certifier vos produits par l'ONCQ (Office National de Contrôle Qualité) pour garantir la sécurité et la santé de nos citoyens.</p>
                     </div>
-                    <div className="condition-card">
+                    <div className="condition-card fade-in-up delay-8">
                         <i className="fas fa-clipboard-list"></i>
                         <h4>3. Publier vos produits</h4>
                         <p>Une fois certifié, listez vos produits, votre localisation et vos coordonnées pour être visible par les acheteurs.</p>

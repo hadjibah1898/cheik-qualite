@@ -14,6 +14,8 @@ import About from './components/About.js';
 import News from './components/News.js';
 import Testimonials from './components/Testimonials.js';
 import Partners from './components/Partners.js';
+import BecomeAgentSection from './components/BecomeAgentSection.js'; // Import the new section component
+import FAQ from './components/FAQ/FAQ.js';
 
 const Accueil = () => {
     const [productQuery, setProductQuery] = useState('');
@@ -21,9 +23,16 @@ const Accueil = () => {
     const [result, setResult] = useState(null);
     const [showScanner, setShowScanner] = useState(false);
     const [products, setProducts] = useState([]);
+    const [isAuthenticated, setIsAuthenticated] = useState(false); // State for authentication
     const scannerRef = useRef(null);
 
     useEffect(() => {
+        // Check for auth token on mount
+        const token = localStorage.getItem('token');
+        if (token) {
+            setIsAuthenticated(true);
+        }
+
         const fetchLocalProducts = async () => {
             try {
                 const response = await fetch('/api/local-products'); // Assuming this endpoint
@@ -31,7 +40,7 @@ const Accueil = () => {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                setProducts(data);
+                setProducts(data.products);
             } catch (error) {
                 console.error("Error fetching local products:", error);
                 toast.error("Erreur lors du chargement des produits locaux.");
@@ -285,13 +294,15 @@ const Accueil = () => {
                 <p style={{textAlign:'center', marginBottom: '20px'}}>Soutenons l\'économie guinéenne en consommant des produits du terroir, sûrs et de qualité.</p>
                 <div className="local-products-grid">
                     {products.slice(-6).map(product => (
-                        <ProductCard key={product.id} product={product} />
+                        <ProductCard key={product._id} product={product} />
                     ))}
                 </div>
             </section>
 
+            {isAuthenticated && <BecomeAgentSection />}
             <Partners />
             <About />
+            <FAQ />
         </>
     );
 };

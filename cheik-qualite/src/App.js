@@ -4,6 +4,7 @@ import Layout from './components/Layout/Layout.js';
 import Accueil from './pages/Accueil/index.js';
 import ConseilSante from './pages/ConseilSante/index.js';
 import Admin from './pages/Admin/index.js';
+// import AgentDashboard from './pages/AgentDashboard/index.js'; // Import AgentDashboard
 import ProduitsLocaux from './pages/ProduitsLocaux/index.js';
 import Notifications from './pages/Notifications/index.js';
 import Profil from './pages/Profil/index.js';
@@ -13,9 +14,10 @@ import AuthPage from './components/Login/AuthPage.js';
 import VerificationProduit from './pages/VerificationProduit/index.js';
 import RechercheAvancee from './pages/RechercheAvancee/index.js';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute.js';
-import SoumissionCertificat from './pages/SoumissionCertificat/index.js'; // Import the new page
-import Unauthorized from './pages/Unauthorized/index.js'; // Import the new Unauthorized page
+import SoumissionCertificat from './pages/SoumissionCertificat/index.js';
+import Unauthorized from './pages/Unauthorized/index.js';
 import Contact from './pages/Contact/index.js';
+import DevenirAgentPage from './pages/DevenirAgent/index.js';
 import Chatbot from './components/Chatbot/Chatbot.js';
 
 function App() {
@@ -23,16 +25,18 @@ function App() {
     <Router>
       <Layout>
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Accueil />} />
           <Route path="/conseils" element={<ConseilSante />} />
           <Route path="/produits-locaux" element={<ProduitsLocaux />} />
           <Route path="/a-propos" element={<Propos />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<AuthPage />} />
-          <Route path="/unauthorized" element={<Unauthorized />} /> {/* Unauthorized page */}
+          <Route path="/devenir-agent" element={<DevenirAgentPage />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
 
-          {/* Protected routes */}
-          <Route element={<PrivateRoute />}>
+          {/* Protected Routes for Standard Users */}
+          <Route element={<PrivateRoute allowedRoles={['user', 'admin', 'agent']} />}>
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/profil" element={<Profil />} />
             <Route path="/soumission" element={<Soumission />} />
@@ -40,10 +44,15 @@ function App() {
             <Route path="/recherche-avancee" element={<RechercheAvancee />} />
           </Route>
 
-          {/* Admin protected routes */}
+          {/* Protected Route for Agents
+          <Route element={<PrivateRoute allowedRoles={['agent']} />}>
+            <Route path="/agent/dashboard" element={<AgentDashboard />} />
+          </Route> */}
+
+          {/* Protected Route for Admins */}
           <Route element={<PrivateRoute allowedRoles={['admin']} />}>
             <Route path="/admin" element={<Admin />} />
-            <Route path="/soumission-certificat" element={<SoumissionCertificat />} /> {/* New admin page */}
+            <Route path="/soumission-certificat" element={<SoumissionCertificat />} />
           </Route>
         </Routes>
         <Chatbot />

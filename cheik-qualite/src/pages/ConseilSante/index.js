@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './ConseilSante.css';
 import AlimentsTab from './components/AlimentsTab.js';
 import MagazinesTab from './components/MagazinesTab.js';
-import VendeursTab from './components/VendeursTab.js';
+
 
 
 const ConseilSante = () => {
@@ -92,7 +92,7 @@ const ConseilSante = () => {
 
             {activeTab === 'aliments' && <AlimentsTab getStatus={getStatus} />}
             {activeTab === 'magazines' && <MagazinesTab />}
-            {activeTab === 'vendeurs' && <VendeursTab />}
+            
 
             <div className="footer-note">
                 <p><i className="fas fa-info-circle"></i> Ces conseils ne remplacent pas une consultation médicale. Consultez toujours un professionnel de santé pour des recommandations personnalisées.</p>

@@ -56,3 +56,12 @@
         margin-top: 30px;
     }
 }
+
+@media (max-width: 400px) {
+    .learn-more-btn {
+        display: block;
+        width: 70%;
+        margin: 20px auto 0;
+        text-align: center;
+    }
+}

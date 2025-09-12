@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios'; // Import axios for making HTTP requests
+import api from '../../../api.js'; // Import the centralized API instance
 
 const SoumissionProduitLocal = ({ onProductAdded }) => {
     const [formData, setFormData] = useState({
@@ -70,7 +70,7 @@ const SoumissionProduitLocal = ({ onProductAdded }) => {
                 return;
             }
 
-            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/local-products-submission`, dataToSend, {
+            const response = await api.post('/api/local-products-submission', dataToSend, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`

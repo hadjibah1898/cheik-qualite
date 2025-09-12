@@ -1,0 +1,74 @@
+.devenir-agent-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    background-color: #f4f7f6;
+}
+
+.devenir-agent-card {
+    background-color: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+}
+
+.devenir-agent-card h2 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.devenir-agent-card p {
+    color: #7f8c8d;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.devenir-agent-form .form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.devenir-agent-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #34495e;
+}
+
+.devenir-agent-form input,
+.devenir-agent-form select,
+.devenir-agent-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #bdc3c7;
+    border-radius: 5px;
+    font-size: 1em;
+    transition: border-color 0.3s;
+}
+
+.devenir-agent-form input:focus,
+.devenir-agent-form select:focus,
+.devenir-agent-form textarea:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+.submit-application-btn {
+    background-color: #3498db;
+    color: white;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+.submit-application-btn:hover {
+    background-color: #2980b9;
+}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios'; // Import axios for making HTTP requests
+import api from '../../../api.js'; // Import the centralized API instance
 
 const SoumissionProduit = () => {
     const [formData, setFormData] = useState({
@@ -50,7 +50,7 @@ const SoumissionProduit = () => {
                 return;
             }
 
-            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/products`, formData, {
+            const response = await api.post('/api/products', data, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${token}`

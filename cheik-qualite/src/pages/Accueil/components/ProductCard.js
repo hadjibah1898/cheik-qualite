@@ -36,7 +36,7 @@ const ProductCard = ({ product }) => {
                 <h3>{product.name}</h3>
                 <p>{product.description}</p>
                 <span className="product-badge">{product.badge}</span>
-                <button className="contact-btn" onClick={handleContact}><i className="fas fa-phone"></i> Contacter</button>
+                {product.contact && <button className="contact-btn" onClick={handleContact}><i className="fas fa-phone"></i> Contacter</button>}
             </div>
         </div>
     );

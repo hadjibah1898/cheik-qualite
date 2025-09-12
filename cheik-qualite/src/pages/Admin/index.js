@@ -5,10 +5,11 @@ import AddDieteticianForm from './components/AddDieteticianForm.js'; // Import t
 import SoumissionCertificat from './components/SoumissionCertificat.js';
 import SoumissionProduit from './components/SoumissionProduit.js'; // Import the new component
 import SoumissionProduitLocal from './components/SoumissionProduitLocal.js'; // Import the new component
+import GestionAgents from './components/GestionAgents.js'; // Import the new component for agent management
 import { toast } from 'react-toastify';
 
 const Admin = () => {
-    const [activeView, setActiveView] = useState('dashboard'); // 'dashboard', 'alerts', 'magazines', 'certificates', 'products'
+    const [activeView, setActiveView] = useState('dashboard'); // 'dashboard', 'alerts', 'magazines', 'certificates', 'products', 'agents'
 
     const [products, setProducts] = useState([
         { id: 1, name: "Huile de palmiste", vendor: "Producteur Mamadou", submissionDate: "2023-10-25", status: "pending" },
@@ -345,6 +346,8 @@ const Admin = () => {
                         )}
                     </div>
                 );
+            case 'agents':
+                return <GestionAgents />;
             default:
                 return <h2>Dashboard</h2>;
         }
@@ -367,6 +370,7 @@ const Admin = () => {
                     <li><button type="button" className={`sidebar-item ${activeView === 'certificates' ? 'active' : ''}`} onClick={() => setActiveView('certificates')}>Soumettre un certificat</button></li>
                     <li><button type="button" className={`sidebar-item ${activeView === 'localProducts' ? 'active' : ''}`} onClick={() => setActiveView('localProducts')}>Soumettre un produit local</button></li>
                     <li><button type="button" className={`sidebar-item ${activeView === 'viewLocalProducts' ? 'active' : ''}`} onClick={() => setActiveView('viewLocalProducts')}>Voir les produits locaux</button></li>
+                    <li><button type="button" className={`sidebar-item ${activeView === 'agents' ? 'active' : ''}`} onClick={() => setActiveView('agents')}>Gérer les agents</button></li>
                 </ul>
             </nav>
 

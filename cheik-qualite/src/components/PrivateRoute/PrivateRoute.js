@@ -10,8 +10,12 @@ const PrivateRoute = ({ allowedRoles }) => {
   if (token) {
     try {
       const decodedToken = jwtDecode(token);
-      isAuthenticated = true;
-      userRole = decodedToken.role; // Assuming the role is stored in the token payload
+      if (decodedToken.exp * 1000 < Date.now()) {
+        localStorage.removeItem('token');
+      } else {
+        isAuthenticated = true;
+        userRole = decodedToken.role; // Assuming the role is stored in the token payload
+      }
     } catch (error) {
       console.error("Error decoding token:", error);
       // Token is invalid, treat as unauthenticated

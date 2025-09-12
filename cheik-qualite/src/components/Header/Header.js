@@ -56,7 +56,7 @@ const Header = () => {
         fetchAlerts();
 
         // Optional: Poll for new alerts every X seconds
-        const alertInterval = setInterval(fetchAlerts, 30000); // Fetch every 30 seconds
+        const alertInterval = setInterval(fetchAlerts, 60000); // Fetch every 60 seconds
         return () => clearInterval(alertInterval);
     }, []); // Empty dependency array to run once on mount
 

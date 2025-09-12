@@ -1,0 +1,40 @@
+.become-agent-section {
+    padding: 60px 20px;
+    background-color: #eaf2f8; /* A light blue, calming background */
+    text-align: center;
+}
+
+.become-agent-section .container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.become-agent-section h2 {
+    font-size: 2.5em;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.become-agent-section p {
+    font-size: 1.1em;
+    color: #34495e;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.cta-button {
+    display: inline-block;
+    background-color: #3498db;
+    color: white;
+    padding: 15px 30px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 1.2em;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.cta-button:hover {
+    background-color: #2980b9;
+    transform: translateY(-3px);
+}

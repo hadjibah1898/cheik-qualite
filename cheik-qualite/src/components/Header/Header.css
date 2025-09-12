@@ -230,11 +230,15 @@ header p {
     .logo-text {
         font-size: 1.5rem; /* Smaller font size for logo */
         margin-bottom: 0;
-        text-align: left;
+        /* text-align: left; */ /* Removed to allow centering */
     }
 
     header p {
        display: none; /* Hide tagline on mobile */
+    }
+
+    .guinea-flag { /* Added to hide the flag on small screens */
+        display: none;
     }
 
     .header-nav {
@@ -284,7 +288,7 @@ header p {
 
     .header-top-right {
         position: static; /* Remove absolute positioning */
-        order: 2; /* Order for flexbox */
+        order: 4; /* Order for flexbox - moved to the right */
         gap: 15px;
     }
     
@@ -292,6 +296,21 @@ header p {
       order: 3;
       flex-grow: 1;
       text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-text {
+        font-size: 1.3rem;
+    }
+
+    .header-top-right {
+        gap: 10px;
+    }
+
+    .notification-icon,
+    .profile-icon-btn {
+        font-size: 1.1rem;
     }
 }
 

@@ -9,6 +9,7 @@ import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import multer from 'multer';
 import fetch from 'node-fetch';
+import { check, validationResult } from 'express-validator';
 
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -137,29 +138,7 @@ app.get('/', (req, res) => {
 });
 
 // Auth Routes
-app.post('/api/auth/register', authLimiter, async (req, res) => {
-  try {
-    const { username, password } = req.body;
-
-    if (!username || !password) {
-      return res.status(400).json({ message: 'Nom d\'utilisateur et mot de passe requis.' });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const usersCollection = db.collection('users');
-
-    const existingUser = await usersCollection.findOne({ username });
-    if (existingUser) {
-      return res.status(409).json({ message: 'Nom d\'utilisateur déjà pris.' });
-    }
-
-    await usersCollection.insertOne({ username, password: hashedPassword, role: 'user' });
-    res.status(201).json({ message: 'Utilisateur enregistré avec succès.' });
-  } catch (error) {
-    console.error('Erreur lors de l\'enregistrement de l\'utilisateur:', error);
-    res.status(500).json({ message: 'Erreur serveur' });
-  }
-});
+app.post('/api/auth/register', authLimiter, [check('username').isLength({ min: 3 }).withMessage('Le nom d\'utilisateur doit contenir au moins 3 caractères.'), check('password').isLength({ min: 6 }).withMessage('Le mot de passe doit contenir au moins 6 caractères.')], async (req, res) => { const errors = validationResult(req); if (!errors.isEmpty()) { return res.status(400).json({ errors: errors.array() }); } try { const { username, password } = req.body; const hashedPassword = await bcrypt.hash(password, 10); const usersCollection = db.collection('users'); const existingUser = await usersCollection.findOne({ username }); if (existingUser) { return res.status(409).json({ message: 'Nom d\'utilisateur déjà pris.' }); } await usersCollection.insertOne({ username, password: hashedPassword, role: 'user' }); res.status(201).json({ message: 'Utilisateur enregistré avec succès.' }); } catch (error) { console.error('Erreur lors de l\'enregistrement de l\'utilisateur:', error); res.status(500).json({ message: 'Erreur serveur' }); } });
 
 app.post('/api/auth/login', authLimiter, async (req, res) => {
   try {
@@ -682,8 +661,18 @@ app.get('/api/chatbot-knowledge', async (req, res) => {
 
 app.get('/api/local-products', async (req, res) => {
   try {
-    const localProducts = await db.collection('local_products').find({}).toArray();
-    res.json(localProducts);
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const skip = (page - 1) * limit;
+
+    const localProducts = await db.collection('local_products').find({}).skip(skip).limit(limit).toArray();
+    const totalProducts = await db.collection('local_products').countDocuments();
+
+    res.json({
+      products: localProducts,
+      totalPages: Math.ceil(totalProducts / limit),
+      currentPage: page,
+    });
   } catch (error) {
     console.error('Erreur lors de la récupération des produits locaux:', error);
     res.status(500).json({ message: 'Erreur serveur' });
@@ -821,6 +810,204 @@ app.post('/api/contact', async (req, res) => {
   } catch (error) {
     console.error('Erreur lors de l\'envoi de l\'e-mail:', error);
     res.status(500).json({ message: 'Erreur lors de l\'envoi de l\'e-mail.' });
-  }
+  } 
 });
 
+// // ┌───────────────────────────────────────────┐
+// // │ --- ROUTE POUR LES CANDIDATURES D'AGENT --- │
+// // └───────────────────────────────────────────┘
+
+// // Utiliser le même limiteur que pour l'authentification pour éviter le spam
+// app.post('/api/agent-applications', authLimiter, async (req, res) => {
+//   try {
+//     const { fullName, email, phone, region, motivation } = req.body;
+
+//     if (!fullName || !email || !phone || !region || !motivation) {
+//       return res.status(400).json({ message: "Tous les champs du formulaire sont requis." });
+//     }
+
+//     // Optionnel : Vérifier si une candidature avec cet email existe déjà
+//     const existingApplication = await db.collection('agent_applications').findOne({ email });
+//     if (existingApplication) {
+//       return res.status(409).json({ message: "Vous avez déjà soumis une candidature. Nous l'examinons." });
+//     }
+
+//     const newApplication = {
+//       fullName,
+//       email,
+//       phone,
+//       region,
+//       motivation,
+//       status: 'pending', // Statut par défaut
+//       submittedAt: new Date(),
+//     };
+
+//     await db.collection('agent_applications').insertOne(newApplication);
+//     res.status(201).json({ message: "Candidature soumise avec succès !" });
+
+//   } catch (error) {
+//     console.error("Erreur lors de la soumission de la candidature d'agent:", error);
+//     res.status(500).json({ message: "Erreur serveur" });
+//   }
+// });
+
+// // Vous aurez aussi besoin d'une route pour que les admins puissent voir ces candidatures
+// app.get('/api/agent-applications', authenticateToken, authorizeAdmin, async (req, res) => {
+//     try {
+//         const applications = await db.collection('agent_applications').find({}).sort({ submittedAt: -1 }).toArray();
+//         res.json(applications);
+//     } catch (error) {
+//         console.error("Erreur lors de la récupération des candidatures d'agents:", error);
+//         res.status(500).json({ message: "Erreur serveur" });
+//     }
+// });
+
+// // Et une route pour approuver/rejeter les candidatures
+// app.put('/api/agent-applications/:id', authenticateToken, authorizeAdmin, async (req, res) => {
+//     try {
+//         const applicationId = req.params.id;
+//         const { status } = req.body; // 'approved' or 'rejected'
+
+//         if (!['approved', 'rejected'].includes(status)) {
+//             return res.status(400).json({ message: "Statut invalide." });
+//         }
+
+//         const result = await db.collection('agent_applications').updateOne(
+//             { _id: new ObjectId(applicationId) },
+//             { $set: { status: status } }
+//         );
+
+//         if (result.matchedCount === 0) {
+//             return res.status(404).json({ message: "Candidature non trouvée." });
+//         }
+
+//         // Si la candidature est approuvée, créez un compte agent
+//         if (status === 'approved') {
+//             const application = await db.collection('agent_applications').findOne({ _id: new ObjectId(applicationId) });
+            
+//             const { fullName, email, region } = application;
+//             const randomPassword = Math.random().toString(36).slice(-8); // Générer un mot de passe aléatoire
+//             const hashedPassword = await bcrypt.hash(randomPassword, 10);
+
+//             // Vérifier si l'utilisateur existe déjà dans la collection 'users' ou 'agents'
+//             const existingUser = await db.collection('agents').findOne({ email });
+//             if (!existingUser) {
+//                 await db.collection('agents').insertOne({
+//                     name: fullName,
+//                     email,
+//                     password: hashedPassword,
+//                     region,
+//                     status: 'Actif',
+//                     role: 'agent',
+//                     createdAt: new Date(),
+//                 });
+                
+//                 // Ici, vous pourriez envoyer un email à l'agent avec son mot de passe
+//                 console.log(`Agent ${fullName} créé avec le mot de passe : ${randomPassword}`);
+//             }
+//         }
+
+//         res.json({ message: `Candidature ${status === 'approved' ? 'approuvée' : 'rejetée'} avec succès.` });
+
+//     } catch (error) {
+//         console.error("Erreur lors du traitement de la candidature:", error);
+//         res.status(500).json({ message: "Erreur serveur" });
+//     }
+// });
+
+// // ┌───────────────────────────────────────────┐
+// // │ --- ROUTES POUR LA GESTION DIRECTE DES AGENTS --- │
+// // └───────────────────────────────────────────┘
+
+// // GET all agents
+// app.get('/api/agents', authenticateToken, authorizeAdmin, async (req, res) => {
+//     try {
+//         const agents = await db.collection('agents').find({}).project({ password: 0 }).toArray(); // Exclude password
+//         res.json(agents);
+//     } catch (error) {
+//         console.error("Erreur lors de la récupération des agents:", error);
+//         res.status(500).json({ message: "Erreur serveur" });
+//     }
+// });
+
+// // POST create a new agent
+// app.post('/api/agents', authenticateToken, authorizeAdmin, async (req, res) => {
+//     try {
+//         const { name, email, password, region, status } = req.body;
+
+//         if (!name || !email || !password || !region) {
+//             return res.status(400).json({ message: "Nom, email, mot de passe et région sont requis." });
+//         }
+
+//         const existingAgent = await db.collection('agents').findOne({ email });
+//         if (existingAgent) {
+//             return res.status(409).json({ message: "Un agent avec cet email existe déjà." });
+//         }
+
+//         const hashedPassword = await bcrypt.hash(password, 10);
+
+//         const newAgent = {
+//             name,
+//             email,
+//             password: hashedPassword,
+//             region,
+//             status: status || 'Actif', // Default to 'Actif' if not provided
+//             role: 'agent', // Agents always have 'agent' role
+//             createdAt: new Date(),
+//         };
+
+//         await db.collection('agents').insertOne(newAgent);
+//         res.status(201).json({ message: "Agent créé avec succès !", agent: { name: newAgent.name, email: newAgent.email, region: newAgent.region, status: newAgent.status } });
+
+//     } catch (error) {
+//         console.error("Erreur lors de la création de l'agent:", error);
+//         res.status(500).json({ message: "Erreur serveur" });
+//     }
+// });
+
+// // PUT update an agent
+// app.put('/api/agents/:id', authenticateToken, authorizeAdmin, async (req, res) => {
+//     try {
+//         const agentId = req.params.id;
+//         const { name, email, password, region, status } = req.body;
+//         const updateData = { name, email, region, status };
+
+//         if (password) {
+//             updateData.password = await bcrypt.hash(password, 10);
+//         }
+
+//         const result = await db.collection('agents').updateOne(
+//             { _id: new ObjectId(agentId) },
+//             { $set: updateData }
+//         );
+
+//         if (result.matchedCount === 0) {
+//             return res.status(404).json({ message: "Agent non trouvé." });
+//         }
+
+//         res.json({ message: "Agent mis à jour avec succès !" });
+
+//     } catch (error) {
+//         console.error("Erreur lors de la mise à jour de l'agent:", error);
+//         res.status(500).json({ message: "Erreur serveur" });
+//     }
+// });
+
+// // DELETE an agent
+// app.delete('/api/agents/:id', authenticateToken, authorizeAdmin, async (req, res) => {
+//     try {
+//         const agentId = req.params.id;
+
+//         const result = await db.collection('agents').deleteOne({ _id: new ObjectId(agentId) });
+
+//         if (result.deletedCount === 0) {
+//             return res.status(404).json({ message: "Agent non trouvé." });
+//         }
+
+//         res.json({ message: "Agent supprimé avec succès !" });
+
+//     } catch (error) {
+//         console.error("Erreur lors de la suppression de l'agent:", error);
+//         res.status(500).json({ message: "Erreur serveur" });
+//     }
+// });
