@@ -172,6 +172,9 @@ const ProduitsLocaux = () => {
                                     <p className="product-category">{product.category}</p>
                                     <p className="product-description">{product.description}</p>
                                     {product.badge && <span className="product-badge">{product.badge}</span>}
+                                    {product.producer && product.producer.phone && (
+                                        <button className="contact-btn" onClick={() => handleContact(product.producer)}><i className="fas fa-phone"></i> Contacter le producteur</button>
+                                    )}
                                 </div>
                             </div>
                         ))

@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from './AuthPage.module.css'; // Updated CSS import
+import styles from './AuthPage.module.css';
 import { FaFacebookF, FaGoogle, FaTwitter, FaUser, FaLock, FaEye, FaEyeSlash, FaEnvelope, FaPhone } from 'react-icons/fa';
-import { jwtDecode } from 'jwt-decode'; // Correct and safe way to decode JWTs
+import { AuthContext } from '../../context/AuthContext.js'; // Correct path to context
 
 const AuthPage = () => {
   const [username, setUsername] = useState('');
@@ -16,27 +16,21 @@ const AuthPage = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
+  const { login, user } = useContext(AuthContext);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const decodedToken = jwtDecode(token);
-        const userRole = decodedToken.role || 'user';
-        // Redirect based on role if already logged in
-        if (userRole === 'admin') {
-          navigate('/admin');
-        } else if (userRole === 'agent') {
-          navigate('/agent/dashboard');
-        } else {
-          navigate('/profil');
-        }
-      } catch (error) {
-        console.error("Error decoding token on AuthPage load:", error);
-        localStorage.removeItem('token'); // Clear invalid token
+    // Redirect if user is already logged in (user object exists in context)
+    if (user) {
+      const userRole = user.role || 'user';
+      if (userRole === 'admin') {
+        navigate('/admin');
+      } else if (userRole === 'agent') {
+        navigate('/agent/dashboard');
+      } else {
+        navigate('/profil');
       }
     }
-  }, [navigate]);
+  }, [user, navigate]);
 
   const togglePasswordVisiblityLogin = () => setPasswordShownLogin(!passwordShownLogin);
   const togglePasswordVisiblityRegister = () => setPasswordShownRegister(!passwordShownRegister);
@@ -58,19 +52,7 @@ const AuthPage = () => {
       }
 
       const { token } = await response.json();
-      localStorage.setItem('token', token);
-      
-      const decodedToken = jwtDecode(token);
-      const userRole = decodedToken.role || 'user';
-
-      // Redirect based on role
-      if (userRole === 'admin') {
-        navigate('/admin');
-      } else if (userRole === 'agent') {
-        navigate('/agent/dashboard'); // Corrected route
-      } else {
-        navigate('/profil'); // Redirect standard users to their profile
-      }
+      login(token); // Use the login function from context
 
     } catch (err) {
       setError(err.message);
@@ -88,7 +70,7 @@ const AuthPage = () => {
     }
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/register`, {
+      const response = await fetch('http://localhost:5000/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password, email, phoneNumber }),
@@ -98,10 +80,18 @@ const AuthPage = () => {
         const data = await response.json();
         throw new Error(data.message || 'Échec de l’inscription');
       }
+      
+      // On successful registration, switch to login view with a success message
+      setSuccessMessage('Inscription réussie ! Vous pouvez maintenant vous connecter.');
+      setIsLogin(true);
+      setError('');
+      // Clear registration form fields
+      setUsername('');
+      setPassword('');
+      setConfirmPassword('');
+      setEmail('');
+      setPhoneNumber('');
 
-      const { token } = await response.json(); // Assuming backend returns token on registration
-      localStorage.setItem('token', token);
-      window.location.href = '/profil'; // Redirect to profile page
     } catch (err) {
       setError(err.message);
     }
@@ -117,7 +107,7 @@ const AuthPage = () => {
         <div className={styles.left}>
           <h2>{isLogin ? 'Bienvenue !' : 'Rejoignez-nous !'}</h2>
           <p>{isLogin ? 'Connectez-vous pour accéder à votre espace.' : 'Créez un compte pour profiter de nos services.'}</p>
-          <button className={styles.switchBtn} onClick={() => setIsLogin(!isLogin)}>
+          <button className={styles.switchBtn} onClick={() => { setIsLogin(!isLogin); setError(''); setSuccessMessage(''); }}>
             {isLogin ? 'Créer un compte' : 'J’ai déjà un compte'}
           </button>
         </div>
@@ -169,9 +159,9 @@ const AuthPage = () => {
 
           <div className={styles.divider}>OU</div>
           <div className={styles.socials}>
-            <a onClick={() => handleSocialLogin('Facebook')}><FaFacebookF /></a>
-            <a onClick={() => handleSocialLogin('Google')}><FaGoogle /></a>
-            <a onClick={() => handleSocialLogin('Twitter')}><FaTwitter /></a>
+            <button onClick={() => handleSocialLogin('Facebook')}><FaFacebookF /></button>
+            <button onClick={() => handleSocialLogin('Google')}><FaGoogle /></button>
+            <button onClick={() => handleSocialLogin('Twitter')}><FaTwitter /></button>
           </div>
         </div>
       </div>

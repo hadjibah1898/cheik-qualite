@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Admin.css';
-import AddMagazineForm from './components/AddMagazineForm.js';
-import AddDieteticianForm from './components/AddDieteticianForm.js'; // Import the new component
+
+import AddDieteticianForm from './components/AddDieteticianForm.js';
 import SoumissionCertificat from './components/SoumissionCertificat.js';
-import SoumissionProduit from './components/SoumissionProduit.js'; // Import the new component
-import SoumissionProduitLocal from './components/SoumissionProduitLocal.js'; // Import the new component
-import GestionAgents from './components/GestionAgents.js'; // Import the new component for agent management
+import SoumissionProduit from './components/SoumissionProduit.js';
+import SoumissionProduitLocal from './components/SoumissionProduitLocal.js';
+import GestionAgents from './components/GestionAgents.js';
+import GestionPermissions from './components/GestionPermissions.js'; // Import the new component
 import { toast } from 'react-toastify';
 
 const Admin = () => {
-    const [activeView, setActiveView] = useState('dashboard'); // 'dashboard', 'alerts', 'magazines', 'certificates', 'products', 'agents'
+    const [activeView, setActiveView] = useState('dashboard'); // 'dashboard', 'alerts', 'magazines', 'certificates', 'products', 'agents', 'permissions'
 
     const [products, setProducts] = useState([
         { id: 1, name: "Huile de palmiste", vendor: "Producteur Mamadou", submissionDate: "2023-10-25", status: "pending" },
@@ -25,23 +26,26 @@ const Admin = () => {
         certified: 42,
         users: 150
     });
-    const [alertsList, setAlertsList] = useState([]); // New state for alerts
-    const [localProductsList, setLocalProductsList] = useState([]); // New state for local products
-        const [, setUsers] = useState([]);
+    const [alertsList, setAlertsList] = useState([]);
+    const [localProductsList, setLocalProductsList] = useState([]);
+    const [users, setUsers] = useState([]);
+
+    const alertsFormRef = useRef(null);
 
     useEffect(() => {
         const pendingProducts = products.filter(p => p.status === 'pending').length;
         setStats(prevStats => ({...prevStats, pending: pendingProducts}));
     }, [products]);
 
-    // New useEffect for fetching alerts
     useEffect(() => {
         if (activeView === 'alerts') {
             fetchAlerts();
+            if (alertsFormRef.current) {
+                alertsFormRef.current.scrollIntoView({ behavior: 'smooth' });
+            }
         }
-    }, [activeView]);
+    }, [activeView, alertsFormRef]);
 
-    // New useEffect for fetching local products
     useEffect(() => {
         if (activeView === 'viewLocalProducts') {
             fetchLocalProducts();
@@ -141,13 +145,19 @@ const Admin = () => {
                 toast.success(data.message);
                 setAlertTitle('');
                 setAlertMessage('');
-                fetchAlerts(); // Refresh alerts after submission
+                fetchAlerts();
             } else {
                 toast.error(`Erreur: ${data.message || 'Quelque chose s\'est mal passé.'}`);
+            }
+            if (alertsFormRef.current) {
+                alertsFormRef.current.scrollIntoView({ behavior: 'smooth' });
             }
         } catch (error) {
             console.error('Erreur lors de la publication de l\'alerte:', error);
             toast.error('Erreur lors de la connexion au serveur.');
+            if (alertsFormRef.current) {
+                alertsFormRef.current.scrollIntoView({ behavior: 'smooth' });
+            }
         }
     };
 
@@ -163,7 +173,7 @@ const Admin = () => {
 
             if (response.ok) {
                 toast.success('Alerte supprimée avec succès.');
-                setAlertsList(alertsList.filter(alert => alert._id !== id)); // Optimistic update
+                setAlertsList(alertsList.filter(alert => alert._id !== id));
             } else {
                 const errorData = await response.json();
                 toast.error(`Erreur: ${errorData.message || 'Quelque chose s\'est mal passé lors de la suppression.'}`);
@@ -172,6 +182,38 @@ const Admin = () => {
             console.error('Erreur lors de la suppression de l\'alerte:', error);
             toast.error('Erreur de connexion au serveur lors de la suppression de l\'alerte.');
         }
+    };
+
+    const handleDeleteLocalProduct = async (id) => {
+        if (!window.confirm("Êtes-vous sûr de vouloir supprimer ce produit local ?")) {
+            return;
+        }
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`/api/local-products/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                toast.success('Produit local supprimé avec succès.');
+                setLocalProductsList(localProductsList.filter(product => product._id !== id));
+            } else {
+                const errorData = await response.json();
+                toast.error(`Erreur: ${errorData.message || 'Quelque chose s\'est mal passé lors de la suppression du produit local.'}`);
+            }
+        } catch (error) {
+            console.error('Erreur lors de la suppression du produit local:', error);
+            toast.error('Erreur de connexion au serveur lors de la suppression du produit local.');
+        }
+    };
+
+    const handleEditLocalProduct = (product) => {
+        // For now, just an alert. In a real app, this would open a modal or navigate to an edit form.
+        alert(`Modifier le produit local: ${product.name}`);
+        console.log("Edit product:", product);
     };
 
     const filteredProducts = products.filter(p => p.status === 'pending' && p.name.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -243,9 +285,8 @@ const Admin = () => {
                 );
             case 'alerts':
                 return (
-                    <div className="dashboard-section">
+                    <div className="dashboard-section" ref={alertsFormRef}>
                         <h3>Gérer les alertes ONCQ</h3>
-                        {/* Alert Submission Form */}
                         <form onSubmit={handleAlertSubmit}>
                             <div className="form-group">
                                 <label htmlFor="alert-title">Titre de l'alerte</label>
@@ -258,7 +299,6 @@ const Admin = () => {
                             <button type="submit" className="submit-btn">Publier l'alerte</button>
                         </form>
 
-                        {/* Existing Alerts Display */}
                         <h3 style={{ marginTop: '2rem' }}>Alertes existantes</h3>
                         {alertsList.length > 0 ? (
                             <div className="table-container">
@@ -294,7 +334,7 @@ const Admin = () => {
                 return (
                     <div className="dashboard-section">
                         <h3>Ajouter un Magazine Santé</h3>
-                        <AddMagazineForm />
+                        {/* <AddMagazineForm ref={magazineFormRef} /> */}
                     </div>
                 );
             case 'addDietitian':
@@ -324,6 +364,7 @@ const Admin = () => {
                                             <th>Description</th>
                                             <th>Date de Soumission</th>
                                             <th>Image</th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -335,6 +376,10 @@ const Admin = () => {
                                                 <td>{new Date(product.createdAt).toLocaleDateString()}</td>
                                                 <td>
                                                     {product.imageUrl && <img src={`${process.env.REACT_APP_BACKEND_URL}${product.imageUrl}`} alt={product.name} style={{ width: '50px', height: '50px', objectFit: 'cover' }} />}
+                                                </td>
+                                                <td>
+                                                    <button className="action-btn approve-btn" onClick={() => handleEditLocalProduct(product)}>Modifier</button>
+                                                    <button className="action-btn reject-btn" onClick={() => handleDeleteLocalProduct(product._id)}>Supprimer</button>
                                                 </td>
                                             </tr>
                                         ))}
@@ -348,6 +393,43 @@ const Admin = () => {
                 );
             case 'agents':
                 return <GestionAgents />;
+            case 'permissions':
+                return <GestionPermissions />;
+            case 'users':
+                return (
+                    <div className="dashboard-section">
+                        <h3>Utilisateurs Enregistrés</h3>
+                        {users.length > 0 ? (
+                            <div className="table-container">
+                                <table id="usersTable">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nom d'utilisateur</th>
+                                            <th>Rôle</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {users.map(user => (
+                                            <tr key={user._id}>
+                                                <td>{user._id}</td>
+                                                <td>{user.username}</td>
+                                                <td>{user.role}</td>
+                                                <td>
+                                                    {/* Add action buttons here, e.g., Edit, Delete, Change Role */}
+                                                    <button className="action-btn reject-btn" onClick={() => alert(`Supprimer l'utilisateur ${user.username}`)}>Supprimer</button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            <p style={{ textAlign: 'center', marginTop: '1rem' }}>Aucun utilisateur enregistré pour le moment.</p>
+                        )}
+                    </div>
+                );
             default:
                 return <h2>Dashboard</h2>;
         }
@@ -369,8 +451,10 @@ const Admin = () => {
                     <li><button type="button" className={`sidebar-item ${activeView === 'addDietitian' ? 'active' : ''}`} onClick={() => setActiveView('addDietitian')}>Ajouter un diététicien</button></li>
                     <li><button type="button" className={`sidebar-item ${activeView === 'certificates' ? 'active' : ''}`} onClick={() => setActiveView('certificates')}>Soumettre un certificat</button></li>
                     <li><button type="button" className={`sidebar-item ${activeView === 'localProducts' ? 'active' : ''}`} onClick={() => setActiveView('localProducts')}>Soumettre un produit local</button></li>
-                    <li><button type="button" className={`sidebar-item ${activeView === 'viewLocalProducts' ? 'active' : ''}`} onClick={() => setActiveView('viewLocalProducts')}>Voir les produits locaux</button></li>
+                    <li><button type="button" className={`sidebar-item ${activeView === 'viewLocalProducts' ? 'active' : ''}`} onClick={() => setActiveView('viewLocalProducts')}>Gérer les produits locaux</button></li>
                     <li><button type="button" className={`sidebar-item ${activeView === 'agents' ? 'active' : ''}`} onClick={() => setActiveView('agents')}>Gérer les agents</button></li>
+                    <li><button type="button" className={`sidebar-item ${activeView === 'permissions' ? 'active' : ''}`} onClick={() => setActiveView('permissions')}>Gérer les Permissions</button></li>
+                    <li><button type="button" className={`sidebar-item ${activeView === 'users' ? 'active' : ''}`} onClick={() => setActiveView('users')}>Gérer les Utilisateurs</button></li>
                 </ul>
             </nav>
 

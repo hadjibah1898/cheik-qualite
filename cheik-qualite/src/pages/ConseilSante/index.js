@@ -87,7 +87,7 @@ const ConseilSante = () => {
             <div className="nav-tabs">
                 <div className={`nav-tab ${activeTab === 'aliments' ? 'active' : ''}`} onClick={() => setActiveTab('aliments')}>Aliments</div>
                 <div className={`nav-tab ${activeTab === 'magazines' ? 'active' : ''}`} onClick={() => setActiveTab('magazines')}>Prendre rendez-vous</div>
-                <div className={`nav-tab ${activeTab === 'vendeurs' ? 'active' : ''}`} onClick={() => setActiveTab('vendeurs')}>Vendeurs Certifiés</div>
+               
             </div>
 
             {activeTab === 'aliments' && <AlimentsTab getStatus={getStatus} />}

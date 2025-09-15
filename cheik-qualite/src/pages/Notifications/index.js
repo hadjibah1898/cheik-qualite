@@ -1,19 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import './Notifications.css';
+import { AuthContext } from '../../context/AuthContext.js';
+import Modal from '../../components/Modal/Modal.js';
 
 const Notifications = () => {
     const [notifications, setNotifications] = useState([]);
     const [error, setError] = useState('');
     const [settings, setSettings] = useState({
-        email: true,
+        email: false,
         vocal: false,
         push: false
     });
+    const [showEmailModal, setShowEmailModal] = useState(false);
+    const [userEmail, setUserEmail] = useState('');
+    const { user, login } = useContext(AuthContext);
 
     useEffect(() => {
+        if (user && user.email) {
+            setUserEmail(user.email);
+        }
+        const token = localStorage.getItem('token');
+
         const fetchNotifications = async () => {
             try {
-                const response = await fetch('/api/alerts'); // Changed from /api/notifications
+                const response = await fetch('/api/alerts', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
                 if (!response.ok) {
                     throw new Error('Failed to fetch alerts');
                 }
@@ -23,12 +35,25 @@ const Notifications = () => {
                 setError(err.message);
             }
         };
-        fetchNotifications();
 
-        // Mark alerts as read when Notifications component is viewed
+        const fetchSettings = async () => {
+            try {
+                const response = await fetch('/api/settings', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setSettings(data);
+                } else {
+                    console.error('Failed to fetch settings');
+                }
+            } catch (err) {
+                console.error('Error fetching settings:', err);
+            }
+        };
+
         const markAlertsAsRead = async () => {
             try {
-                const token = localStorage.getItem('token');
                 const response = await fetch('/api/alerts/mark-as-read', {
                     method: 'POST',
                     headers: {
@@ -43,17 +68,95 @@ const Notifications = () => {
                 console.error('Error marking alerts as read:', err);
             }
         };
+
+        fetchNotifications();
+        fetchSettings();
         markAlertsAsRead();
 
-    }, []);
+    }, [user]);
 
-    const handleSettingChange = (e) => {
+    const updateSettingsOnServer = async (newSettings) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('/api/settings', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newSettings),
+            });
+
+            if (!response.ok) {
+                console.error('Failed to update settings');
+                // Revert on failure
+                setSettings(settings);
+            }
+        } catch (err) {
+            console.error('Error updating settings:', err);
+            setSettings(settings);
+        }
+    };
+
+    const handleSettingChange = async (e) => {
         const { id, checked } = e.target;
-        setSettings(prevSettings => ({ ...prevSettings, [id]: checked }));
+
+        if (id === 'email' && checked && (!user || !user.email)) {
+            setShowEmailModal(true);
+            return; // Stop processing until email is provided
+        }
+
+        const newSettings = { ...settings, [id]: checked };
+        setSettings(newSettings);
+        await updateSettingsOnServer(newSettings);
+    };
+
+    const handleEmailSubmit = async (e) => {
+        e.preventDefault();
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch('/api/user/profile', {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ...user, email: userEmail }),
+            });
+
+            if (response.ok) {
+                // Refresh user context by re-triggering login logic
+                login(token);
+                setShowEmailModal(false);
+                // Automatically enable and save the email setting
+                const newSettings = { ...settings, email: true };
+                setSettings(newSettings);
+                await updateSettingsOnServer(newSettings);
+            } else {
+                console.error('Failed to update email');
+            }
+        } catch (error) {
+            console.error('Error updating email', error);
+        }
     };
 
     return (
         <>
+            <Modal show={showEmailModal} onClose={() => setShowEmailModal(false)}>
+                <h4>Votre adresse e-mail est requise</h4>
+                <p>Veuillez fournir votre adresse e-mail pour recevoir des notifications.</p>
+                <form onSubmit={handleEmailSubmit} className="email-modal-form">
+                    <input
+                        type="email"
+                        value={userEmail}
+                        onChange={(e) => setUserEmail(e.target.value)}
+                        placeholder="votre.email@example.com"
+                        required
+                    />
+                    <button type="submit">Enregistrer</button>
+                </form>
+            </Modal>
+
             <section className="notification-section">
                 <h2><i className="fas fa-bell"></i> Votre Centre de Notifications</h2>
 

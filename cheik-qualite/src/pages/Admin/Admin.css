@@ -376,4 +376,95 @@ body {
     .main-content {
         padding: 1rem;
     }
+
+    /* Table specific adjustments for smaller screens */
+    #productTable thead th,
+    #productTable tbody td,
+    #alertsTable thead th,
+    #alertsTable tbody td,
+    #localProductsTable thead th,
+    #localProductsTable tbody td,
+    #usersTable thead th,
+    #usersTable tbody td {
+        padding: 0.75rem 0.5rem; /* Reduce padding */
+        font-size: 0.85rem; /* Slightly smaller font */
+    }
+
+    .action-btn {
+        padding: 6px 10px; /* Smaller buttons */
+        font-size: 0.8rem;
+        margin-right: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 0.8rem;
+    }
+
+    .user-info {
+        font-size: 0.9rem;
+    }
+
+    .sidebar ul {
+        gap: 5px;
+    }
+
+    .sidebar-item {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    .main-content {
+        padding: 0.8rem;
+    }
+
+    .stats-section {
+        gap: 10px;
+    }
+
+    .stat-card {
+        padding: 1rem;
+    }
+
+    .stat-title {
+        font-size: 0.9rem;
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+    }
+
+    .dashboard-section {
+        padding: 1rem;
+    }
+
+    .header-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    #searchInput {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .action-btn {
+        padding: 4px 8px;
+        font-size: 0.75rem;
+        margin-right: 3px;
+    }
+
+    /* Further reduce table cell padding for very small screens */
+    #productTable thead th,
+    #productTable tbody td,
+    #alertsTable thead th,
+    #alertsTable tbody td,
+    #localProductsTable thead th,
+    #localProductsTable tbody td,
+    #usersTable thead th,
+    #usersTable tbody td {
+        padding: 0.5rem 0.3rem;
+        font-size: 0.8rem;
+    }
 }

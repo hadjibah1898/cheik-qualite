@@ -53,6 +53,7 @@ const ContactModal = ({ producer, onClose }) => {
     <div className="modal-overlay">
       <div className="modal-content">
         <h2>Contacter {producer.name}</h2>
+        {producer.phone && <p>Téléphone: <a href={`tel:${producer.phone}`}>{producer.phone}</a></p>}
         <form onSubmit={handleSubmit}>
           <textarea
             placeholder="Votre message..."

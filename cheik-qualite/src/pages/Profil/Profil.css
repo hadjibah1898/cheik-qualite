@@ -176,7 +176,8 @@ header p { font-size: 1.2rem; max-width: 800px; margin: 0 auto; opacity: 0.9; }
 .info-group p,
 .info-group input[type="text"],
 .info-group input[type="email"],
-.info-group input[type="tel"] {
+.info-group input[type="tel"],
+.info-group input[type="password"] {
     font-size: 1.1rem;
     padding: 12px 15px;
     border: 1px solid #e0e0e0;
@@ -189,7 +190,8 @@ header p { font-size: 1.2rem; max-width: 800px; margin: 0 auto; opacity: 0.9; }
 
 .info-group input[type="text"]:focus,
 .info-group input[type="email"]:focus,
-.info-group input[type="tel"]:focus {
+.info-group input[type="tel"]:focus,
+.info-group input[type="password"]:focus {
     border-color: #3498db;
     box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.2);
     outline: none;
@@ -294,10 +296,9 @@ header p { font-size: 1.2rem; max-width: 800px; margin: 0 auto; opacity: 0.9; }
 }
 
 .edit-actions {
-    margin-top: 40px;
+    margin-top: 20px;
     display: flex;
     gap: 20px;
-    justify-content: center;
 }
 
 .edit-actions button {
@@ -331,6 +332,29 @@ header p { font-size: 1.2rem; max-width: 800px; margin: 0 auto; opacity: 0.9; }
     transform: translateY(-3px);
     box-shadow: 0 8px 20px rgba(231, 76, 60, 0.2);
 }
+
+.security-section {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid #eee;
+}
+
+.security-section h3 {
+    font-size: 2rem;
+    color: #e74c3c;
+    margin-bottom: 25px;
+    font-weight: 700;
+}
+
+.save-password-btn {
+    background: #e74c3c;
+    color: white;
+}
+
+.save-password-btn:hover {
+    background: #c0392b;
+}
+
 
 /* Footer (assuming this is a global footer, not specific to profile) */
 .site-footer {
@@ -409,4 +433,25 @@ header p { font-size: 1.2rem; max-width: 800px; margin: 0 auto; opacity: 0.9; }
     .social-icons {
         justify-content: center;
     }
+}
+
+.logout-btn-profile {
+    display: block;
+    width: 100%;
+    background-color: #e74c3c; /* Red color for logout */
+    color: white;
+    border: none;
+    padding: 14px 30px;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    font-size: 1.1rem;
+    margin-top: 30px; /* Add some spacing from other buttons */
+}
+
+.logout-btn-profile:hover {
+    background-color: #c0392b;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(231, 76, 60, 0.2);
 }

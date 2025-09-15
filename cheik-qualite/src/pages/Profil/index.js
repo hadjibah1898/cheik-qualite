@@ -1,59 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Profil.css';
+import { AuthContext } from '../../context/AuthContext.js';
+
+// Import des nouveaux sous-composants
+import PersonalInfoSection from './components/PersonalInfoSection.js';
+import HealthPreferencesSection from './components/HealthPreferencesSection.js';
+import SecuritySection from './components/SecuritySection.js';
 
 const predefinedHealthConditions = ["Diabétique", "Hypertendu", "Drépanocytaire", "Aucun"];
 
 const Profil = () => {
-    const [user, setUser] = useState({}); // Initialize as empty, data will be fetched
-    const [loading, setLoading] = useState(true);
+    const { user: contextUser, loading: userLoading } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    const [user, setUser] = useState({});
     const [editMode, setEditMode] = useState(false);
-    const [formData, setFormData] = useState({}); // To hold changes during editing
-    const [selectedFile, setSelectedFile] = useState(null); // For profile picture upload
-    const [message, setMessage] = useState(null); // For success/error messages
-    const [messageType, setMessageType] = useState(null); // 'success' or 'error'
+    const [formData, setFormData] = useState({});
+    const [passwordData, setPasswordData] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [message, setMessage] = useState(null);
+    const [messageType, setMessageType] = useState(null);
 
     useEffect(() => {
-        const fetchUserProfile = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    // Handle case where token is not found (e.g., redirect to login)
-                    setLoading(false);
-                    return;
-                }
-
-                const response = await fetch('http://localhost:5000/api/user/profile', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                    },
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to fetch user profile');
-                }
-
-                const data = await response.json();
-                setUser(data);
-                setFormData(data); // Initialize formData with fetched user data
-            } catch (error) {
-                console.error('Error fetching user profile:', error);
-                // Handle error (e.g., display error message to user)
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchUserProfile();
-    }, []); // Empty dependency array means this effect runs once on mount
+        if (contextUser) {
+            setUser(contextUser);
+            setFormData(contextUser);
+        }
+    }, [contextUser]);
 
     const handleEditToggle = () => {
         setEditMode(!editMode);
-        // If exiting edit mode, reset formData to current user data
         if (editMode) {
             setFormData(user);
-            setSelectedFile(null); // Clear selected file when exiting edit mode
-            setMessage(null); // Clear messages when exiting edit mode
-            setMessageType(null); // Clear message type
+            setSelectedFile(null);
+            setMessage(null);
+            setMessageType(null);
+            setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
         }
     };
 
@@ -62,16 +45,17 @@ const Profil = () => {
         setFormData({ ...formData, [name]: value });
     };
 
+    const handlePasswordInputChange = (e) => {
+        const { name, value } = e.target;
+        setPasswordData({ ...passwordData, [name]: value });
+    };
+
     const handleHealthConditionChange = (e) => {
         const { value, checked } = e.target;
         setFormData((prevFormData) => {
             const currentConditions = prevFormData.healthConditions || [];
             if (checked) {
-                // If "Aucun" is selected, deselect all others
-                if (value === "Aucun") {
-                    return { ...prevFormData, healthConditions: ["Aucun"] };
-                }
-                // If any other condition is selected, deselect "Aucun"
+                if (value === "Aucun") return { ...prevFormData, healthConditions: ["Aucun"] };
                 const newConditions = currentConditions.filter(c => c !== "Aucun");
                 return { ...prevFormData, healthConditions: [...newConditions, value] };
             } else {
@@ -84,179 +68,135 @@ const Profil = () => {
         setSelectedFile(e.target.files[0]);
     };
 
-    const handleSave = async () => {
-        setMessage(null); // Clear previous messages
-        setMessageType(null); // Clear previous message type
-
+    const handleInfoSave = async () => {
+        setMessage(null);
         try {
             const token = localStorage.getItem('token');
-            if (!token) {
-                setMessage("Vous n'êtes pas authentifié. Veuillez vous connecter.");
-                setMessageType('error');
-                return;
-            }
+            if (!token) throw new Error("Vous n'êtes pas authentifié.");
 
-            let profilePictureUrl = user.profilePictureUrl; // Start with existing URL
-
+            let profilePictureUrl = formData.profilePictureUrl;
             if (selectedFile) {
                 const formDataImage = new FormData();
                 formDataImage.append('profilePicture', selectedFile);
-
-                const uploadResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/user/upload-profile-picture`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                    },
-                    body: formDataImage
-                });
-
+                const uploadResponse = await fetch(`/api/user/upload-profile-picture`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: formDataImage });
                 if (!uploadResponse.ok) {
                     const errorData = await uploadResponse.json();
-                    throw new Error(errorData.message || "Échec du téléchargement de l'image de profil.");
+                    throw new Error(errorData.message || "Échec du téléchargement de l'image.");
                 }
-
                 const uploadData = await uploadResponse.json();
-                profilePictureUrl = uploadData.profilePictureUrl; // Get new URL from backend
+                profilePictureUrl = uploadData.profilePictureUrl;
             }
 
-            // Now save the rest of the profile data, including the (potentially new) profile picture URL
-            const response = await fetch('http://localhost:5000/api/user/profile', {
+            const response = await fetch(`/api/user/profile`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify({ ...formData, profilePictureUrl }),
             });
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.message || 'Échec de la mise à jour du profil utilisateur.');
+                throw new Error(errorData.message || 'Échec de la mise à jour du profil.');
             }
 
             const updatedUser = await response.json();
             setUser(updatedUser);
             setEditMode(false);
-            setSelectedFile(null); // Clear selected file after successful save
-            setMessage('Profil mis à jour avec succès !');
+            setSelectedFile(null);
+            setMessage('Informations mises à jour avec succès !');
             setMessageType('success');
         } catch (error) {
-            console.error('Error updating user profile:', error);
             setMessage(error.message || 'Une erreur inattendue est survenue.');
             setMessageType('error');
         }
     };
 
-    const handleCancel = () => {
-        setFormData(user); // Revert changes
-        setEditMode(false);
-        setSelectedFile(null); // Clear selected file on cancel
-        setMessage(null); // Clear messages on cancel
-        setMessageType(null); // Clear message type
+    const handlePasswordSave = async () => {
+        if (passwordData.newPassword !== passwordData.confirmPassword) {
+            setMessage("Le nouveau mot de passe et sa confirmation ne correspondent pas.");
+            setMessageType('error');
+            return;
+        }
+        if (!passwordData.currentPassword || !passwordData.newPassword) {
+            setMessage("Veuillez remplir tous les champs de mot de passe.");
+            setMessageType('error');
+            return;
+        }
+
+        setMessage(null);
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`http://localhost:5000/api/user/change-password`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify(passwordData),
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message);
+            
+            setMessage(data.message);
+            setMessageType('success');
+            setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+        } catch (error) {
+            setMessage(error.message);
+            setMessageType('error');
+        }
     };
 
-    if (loading) {
-        return (
-            <div className="profile-container loading">
-                <span className="loading-spinner"></span> Chargement du profil...
-            </div>
-        );
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        navigate('/');
+    };
+
+    if (userLoading) {
+        return <div className="profile-container loading"><span className="loading-spinner"></span> Chargement...</div>;
     }
 
     return (
-        <>
-            <div className="profile-container">
-                <div className="profile-header">
-                    <h2>Bonjour, {user.name ? user.name.split(' ')[0] : 'Utilisateur'}!</h2>
-                    <p>Votre tableau de bord personnel</p>
-                </div>
-                
-                {message && (
-                    <div className={`form-message ${messageType}`}>
-                        {messageType === 'success' && <i className="fas fa-check-circle"></i>}
-                        {messageType === 'error' && <i className="fas fa-exclamation-circle"></i>}
-                        {message}
-                    </div>
+        <div className="profile-container">
+            <div className="profile-header">
+                <h2>Bonjour, {user.name ? user.name.split(' ')[0] : 'Utilisateur'}!</h2>
+                <p>Gérez vos informations personnelles et vos préférences.</p>
+            </div>
+            
+            {message && <div className={`form-message ${messageType}`}>{message}</div>}
+
+            <PersonalInfoSection
+                user={user}
+                formData={formData}
+                editMode={editMode}
+                handleChange={handleChange}
+                handleFileChange={handleFileChange}
+                handleInfoSave={handleInfoSave}
+                selectedFile={selectedFile}
+                message={message}
+                messageType={messageType}
+            />
+
+            <HealthPreferencesSection
+                user={user}
+                formData={formData}
+                editMode={editMode}
+                handleHealthConditionChange={handleHealthConditionChange}
+                predefinedHealthConditions={predefinedHealthConditions}
+            />
+
+            <SecuritySection
+                editMode={editMode}
+                passwordData={passwordData}
+                handlePasswordInputChange={handlePasswordInputChange}
+                handlePasswordSave={handlePasswordSave}
+            />
+
+            <div className="profile-actions">
+                {!editMode ? (
+                    <button onClick={handleEditToggle} className="edit-btn"><i className="fas fa-edit"></i> Modifier le profil</button>
+                ) : (
+                    <button onClick={handleEditToggle} className="cancel-btn">Annuler les modifications</button>
                 )}
 
-                <div className="profile-card">
-                    <div className="profile-avatar">
-                        <img src={user.profilePictureUrl || "https://via.placeholder.com/150"} alt="Profil" />
-                        {editMode && (
-                            <label htmlFor="profile-picture-upload" className="file-upload-label">
-                                <i className="fas fa-camera"></i> Changer la photo
-                                <input type="file" id="profile-picture-upload" accept="image/*" onChange={handleFileChange} />
-                            </label>
-                        )}
-                    </div>
-                    
-                    <div className="profile-info">
-                        <h3>Informations de contact</h3>
-                        <div className="info-group">
-                            <label>Nom et Prénom</label>
-                            {editMode ? (
-                                <input type="text" name="name" value={formData.name || ''} onChange={handleChange} />
-                            ) : (
-                                <p>{user.name}</p>
-                            )}
-                        </div>
-                        <div className="info-group">
-                            <label>Email</label>
-                            {editMode ? (
-                                <input type="email" name="email" value={formData.email || ''} onChange={handleChange} />
-                            ) : (
-                                <p>{user.email}</p>
-                            )}
-                        </div>
-                        <div className="info-group">
-                            <label>Téléphone</label>
-                            {editMode ? (
-                                <input type="tel" name="phone" value={formData.phone || ''} onChange={handleChange} />
-                            ) : (
-                                <p>{user.phone}</p>
-                            )}
-                        </div>
-
-                        <div className="health-preferences">
-                            <h3>Préférences de santé</h3>
-                            {editMode ? (
-                                <div className="checkbox-group">
-                                    {predefinedHealthConditions.map((condition) => (
-                                        <label key={condition}>
-                                            <input
-                                                type="checkbox"
-                                                name="healthConditions"
-                                                value={condition}
-                                                checked={formData.healthConditions && formData.healthConditions.includes(condition)}
-                                                onChange={handleHealthConditionChange}
-                                            />
-                                            {condition}
-                                        </label>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="preference-list">
-                                    {user.healthConditions && user.healthConditions.map((condition, index) => (
-                                        <span key={index} className="preference-item">{condition}</span>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
-                        {editMode ? (
-                            <div className="edit-actions">
-                                <button onClick={handleSave} className="save-btn">Enregistrer</button>
-                                <button onClick={handleCancel} className="cancel-btn">Annuler</button>
-                            </div>
-                        ) : (
-                            <button onClick={handleEditToggle} className="edit-btn">
-                                <i className="fas fa-edit"></i> Modifier le profil
-                            </button>
-                        )}
-                    </div>
-                </div>
+                <button onClick={handleLogout} className="logout-btn-profile">Déconnexion</button>
             </div>
-        </>
+        </div>
     );
 };
 

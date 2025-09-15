@@ -196,6 +196,8 @@ header p {
     color: #e74c3c;
 }
 
+
+
 /* Blinking animation for notifications */
 @keyframes blink {
     0% { opacity: 1; }
@@ -297,6 +299,8 @@ header p {
       flex-grow: 1;
       text-align: center;
     }
+
+    
 }
 
 @media (max-width: 480px) {
@@ -314,17 +318,3 @@ header p {
     }
 }
 
-@media (max-width: 480px) {
-    .logo-text {
-        font-size: 1.3rem;
-    }
-
-    .header-top-right {
-        gap: 10px;
-    }
-
-    .notification-icon,
-    .profile-icon-btn {
-        font-size: 1.1rem;
-    }
-}

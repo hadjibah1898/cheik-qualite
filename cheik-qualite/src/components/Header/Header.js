@@ -133,6 +133,9 @@ const Header = () => {
                    {userRole === 'admin' && (
                         <li><NavLink to="/admin">Admin</NavLink></li>
                    )}
+                   {userRole === 'agent' && (
+                        <li><NavLink to="/agent/dashboard">Dashboard Agent</NavLink></li>
+                   )}
                 </ul>
             </nav>
         </header>

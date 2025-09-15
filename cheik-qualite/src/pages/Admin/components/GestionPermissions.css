@@ -1,0 +1,77 @@
+.gestion-permissions-container {
+    padding: 30px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.gestion-permissions-container h3 {
+    color: #343a40;
+    margin-bottom: 8px;
+    font-size: 1.75em;
+    font-weight: 600;
+}
+
+.gestion-permissions-container p {
+    color: #6c757d;
+    margin-bottom: 30px;
+    font-size: 1.1em;
+}
+
+.permissions-list {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.07);
+    margin-bottom: 20px;
+}
+
+.permission-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.permission-item:last-child {
+    border-bottom: none;
+}
+
+.permission-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+.permission-item label {
+    font-size: 1.1em;
+    color: #495057;
+    cursor: pointer;
+}
+
+.permission-item label code {
+    font-size: 0.9em;
+    color: #e83e8c;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    padding: 2px 6px;
+}
+
+.save-permissions-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+}
+
+.save-permissions-btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}

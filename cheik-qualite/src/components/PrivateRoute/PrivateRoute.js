@@ -1,38 +1,35 @@
-import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode'; // Correct import for jwt-decode
+import React, { useContext } from 'react';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthContext.js';
 
-const PrivateRoute = ({ allowedRoles }) => {
-  const token = localStorage.getItem('token');
-  let isAuthenticated = false;
-  let userRole = null;
+const PrivateRoute = () => {
+    const { user, permissions, loading } = useContext(AuthContext);
+    const location = useLocation();
 
-  if (token) {
-    try {
-      const decodedToken = jwtDecode(token);
-      if (decodedToken.exp * 1000 < Date.now()) {
-        localStorage.removeItem('token');
-      } else {
-        isAuthenticated = true;
-        userRole = decodedToken.role; // Assuming the role is stored in the token payload
-      }
-    } catch (error) {
-      console.error("Error decoding token:", error);
-      // Token is invalid, treat as unauthenticated
-      localStorage.removeItem('token');
+    if (loading) {
+        // While the context is loading user and permissions, show a loading indicator
+        // or a blank screen to prevent redirects before the state is known.
+        return <div>Chargement...</div>; // Or a spinner component
     }
-  }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
-  }
+    if (!user) {
+        // User is not logged in, redirect to login page
+        // Pass the current location so we can redirect back after login
+        return <Navigate to="/login" state={{ from: location }} replace />;
+    }
 
-  if (allowedRoles && !allowedRoles.includes(userRole)) {
-    // User is authenticated but does not have the required role
-    return <Navigate to="/unauthorized" />; // Redirect to an unauthorized page
-  }
+    // Admins have access to all routes
+    if (user.role === 'admin') {
+        return <Outlet />;
+    }
 
-  return <Outlet />;
+    // For other roles, check if the current path is in their list of allowed routes
+    if (permissions.includes(location.pathname)) {
+        return <Outlet />;
+    }
+
+    // If the user is logged in but doesn't have permission for the route
+    return <Navigate to="/unauthorized" state={{ from: location }} replace />;
 };
 
 export default PrivateRoute;
