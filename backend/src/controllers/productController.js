@@ -48,7 +48,7 @@ const createProduct = async (req, res) => {
 
 const createLocalProduct = async (req, res) => {
     try {
-        const { productName, description, category, productImage, region, barcode, certification } = req.body;
+        const { productName, description, category, productImage, region, barcode, certification, producer } = req.body;
         const db = getDB();
 
         if (!productName || !description || !category || !productImage) {
@@ -62,6 +62,7 @@ const createLocalProduct = async (req, res) => {
             region,
             barcode,
             certification,
+            producer: producer, // Ajout du champ producteur
             imageUrl: productImage,
             badge: 'Certifié ONCQ',
             createdAt: new Date(),
@@ -305,30 +306,10 @@ const getLocalProducts = async (req, res) => {
         const db = getDB();
 
         const localProductsCursor = db.collection('local_products').find({}).skip(skip).limit(limit);
-        const localProducts = [];
+        const localProducts = await localProductsCursor.toArray(); // Simplification de la boucle
 
-        for await (const product of localProductsCursor) {
-            if (product.producerId) {
-                try {
-                    if (ObjectId.isValid(product.producerId)) {
-                        const producer = await db.collection('producers').findOne({ _id: new ObjectId(product.producerId) });
-                        if (producer) {
-                            localProducts.push({ ...product, producer });
-                        } else {
-                            localProducts.push(product);
-                        }
-                    } else {
-                        console.warn(`Invalid producerId format for product ${product._id}: ${product.producerId}`);
-                        localProducts.push(product);
-                    }
-                } catch (producerError) {
-                    console.error(`Error fetching producer for product ${product._id}:`, producerError);
-                    localProducts.push(product);
-                }
-            } else {
-                localProducts.push(product);
-            }
-        }
+        // La logique de jointure complexe est supprimée pour correspondre à la structure de données actuelle.
+        // Le nom du producteur est déjà dans l'objet produit.
 
         const totalProducts = await db.collection('local_products').countDocuments();
 

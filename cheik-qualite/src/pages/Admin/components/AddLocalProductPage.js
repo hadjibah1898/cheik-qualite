@@ -19,7 +19,7 @@ const AddLocalProductPage = () => {
         }
 
         try {
-            await api.post('/api/local-products-submission', dataToSend, {
+                        await api.post('/api/local-products/submission', dataToSend, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
