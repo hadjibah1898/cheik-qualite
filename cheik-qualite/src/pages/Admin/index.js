@@ -4,7 +4,8 @@ import './Admin.css';
 import AddDieteticianForm from './components/AddDieteticianForm.js';
 import SoumissionCertificat from './components/SoumissionCertificat.js';
 import SoumissionProduit from './components/SoumissionProduit.js';
-import SoumissionProduitLocal from './components/SoumissionProduitLocal.js';
+import GestionProduitsLocaux from './components/GestionProduitsLocaux.js';
+
 import GestionAgents from './components/GestionAgents.js';
 import GestionPermissions from './components/GestionPermissions.js'; // Import the new component
 import { toast } from 'react-toastify';
@@ -348,49 +349,8 @@ const Admin = () => {
                 return <SoumissionCertificat />;
             case 'products':
                 return <SoumissionProduit />;
-            case 'localProducts':
-                return <SoumissionProduitLocal onProductAdded={fetchLocalProducts} />;
-            case 'viewLocalProducts':
-                return (
-                    <div className="dashboard-section">
-                        <h3>Produits Locaux Soumis</h3>
-                        {localProductsList.length > 0 ? (
-                            <div className="table-container">
-                                <table id="localProductsTable">
-                                    <thead>
-                                        <tr>
-                                            <th>Nom du Produit</th>
-                                            <th>Catégorie</th>
-                                            <th>Description</th>
-                                            <th>Date de Soumission</th>
-                                            <th>Image</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {localProductsList.map(product => (
-                                            <tr key={product._id}>
-                                                <td>{product.name}</td>
-                                                <td>{product.category}</td>
-                                                <td>{product.description}</td>
-                                                <td>{new Date(product.createdAt).toLocaleDateString()}</td>
-                                                <td>
-                                                    {product.imageUrl && <img src={`${process.env.REACT_APP_BACKEND_URL}${product.imageUrl}`} alt={product.name} style={{ width: '50px', height: '50px', objectFit: 'cover' }} />}
-                                                </td>
-                                                <td>
-                                                    <button className="action-btn approve-btn" onClick={() => handleEditLocalProduct(product)}>Modifier</button>
-                                                    <button className="action-btn reject-btn" onClick={() => handleDeleteLocalProduct(product._id)}>Supprimer</button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        ) : (
-                            <p style={{ textAlign: 'center', marginTop: '1rem' }}>Aucun produit local soumis pour le moment.</p>
-                        )}
-                    </div>
-                );
+            case 'gestionProduitsLocaux':
+                return <GestionProduitsLocaux />;
             case 'agents':
                 return <GestionAgents />;
             case 'permissions':
@@ -450,8 +410,7 @@ const Admin = () => {
                     <li><button type="button" className={`sidebar-item ${activeView === 'alerts' ? 'active' : ''}`} onClick={() => setActiveView('alerts')}>Gérer les alertes</button></li>
                     <li><button type="button" className={`sidebar-item ${activeView === 'addDietitian' ? 'active' : ''}`} onClick={() => setActiveView('addDietitian')}>Ajouter un diététicien</button></li>
                     <li><button type="button" className={`sidebar-item ${activeView === 'certificates' ? 'active' : ''}`} onClick={() => setActiveView('certificates')}>Soumettre un certificat</button></li>
-                    <li><button type="button" className={`sidebar-item ${activeView === 'localProducts' ? 'active' : ''}`} onClick={() => setActiveView('localProducts')}>Soumettre un produit local</button></li>
-                    <li><button type="button" className={`sidebar-item ${activeView === 'viewLocalProducts' ? 'active' : ''}`} onClick={() => setActiveView('viewLocalProducts')}>Gérer les produits locaux</button></li>
+                    <li><button type="button" className={`sidebar-item ${activeView === 'gestionProduitsLocaux' ? 'active' : ''}`} onClick={() => setActiveView('gestionProduitsLocaux')}>Gérer les produits locaux</button></li>
                     <li><button type="button" className={`sidebar-item ${activeView === 'agents' ? 'active' : ''}`} onClick={() => setActiveView('agents')}>Gérer les agents</button></li>
                     <li><button type="button" className={`sidebar-item ${activeView === 'permissions' ? 'active' : ''}`} onClick={() => setActiveView('permissions')}>Gérer les Permissions</button></li>
                     <li><button type="button" className={`sidebar-item ${activeView === 'users' ? 'active' : ''}`} onClick={() => setActiveView('users')}>Gérer les Utilisateurs</button></li>

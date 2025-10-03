@@ -381,6 +381,10 @@ body {
         font-size: 1.3rem;
     }
 
+    .email-form input {
+        width: 100%;
+    }
+
     .result-box {
         padding: 20px;
     }
@@ -392,6 +396,27 @@ body {
     .result-box .result-image {
         width: 140px;
         height: 140px;
+    }
+
+    .account-benefits-container {
+        padding: 20px;
+    }
+
+    .account-benefits-container h3 {
+        font-size: 1.3rem;
+    }
+
+    .account-benefits-container p {
+        font-size: 0.9rem;
+    }
+
+    .account-benefits-container li {
+        font-size: 0.85rem;
+    }
+
+    .account-benefits-container .link-button {
+        padding: 10px 20px;
+        font-size: 0.9rem;
     }
 }
 
@@ -485,3 +510,117 @@ body {
     }
 }
 
+/* New styles for account benefits section */
+.account-benefits-container {
+    flex: 1;
+    min-width: 300px;
+    padding: 30px;
+    background: #e9f5ff; /* Light blue background */
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    position: relative;
+    left: -13px;
+}
+
+.account-benefits-container h3 {
+    font-size: 1.5rem;
+    color: #2980b9; /* Darker blue for heading */
+    margin-bottom: 15px;
+}
+
+.account-benefits-container p {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.account-benefits-container ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+    text-align: left;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.account-benefits-container li {
+    background: #d4edda; /* Light green for list items */
+    color: #155724; /* Dark green text */
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+}
+
+.account-benefits-container li::before {
+    content: '✅'; /* Checkmark icon */
+    font-size: 1.2rem;
+}
+
+.account-benefits-container .link-button {
+    display: inline-block;
+    background: #3498db;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.3s ease;
+}
+
+.account-benefits-container .link-button:hover {
+    background: #2980b9;
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+    .account-benefits-container {
+        padding: 20px;
+    }
+
+    .account-benefits-container h3 {
+        font-size: 1.3rem;
+    }
+
+    .account-benefits-container p {
+        font-size: 0.9rem;
+    }
+
+    .account-benefits-container li {
+        font-size: 0.85rem;
+    }
+
+    .account-benefits-container .link-button {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 350px) {
+    .account-benefits-container {
+        padding: 15px;
+    }
+
+    .account-benefits-container h3 {
+        font-size: 1.2rem;
+    }
+
+    .account-benefits-container p {
+        font-size: 0.85rem;
+    }
+
+    .account-benefits-container li {
+        font-size: 0.8rem;
+        padding: 8px 12px;
+    }
+
+    .account-benefits-container .link-button {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+    }
+}

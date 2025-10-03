@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import './Banner.css';
 
 const images = [
-    'https://picsum.photos/1920/1080?random=1', 
-    'https://picsum.photos/1920/1080?random=2', 
-    'https://picsum.photos/1920/1080?random=3', 
-    'https://picsum.photos/1920/1080?random=4' 
+    'https://images.unsplash.com/photo-1535090467336-95d21c1b2356', 
+    'https://images.unsplash.com/photo-1547486894-864a31340712', 
+    'https://images.unsplash.com/photo-1587899769963-3c09c0358666'
 ];
 
 const Banner = () => {

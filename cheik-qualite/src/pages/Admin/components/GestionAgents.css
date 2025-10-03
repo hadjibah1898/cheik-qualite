@@ -98,7 +98,8 @@
 }
 
 .agent-actions .approve-btn,
-.agent-actions .reject-btn {
+.agent-actions .reject-btn,
+.agent-actions .delete-btn {
     padding: 8px 15px;
     border: none;
     border-radius: 6px;
@@ -111,15 +112,85 @@
 }
 
 .agent-actions .approve-btn:hover,
-.agent-actions .reject-btn:hover {
+.agent-actions .reject-btn:hover,
+.agent-actions .delete-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
-.agent-actions .reject-btn {
+.agent-actions .reject-btn,
+.agent-actions .delete-btn {
     background-color: #dc3545;
+}
+
+.agent-actions .reject-btn:hover,
+.agent-actions .delete-btn:hover {
+    background-color: #c82333;
 }
 
 .agent-actions .approve-btn {
     background-color: #28a745;
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.modal-content p {
+    font-size: 1.1rem;
+    margin: 0 0 1.5rem 0;
+    color: #333;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.modal-actions .btn {
+    padding: 0.7rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.modal-actions .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.modal-actions .btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.modal-actions .btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.modal-actions .btn-danger:hover {
+    background-color: #c82333;
 }

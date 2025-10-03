@@ -7,6 +7,8 @@ import { AuthContext } from '../../context/AuthContext.js';
 import PersonalInfoSection from './components/PersonalInfoSection.js';
 import HealthPreferencesSection from './components/HealthPreferencesSection.js';
 import SecuritySection from './components/SecuritySection.js';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit } from '@fortawesome/free-solid-svg-icons';
 
 const predefinedHealthConditions = ["Diabétique", "Hypertendu", "Drépanocytaire", "Aucun"];
 
@@ -189,9 +191,9 @@ const Profil = () => {
 
             <div className="profile-actions">
                 {!editMode ? (
-                    <button onClick={handleEditToggle} className="edit-btn"><i className="fas fa-edit"></i> Modifier le profil</button>
+                    <button key="edit" onClick={handleEditToggle} className="edit-btn"><FontAwesomeIcon icon={faEdit} /> Modifier le profil</button>
                 ) : (
-                    <button onClick={handleEditToggle} className="cancel-btn">Annuler les modifications</button>
+                    <button key="cancel" onClick={handleEditToggle} className="cancel-btn">Annuler les modifications</button>
                 )}
 
                 <button onClick={handleLogout} className="logout-btn-profile">Déconnexion</button>

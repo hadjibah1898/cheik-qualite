@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import './ConseilSante.css';
 import AlimentsTab from './components/AlimentsTab.js';
 import MagazinesTab from './components/MagazinesTab.js';
@@ -7,6 +7,28 @@ import MagazinesTab from './components/MagazinesTab.js';
 
 const ConseilSante = () => {
     const [activeTab, setActiveTab] = useState('aliments');
+    const [rotatingPhrase, setRotatingPhrase] = useState('');
+
+    const phrases = useMemo(() => [
+        "Malades chroniques : Vérifiez toujours l'adéquation des produits à votre santé. Consultez un nutritionniste !",
+        "Votre santé est précieuse. Les produits locaux sont bons, mais une vérification est essentielle pour les maladies chroniques.",
+        "Diabète, hypertension, drépanocytose... Avant de consommer, demandez l'avis d'un spécialiste de la nutrition.",
+        "Ne prenez aucun risque avec votre santé chronique. Nos diététiciens sont là pour vous conseiller.",
+        "Produits locaux et maladies chroniques : L'équilibre passe par l'information et le conseil professionnel."
+    ], []);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const randomIndex = Math.floor(Math.random() * phrases.length);
+            setRotatingPhrase(phrases[randomIndex]);
+        }, 7000); // Change phrase every 7 seconds
+
+        // Set initial phrase
+        const initialIndex = Math.floor(Math.random() * phrases.length);
+        setRotatingPhrase(phrases[initialIndex]);
+
+        return () => clearInterval(interval);
+    }, [phrases]);
 
     const getStatus = (condition, value) => {
         let text, icon, className;
@@ -84,6 +106,10 @@ const ConseilSante = () => {
 
     return (
         <>
+            <div className="rotating-phrase-banner">
+                <p>{rotatingPhrase}</p>
+            </div>
+
             <div className="nav-tabs">
                 <div className={`nav-tab ${activeTab === 'aliments' ? 'active' : ''}`} onClick={() => setActiveTab('aliments')}>Aliments</div>
                 <div className={`nav-tab ${activeTab === 'magazines' ? 'active' : ''}`} onClick={() => setActiveTab('magazines')}>Prendre rendez-vous</div>

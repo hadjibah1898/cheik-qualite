@@ -1,7 +1,6 @@
 import React from 'react';
-import SoumissionProduitLocal from '../Admin/components/SoumissionProduitLocal.js';
-import './AgentDashboard.css';
 import { jwtDecode } from 'jwt-decode'; // Corrected import
+import SubmitProductForm from './components/SubmitProductForm.js';
 
 const AgentDashboard = () => {
     const token = localStorage.getItem('token');
@@ -23,7 +22,7 @@ const AgentDashboard = () => {
                 <p>Bienvenue, {agentName}.</p>
             </header>
             <main className="agent-dashboard-main">
-                <SoumissionProduitLocal />
+                <SubmitProductForm />
             </main>
         </div>
     );

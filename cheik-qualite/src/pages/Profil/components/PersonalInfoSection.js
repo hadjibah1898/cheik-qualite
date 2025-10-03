@@ -1,4 +1,6 @@
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCamera } from '@fortawesome/free-solid-svg-icons';
 
 const PersonalInfoSection = ({ user, formData, editMode, handleChange, handleFileChange, handleInfoSave, selectedFile, message, messageType }) => {
     return (
@@ -7,7 +9,7 @@ const PersonalInfoSection = ({ user, formData, editMode, handleChange, handleFil
                 <img src={formData.profilePictureUrl || "https://via.placeholder.com/150"} alt="Profil" />
                 {editMode && (
                     <label htmlFor="profile-picture-upload" className="file-upload-label">
-                        <i className="fas fa-camera"></i> Changer
+                        <FontAwesomeIcon icon={faCamera} /> Changer
                         <input type="file" id="profile-picture-upload" accept="image/*" onChange={handleFileChange} />
                     </label>
                 )}

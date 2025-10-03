@@ -15,7 +15,6 @@ import News from './components/News.js';
 import Testimonials from './components/Testimonials.js';
 import Partners from './components/Partners.js';
 import BecomeAgentSection from './components/BecomeAgentSection.js'; // Import the new section component
-import FAQ from './components/FAQ/FAQ.js';
 
 const Accueil = () => {
     const [productQuery, setProductQuery] = useState('');
@@ -129,7 +128,6 @@ const Accueil = () => {
     const toggleCamera = () => {
         setShowScanner(!showScanner);
     };
-    
     const simulateScanForPC = (code) => {
         setProductQuery(code);
         verifyProduct(code); // Call the new verifyProduct function
@@ -231,7 +229,6 @@ const Accueil = () => {
                         </div>
                     )}
                 </div>
-                
                 {showScanner && (
                     <div id="scanner-container" style={{textAlign:'center', position: 'relative'}}>
                         <div id="interactive" className="viewport"></div>
@@ -284,6 +281,21 @@ const Accueil = () => {
                         </div>
                     </div>
                 )}
+                {!isAuthenticated && (
+                    <div className="account-benefits-container">
+                        <h3>Pourquoi créer un compte ?</h3>
+                        <p>En créant un compte, vous bénéficiez d'avantages exclusifs :</p>
+                        <ul>
+                            <li>Recevez des alertes en direct (téléphone/e-mail) sur les rappels de produits ou nouvelles certifications.</li>
+                            <li>Accédez à l'historique de vos vérifications de produits.</li>
+                            <li>Contribuez à l'amélioration de la qualité des produits locaux.</li>
+                            <li>**Devenez agent :** Inscrivez-vous pour participer activement à la promotion des produits certifiés.</li>
+                            <li>**Producteur certifié :** Publiez vos produits locaux certifiés ONCQ sur notre plateforme pour une visibilité accrue.</li>
+                        </ul>
+                        <p style={{marginTop: '20px'}}>Que vous souhaitiez devenir agent ou publier vos produits, créez un compte dès maintenant !</p>
+                        <NavLink to="/login" className="link-button">Créer un compte ou se connecter</NavLink>
+                    </div>
+                )}
             </section>
 
             <News />
@@ -302,7 +314,7 @@ const Accueil = () => {
             {isAuthenticated && <BecomeAgentSection />}
             <Partners />
             <About />
-            <FAQ />
+            
         </>
     );
 };

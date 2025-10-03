@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from 'react-toastify';
 
 export default function MagazinesTab() {
   const [selectedDiet, setSelectedDiet] = useState(null);
@@ -48,9 +49,8 @@ export default function MagazinesTab() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert(
-      `Merci ${formData.nom} ! Votre rendez-vous avec ${selectedDiet.name} est demandé pour le ${formData.date} à ${formData.time}.
-Type: ${formData.consultation} | Forfait: ${selectedDiet.forfait}`
+    toast.success(
+      `Merci ${formData.nom} ! Votre rendez-vous avec ${selectedDiet.name} est demandé pour le ${formData.date} à ${formData.time}. Type: ${formData.consultation} | Forfait: ${selectedDiet.forfait}`
     );
     setFormData({
       nom: "",

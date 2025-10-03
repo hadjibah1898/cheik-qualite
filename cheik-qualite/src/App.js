@@ -1,5 +1,8 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import Layout from './components/Layout/Layout.js';
 import Accueil from './pages/Accueil/index.js';
 import ConseilSante from './pages/ConseilSante/index.js';
@@ -17,12 +20,24 @@ import PrivateRoute from './components/PrivateRoute/PrivateRoute.js';
 import SoumissionCertificat from './pages/SoumissionCertificat/index.js';
 import Unauthorized from './pages/Unauthorized/index.js';
 import Contact from './pages/Contact/index.js';
+import FAQ from './pages/FAQ/index.js'; // New import for FAQ page
 import DevenirAgentPage from './pages/DevenirAgent/index.js';
 import Chatbot from './components/Chatbot/Chatbot.js';
 
 function App() {
   return (
     <Router>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <Layout>
         <Routes>
           {/* Public Routes */}
@@ -34,6 +49,7 @@ function App() {
           <Route path="/login" element={<AuthPage />} />
           <Route path="/devenir-agent" element={<DevenirAgentPage />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
+          <Route path="/faq" element={<FAQ />} />
 
           {/* All Protected Routes are now managed by the PrivateRoute component dynamically */}
           <Route element={<PrivateRoute />}>
@@ -43,7 +59,7 @@ function App() {
             <Route path="/verifier-produit" element={<VerificationProduit />} />
             <Route path="/recherche-avancee" element={<RechercheAvancee />} />
             
-            {/* Agent specific route */}
+            Agent specific route
             <Route path="/agent/dashboard" element={<AgentDashboard />} />
 
             {/* Admin specific routes */}

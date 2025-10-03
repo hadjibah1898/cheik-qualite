@@ -18,6 +18,7 @@ const Footer = () => {
                         <li><NavLink to="/produits-locaux">Produits Locaux</NavLink></li>
                         <li><NavLink to="/a-propos">À Propos</NavLink></li>
                         <li><NavLink to="/contact">Contact</NavLink></li>
+                        <li><NavLink to="/faq">FAQ</NavLink></li>
                     </ul>
                 </div>
                 <div className="footer-section contact">

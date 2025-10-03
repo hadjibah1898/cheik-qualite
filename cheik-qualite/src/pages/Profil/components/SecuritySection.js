@@ -1,10 +1,10 @@
 import React from 'react';
 
 const SecuritySection = ({ editMode, passwordData, handlePasswordInputChange, handlePasswordSave }) => {
-    if (!editMode) return null; // Only show in edit mode
+    const displayClass = editMode ? '' : 'hidden';
 
     return (
-        <div className="security-section">
+        <div className={`security-section ${displayClass}`}>
             <h3>Sécurité</h3>
             <div className="info-group">
                 <label>Mot de passe actuel</label>

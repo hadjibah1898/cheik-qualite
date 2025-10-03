@@ -1,213 +1,170 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, createContext, useContext } from 'react';
 import './Admin.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartLine, faBoxes, faExclamationTriangle, faSignOutAlt, faBell, faEnvelope, faCheck, faTrashAlt, faBullhorn } from '@fortawesome/free-solid-svg-icons';
+import {
+    FiHome, FiUsers, FiBarChart2, FiSettings, FiLogOut, FiBell, FiMenu, FiX, FiSun, FiMoon, FiCheckCircle, FiXCircle
+} from 'react-icons/fi';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+
+// --- THEME CONTEXT ---
+const ThemeContext = createContext();
+
+const ThemeProvider = ({ children }) => {
+    const [theme, setTheme] = useState('light');
+
+    const toggleTheme = () => {
+        setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
+    };
+
+    useEffect(() => {
+        document.body.className = theme + '-mode';
+    }, [theme]);
+
+    return (
+        <ThemeContext.Provider value={{ theme, toggleTheme }}>
+            {children}
+        </ThemeContext.Provider>
+    );
+};
+
+const useTheme = () => useContext(ThemeContext);
+
+// --- MOCK DATA ---
+const chartData = [
+    { name: 'Jan', Ventes: 400, Inscriptions: 240 },
+    { name: 'Fév', Ventes: 300, Inscriptions: 139 },
+    { name: 'Mar', Ventes: 200, Inscriptions: 980 },
+    { name: 'Avr', Ventes: 278, Inscriptions: 390 },
+    { name: 'Mai', Ventes: 189, Inscriptions: 480 },
+    { name: 'Juin', Ventes: 239, Inscriptions: 380 },
+    { name: 'Juil', Ventes: 349, Inscriptions: 430 },
+];
 
 // --- SUB-COMPONENTS ---
 
-const Sidebar = ({ view, setView }) => (
-    <div className="admin-sidebar">
-        <div className="sidebar-header">
-            <h1>ONCQ</h1>
-            <span>Admin</span>
-        </div>
-        <nav className="sidebar-nav">
-            <a href="#dashboard" onClick={() => setView('dashboard')} className={view === 'dashboard' ? 'active' : ''}>
-                <FontAwesomeIcon icon={faChartLine} />
-                <span>Tableau de Bord</span>
-            </a>
-            <a href="#products" onClick={() => setView('products')} className={view === 'products' ? 'active' : ''}>
-                <FontAwesomeIcon icon={faBoxes} />
-                <span>Produits</span>
-            </a>
-            <a href="#alerts" onClick={() => setView('alerts')} className={view === 'alerts' ? 'active' : ''}>
-                <FontAwesomeIcon icon={faExclamationTriangle} />
-                <span>Alertes</span>
-            </a>
-        </nav>
-        <div className="sidebar-footer">
-            <a href="/">
-                <FontAwesomeIcon icon={faSignOutAlt} />
-                <span>Déconnexion</span>
-            </a>
+const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
+    const [active, setActive] = useState('Accueil');
+
+    const navItems = [
+        { name: 'Accueil', icon: <FiHome /> },
+        { name: 'Utilisateurs', icon: <FiUsers /> },
+        { name: 'Statistiques', icon: <FiBarChart2 /> },
+        { name: 'Paramètres', icon: <FiSettings /> },
+    ];
+
+    return (
+        <aside className={`sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
+            <div className="sidebar-header">
+                <h1 className="sidebar-logo">ONCQ</h1>
+                <button className="sidebar-toggle-close" onClick={() => setSidebarOpen(false)}>
+                    <FiX />
+                </button>
+            </div>
+            <nav className="sidebar-nav">
+                {navItems.map(item => (
+                    <a
+                        key={item.name}
+                        href="#"
+                        className={`nav-item ${active === item.name ? 'active' : ''}`}
+                        onClick={() => setActive(item.name)}
+                    >
+                        <span className="nav-icon">{item.icon}</span>
+                        <span className="nav-text">{item.name}</span>
+                    </a>
+                ))}
+            </nav>
+            <div className="sidebar-footer">
+                <a href="#" className="nav-item">
+                    <span className="nav-icon"><FiLogOut /></span>
+                    <span className="nav-text">Déconnexion</span>
+                </a>
+            </div>
+        </aside>
+    );
+};
+
+const Topbar = ({ setSidebarOpen }) => {
+    const { theme, toggleTheme } = useTheme();
+
+    return (
+        <header className="topbar">
+            <div className="topbar-left">
+                <button className="sidebar-toggle-open" onClick={() => setSidebarOpen(true)}>
+                    <FiMenu />
+                </button>
+                <h2>Tableau de Bord</h2>
+            </div>
+            <div className="topbar-right">
+                <button className="theme-toggle" onClick={toggleTheme}>
+                    {theme === 'light' ? <FiMoon /> : <FiSun />}
+                </button>
+                <a href="#" className="topbar-icon">
+                    <FiBell />
+                </a>
+                <div className="user-avatar">
+                    <span>A</span>
+                </div>
+            </div>
+        </header>
+    );
+};
+
+const StatCard = ({ title, value, icon, color, trend }) => (
+    <div className="stat-card" style={{ '--accent-color': color }}>
+        <div className="stat-card-icon">{icon}</div>
+        <div className="stat-card-info">
+            <p className="stat-card-title">{title}</p>
+            <h3 className="stat-card-value">{value}</h3>
+            {trend && <p className="stat-card-trend">{trend}</p>}
         </div>
     </div>
 );
 
-const AdminHeader = ({ adminName }) => (
-    <header className="admin-header">
-        <div className="header-welcome">
-            <h2>Bonjour, {adminName} !</h2>
-            <p>Bienvenue sur votre tableau de bord.</p>
-        </div>
-        <div className="header-profile">
-            <FontAwesomeIcon icon={faEnvelope} className="header-icon" />
-            <FontAwesomeIcon icon={faBell} className="header-icon" />
-            <div className="user-avatar">A</div>
-        </div>
-    </header>
-);
-
-const StatCard = ({ title, value, color }) => (
-    <div className="stat-card" style={{ borderLeftColor: color }}>
+const ChartCard = ({ title, data }) => (
+    <div className="card chart-card">
         <h3>{title}</h3>
-        <p>{value}</p>
+        <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={data}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="Ventes" stroke="var(--chart-color-1)" activeDot={{ r: 8 }} />
+                <Line type="monotone" dataKey="Inscriptions" stroke="var(--chart-color-2)" />
+            </LineChart>
+        </ResponsiveContainer>
     </div>
 );
 
-const DashboardView = ({ stats, pendingProducts, handleProductAction, loading, error }) => (
-    <>
-        <div className="dashboard-stats">
-            <StatCard title="Produits en attente" value={stats.pending} color="#f39c12" />
-            <StatCard title="Vendeurs Certifiés" value={stats.certified} color="#2ecc71" />
-            <StatCard title="Utilisateurs" value={stats.users} color="#3498db" />
-        </div>
-        <div className="card">
-            <h3>Produits en attente de validation</h3>
-            <div className="table-container">
-                {loading && <p>Chargement des produits...</p>}
-                {error && <p className="error-message">Erreur: {error}</p>}
-                {!loading && !error && (
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Nom du produit</th>
-                                <th>Vendeur</th>
-                                <th>Catégorie</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {pendingProducts.length > 0 ? pendingProducts.map(product => (
-                                <tr key={product._id}>
-                                    <td>{product.name}</td>
-                                    <td>{product.vendor || 'N/A'}</td>
-                                    <td>{product.category || 'N/A'}</td>
-                                    <td>
-                                        <button className="action-btn approve" onClick={() => handleProductAction(product._id, 'approved')} title="Approuver">
-                                            <FontAwesomeIcon icon={faCheck} />
-                                        </button>
-                                        <button className="action-btn reject" onClick={() => handleProductAction(product._id, 'rejected')} title="Rejeter">
-                                            <FontAwesomeIcon icon={faTrashAlt} />
-                                        </button>
-                                    </td>
-                                </tr>
-                            )) : (
-                                <tr>
-                                    <td colSpan="4">Aucun produit en attente.</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                )}
-            </div>
-        </div>
-    </>
-);
-
-const ProductsView = ({ products, loading, error }) => (
-    <div className="card">
-        <h3>Tous les Produits</h3>
+const TableCard = ({ title, headers, data }) => (
+    <div className="card table-card">
+        <h3>{title}</h3>
         <div className="table-container">
-            {loading && <p>Chargement des produits...</p>}
-            {error && <p className="error-message">Erreur: {error}</p>}
-            {!loading && !error && (
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nom du produit</th>
-                            <th>Vendeur</th>
-                            <th>Catégorie</th>
-                            <th>Statut</th>
+            <table>
+                <thead>
+                    <tr>
+                        {headers.map(h => <th key={h}>{h}</th>)}
+                    </tr>
+                </thead>
+                <tbody>
+                    {data.map(row => (
+                        <tr key={row._id}>
+                            <td>{row.name}</td>
+                            <td>{row.vendor || 'N/A'}</td>
+                            <td>{row.category || 'N/A'}</td>
+                            <td>
+                                <span className={`status-badge status-${row.status}`}>
+                                    {row.status === 'pending' ? 'En attente' : row.status === 'approved' ? 'Approuvé' : 'Rejeté'}
+                                </span>
+                            </td>
+                            <td className="action-cell">
+                                <button className="action-btn approve" title="Approuver"><FiCheckCircle /></button>
+                                <button className="action-btn reject" title="Rejeter"><FiXCircle /></button>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {products.length > 0 ? products.map(product => (
-                            <tr key={product._id}>
-                                <td>{product.name}</td>
-                                <td>{product.vendor || 'N/A'}</td>
-                                <td>{product.category || 'N/A'}</td>
-                                <td>
-                                    <span className={`status-badge status-${product.status}`}>
-                                        {product.status === 'pending' ? 'En attente' : product.status === 'approved' ? 'Approuvé' : 'Rejeté'}
-                                    </span>
-                                </td>
-                            </tr>
-                        )) : (
-                            <tr>
-                                <td colSpan="4">Aucun produit trouvé.</td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-            )}
-        </div>
-    </div>
-);
-
-const AlertsView = ({ alertTitle, setAlertTitle, alertMessage, setAlertMessage, handleAlertSubmit, alerts, handleDeleteAlert, loading, error }) => (
-    <div className="card">
-        <h3>Gérer les alertes ONCQ</h3>
-        <form id="add-alert-form" onSubmit={handleAlertSubmit}>
-            <div className="form-group">
-                <label htmlFor="alert-title">Titre de l'alerte</label>
-                <input 
-                    type="text" 
-                    id="alert-title" 
-                    value={alertTitle} 
-                    onChange={(e) => setAlertTitle(e.target.value)} 
-                    required 
-                />
-            </div>
-            <div className="form-group">
-                <label htmlFor="alert-message">Message de l'alerte</label>
-                <textarea 
-                    id="alert-message" 
-                    rows="5" 
-                    value={alertMessage} 
-                    onChange={(e) => setAlertMessage(e.target.value)} 
-                    required 
-                ></textarea>
-            </div>
-            <button type="submit" className="submit-btn">
-                <FontAwesomeIcon icon={faBullhorn} /> Publier l'alerte
-            </button>
-        </form>
-
-        <h3 style={{ marginTop: '30px' }}>Alertes existantes</h3>
-        <div className="table-container">
-            {loading && <p>Chargement des alertes...</p>}
-            {error && <p className="error-message">Erreur: {error}</p>}
-            {!loading && !error && (
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Titre</th>
-                            <th>Message</th>
-                            <th>Date</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {alerts.length > 0 ? alerts.map(alert => (
-                            <tr key={alert._id}>
-                                <td>{alert.title}</td>
-                                <td>{alert.message}</td>
-                                <td>{new Date(alert.createdAt).toLocaleDateString()}</td>
-                                <td>
-                                    <button className="action-btn reject" onClick={() => handleDeleteAlert(alert._id)} title="Supprimer">
-                                        <FontAwesomeIcon icon={faTrashAlt} />
-                                    </button>
-                                </td>
-                            </tr>
-                        )) : (
-                            <tr>
-                                <td colSpan="4">Aucune alerte trouvée.</td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-            )}
+                    ))}
+                </tbody>
+            </table>
         </div>
     </div>
 );
@@ -216,269 +173,60 @@ const AlertsView = ({ alertTitle, setAlertTitle, alertMessage, setAlertMessage, 
 // --- MAIN ADMIN COMPONENT ---
 
 const Admin = () => {
-    const [view, setView] = useState('dashboard');
+    const [isSidebarOpen, setSidebarOpen] = useState(true);
     const [products, setProducts] = useState([]);
-    const [alerts, setAlerts] = useState([]);
-    const [users, setUsers] = useState([]);
-    const [alertTitle, setAlertTitle] = useState('');
-    const [alertMessage, setAlertMessage] = useState('');
-
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const [stats, setStats] = useState({
-        pending: 0,
-        certified: 0,
-        users: 0
-    });
+    // Mock stats
+    const stats = [
+        { title: 'Total Utilisateurs', value: '1,254', icon: <FiUsers />, color: '#3b82f6', trend: '+12% ce mois-ci' },
+        { title: 'Produits Actifs', value: '320', icon: <FiBarChart2 />, color: '#10b981', trend: '+5 nouveaux' },
+        { title: 'Alertes Récentes', value: '12', icon: <FiBell />, color: '#f59e0b', trend: '2 non lues' },
+        { title: 'Taux de Rejet', value: '4.8%', icon: <FiXCircle />, color: '#ef4444', trend: '-1.2% vs hier' },
+    ];
 
-    // Fonction utilitaire pour obtenir le token JWT (à adapter selon votre implémentation d'authentification)
-    const getAuthToken = () => {
-        // Exemple: récupérer le token depuis le localStorage
-        return localStorage.getItem('token'); 
-    };
-
-    // --- FETCH DATA EFFECTS ---
-
-    // Effect pour récupérer les produits
+    // Fetch products (simplified)
     useEffect(() => {
         const fetchProducts = async () => {
             setLoading(true);
-            setError(null);
             try {
-                const token = getAuthToken();
-                const response = await fetch('/api/products', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                if (!response.ok) {
-                    throw new Error(`Erreur HTTP: ${response.status}`);
-                }
-                const data = await response.json();
-                setProducts(data);
+                // This is a mock fetch. Replace with your actual API call.
+                const mockProducts = [
+                    { _id: 1, name: 'Produit A', vendor: 'Vendeur 1', category: 'Catégorie X', status: 'approved' },
+                    { _id: 2, name: 'Produit B', vendor: 'Vendeur 2', category: 'Catégorie Y', status: 'pending' },
+                    { _id: 3, name: 'Produit C', vendor: 'Vendeur 1', category: 'Catégorie X', status: 'rejected' },
+                    { _id: 4, name: 'Produit D', vendor: 'Vendeur 3', category: 'Catégorie Z', status: 'pending' },
+                ];
+                await new Promise(res => setTimeout(res, 1000)); // Simulate network delay
+                setProducts(mockProducts);
             } catch (err) {
-                console.error("Erreur lors de la récupération des produits:", err);
-                setError(err.message);
+                setError('Impossible de charger les produits.');
             } finally {
                 setLoading(false);
             }
         };
         fetchProducts();
-    }, []); // S'exécute une seule fois au montage du composant
+    }, []);
 
-    // Effect pour récupérer les alertes
-    useEffect(() => {
-        const fetchAlerts = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const token = getAuthToken();
-                const response = await fetch('/api/alerts', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                if (!response.ok) {
-                    throw new Error(`Erreur HTTP: ${response.status}`);
-                }
-                const data = await response.json();
-                setAlerts(data);
-            } catch (err) {
-                console.error("Erreur lors de la récupération des alertes:", err);
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchAlerts();
-    }, []); // S'exécute une seule fois au montage du composant
-
-    // Effect pour récupérer les utilisateurs
-    useEffect(() => {
-        const fetchUsers = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const token = getAuthToken();
-                const response = await fetch('/api/users', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                if (!response.ok) {
-                    throw new Error(`Erreur HTTP: ${response.status}`);
-                }
-                const data = await response.json();
-                setUsers(data);
-            } catch (err) {
-                console.error("Erreur lors de la récupération des utilisateurs:", err);
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchUsers();
-    }, []); // S'exécute une seule fois au montage du composant
-
-    // Effect pour mettre à jour les statistiques
-    useEffect(() => {
-        const pendingProductsCount = products.filter(p => p.status === 'pending').length;
-        setStats({
-            pending: pendingProductsCount,
-            certified: products.filter(p => p.status === 'approved').length, // Exemple: produits approuvés comme certifiés
-            users: users.length
-        });
-    }, [products, users]); // Dépend des produits et des utilisateurs
-
-    // --- HANDLERS ---
-
-    const handleProductAction = async (id, action) => {
-        const token = getAuthToken();
-        if (!token) {
-            alert("Vous n'êtes pas authentifié.");
-            return;
-        }
-        try {
-            const method = action === 'approved' ? 'PUT' : 'DELETE'; // Assumons PUT pour approuver, DELETE pour rejeter
-            const url = `/api/products/${id}`;
-            
-            const response = await fetch(url, {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ status: action }) // Envoyer le nouveau statut si PUT
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || `Erreur lors de l'action sur le produit: ${response.status}`);
-            }
-            alert(`Produit ID ${id} a été ${action === 'approved' ? 'Approuvé' : 'Rejeté'} avec succès !`);
-            // Re-fetch products to update the list
-            const updatedProductsResponse = await fetch('/api/products', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            const updatedProductsData = await updatedProductsResponse.json();
-            setProducts(updatedProductsData);
-
-        } catch (err) {
-            console.error("Erreur lors de l'action sur le produit:", err);
-            alert(`Erreur: ${err.message}`);
-        }
-    };
-
-    const handleAlertSubmit = async (e) => {
-        e.preventDefault();
-        const token = getAuthToken();
-        if (!token) {
-            alert("Vous n'êtes pas authentifié.");
-            return;
-        }
-        try {
-            const response = await fetch('/api/alerts', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ title: alertTitle, message: alertMessage })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || `Erreur lors de la publication de l'alerte: ${response.status}`);
-            }
-            alert(`Nouvelle alerte publiée avec succès !`);
-            setAlertTitle('');
-            setAlertMessage('');
-            // Re-fetch alerts to update the list
-            const updatedAlertsResponse = await fetch('/api/alerts', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            const updatedAlertsData = await updatedAlertsResponse.json();
-            setAlerts(updatedAlertsData);
-
-        } catch (err) {
-            console.error("Erreur lors de la publication de l'alerte:", err);
-            alert(`Erreur: ${err.message}`);
-        }
-    };
-
-    const handleDeleteAlert = async (id) => {
-        const token = getAuthToken();
-        if (!token) {
-            alert("Vous n'êtes pas authentifié.");
-            return;
-        }
-        try {
-            const response = await fetch(`/api/alerts/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || `Erreur lors de la suppression de l'alerte: ${response.status}`);
-            }
-            alert(`Alerte supprimée avec succès !`);
-            // Re-fetch alerts to update the list
-            const updatedAlertsResponse = await fetch('/api/alerts', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            const updatedAlertsData = await updatedAlertsResponse.json();
-            setAlerts(updatedAlertsData);
-
-        } catch (err) {
-            console.error("Erreur lors de la suppression de l'alerte:", err);
-            alert(`Erreur: ${err.message}`);
-        }
-    };
-
-    const renderContent = () => {
-        const pendingProducts = products.filter(p => p.status === 'pending');
-
-        switch (view) {
-            case 'dashboard':
-                return <DashboardView stats={stats} pendingProducts={pendingProducts} handleProductAction={handleProductAction} loading={loading} error={error} />;
-            case 'products':
-                return <ProductsView products={products} loading={loading} error={error} />;
-            case 'alerts':
-                return <AlertsView 
-                            alertTitle={alertTitle} 
-                            setAlertTitle={setAlertTitle} 
-                            alertMessage={alertMessage} 
-                            setAlertMessage={setAlertMessage} 
-                            handleAlertSubmit={handleAlertSubmit} 
-                            alerts={alerts}
-                            handleDeleteAlert={handleDeleteAlert}
-                            loading={loading}
-                            error={error}
-                        />;
-            default:
-                return <DashboardView stats={stats} pendingProducts={pendingProducts} handleProductAction={handleProductAction} loading={loading} error={error} />;
-        }
-    };
+    const tableHeaders = ['Nom du produit', 'Vendeur', 'Catégorie', 'Statut', 'Actions'];
 
     return (
-        <div className="admin-panel">
-            <Sidebar view={view} setView={setView} />
-            <main className="admin-main-content">
-                <AdminHeader adminName="Admin" />
-                {renderContent()}
-            </main>
-        </div>
+        <ThemeProvider>
+            <div className="admin-panel">
+                <Sidebar isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} />
+                <main className="admin-main-content">
+                    <Topbar setSidebarOpen={setSidebarOpen} />
+                    <div className="stats-grid">
+                        {stats.map(stat => <StatCard key={stat.title} {...stat} />)}
+                    </div>
+                    <ChartCard title="Activité Récente" data={chartData} />
+                    <TableCard title="Gestion des Produits" headers={tableHeaders} data={products} />
+                </main>
+            </div>
+        </ThemeProvider>
     );
 };
 
 export default Admin;
+

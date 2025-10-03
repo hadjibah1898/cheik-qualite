@@ -1,9 +1,36 @@
-import React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import './Propos.css';
 
 const Propos = () => {
+    const [rotatingPhrase, setRotatingPhrase] = useState('');
+
+    const phrases = useMemo(() => [
+        "La certification des produits locaux : un gage de santé pour les consommateurs et une porte ouverte sur le marché international.",
+        "Développons l'économie guinéenne ! Certifier nos produits, c'est assurer leur qualité et leur compétitivité mondiale.",
+        "La santé de nos citoyens est notre priorité. La certification garantit des produits locaux sûrs et de haute qualité.",
+        "Fiers de nos produits guinéens ! La certification est la clé pour les faire rayonner au-delà de nos frontières.",
+        "Investir dans la certification, c'est investir dans la confiance des consommateurs et la croissance de nos producteurs locaux."
+    ], []);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const randomIndex = Math.floor(Math.random() * phrases.length);
+            setRotatingPhrase(phrases[randomIndex]);
+        }, 7000); // Change phrase every 7 seconds
+
+        // Set initial phrase
+        const initialIndex = Math.floor(Math.random() * phrases.length);
+        setRotatingPhrase(phrases[initialIndex]);
+
+        return () => clearInterval(interval);
+    }, [phrases]);
+
     return (
         <>
+            <div className="rotating-phrase-banner">
+                <p>{rotatingPhrase}</p>
+            </div>
+
             <section className="about-section fade-in-up">
                 <h2>Notre Initiative</h2>
                 <div className="divider"></div>

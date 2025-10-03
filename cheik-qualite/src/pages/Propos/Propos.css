@@ -278,3 +278,35 @@ header p { font-size: 1.2rem; max-width: 800px; margin: 0 auto; opacity: 0.9; }
 .fade-in-up.delay-1 { animation-delay: 0.2s; }
 .fade-in-up.delay-2 { animation-delay: 0.4s; }
 .fade-in-up.delay-3 { animation-delay: 0.6s; }
+
+/* Rotating Phrase Banner */
+.rotating-phrase-banner {
+    background-color: #e9f7ef; /* Light green background */
+    color: #28a745; /* Green text */
+    padding: 15px 20px;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 1.1em;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    animation: fadeIn 1s ease-out;
+}
+
+.rotating-phrase-banner p {
+    margin: 0;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .rotating-phrase-banner {
+        font-size: 0.9em;
+        padding: 10px 15px;
+    }
+}
+

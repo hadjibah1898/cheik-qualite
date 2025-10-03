@@ -1,0 +1,77 @@
+.guide-avatar-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    max-width: 350px;
+    z-index: 1000; /* Ensure it's above other content */
+    animation: slideInUp 0.5s ease-out;
+}
+
+.avatar-icon {
+    font-size: 2em;
+    color: #007bff;
+    margin-right: 10px;
+}
+
+.avatar-message {
+    flex-grow: 1;
+    text-align: left;
+}
+
+.avatar-message p {
+    margin: 0;
+    font-size: 0.9em;
+    color: #333;
+}
+
+.avatar-message strong {
+    color: #0056b3;
+}
+
+.close-avatar {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    color: #999;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: color 0.3s ease;
+}
+
+.close-avatar:hover {
+    color: #333;
+}
+
+@keyframes slideInUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .guide-avatar-container {
+        bottom: 10px;
+        right: 10px;
+        max-width: calc(100% - 40px);
+        padding: 8px 12px;
+    }
+
+    .avatar-icon {
+        font-size: 1.5em;
+    }
+
+    .avatar-message p {
+        font-size: 0.8em;
+    }
+
+    .close-avatar {
+        font-size: 1.2em;
+    }
+}

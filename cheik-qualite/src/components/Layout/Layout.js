@@ -3,6 +3,7 @@ import Header from '../Header/Header.js';
 import Footer from '../Footer/Footer.js';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import GuideAvatar from '../GuideAvatar/GuideAvatar.js';
 
 const Layout = ({ children }) => {
     return (
@@ -12,6 +13,7 @@ const Layout = ({ children }) => {
                 {children}
             </main>
             <Footer />
+            <GuideAvatar />
             <ToastContainer
                 position="bottom-right"
                 autoClose={5000}
