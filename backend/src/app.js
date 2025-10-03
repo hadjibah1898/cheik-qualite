@@ -37,14 +37,16 @@ const app = express();
 app.use(helmet()); // Ajoute des en-têtes de sécurité pour protéger contre des attaques connues.
 
 // Configuration CORS pour n'autoriser que le frontend
-const allowedOrigins = [process.env.FRONTEND_URL];
+const allowedOrigins = [
+  process.env.FRONTEND_URL, // L'URL de production principale
+  'https://cheik-qualite-pwiued9z4-bah-s-projects.vercel.app', // URL de preview Vercel
+  'http://localhost:3000' // URL pour le développement local
+].filter(Boolean); // Cette ligne retire les entrées vides ou non définies
+
 const corsOptions = {
   origin: (origin, callback) => {
-    // Autoriser les requêtes sans origine (comme Postman) en développement
-    if (!origin && process.env.NODE_ENV !== 'production') {
-      return callback(null, true);
-    }
-    if (allowedOrigins.indexOf(origin) !== -1) {
+    // Autoriser les requêtes sans origine (comme Postman) ou celles qui sont dans notre liste blanche
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
