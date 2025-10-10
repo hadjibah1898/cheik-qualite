@@ -3,7 +3,7 @@
 // Importe les modules nécessaires.
 import 'dotenv/config'; // Pour charger les variables d'environnement depuis un fichier .env
 import express from 'express'; // Le framework principal pour construire notre API
-import cors from 'cors'; // Middleware pour autoriser les requêtes depuis d'autres origines (notre frontend)
+import cors from 'cors';
 import helmet from 'helmet'; // Middleware pour sécuriser l'application en ajoutant divers en-têtes HTTP
 import fs from 'fs'; // Module 'File System' de Node.js, pour interagir avec les fichiers
 
@@ -30,6 +30,12 @@ import agentRoutes from './routes/agentRoutes.js';
 
 // On crée une instance de l'application Express.
 const app = express();
+
+// Ajout du middleware CORS pour autoriser le frontend
+app.use(cors({
+    origin: 'http://localhost:3000', // Remplacez par l'URL de votre frontend si besoin
+    credentials: true
+}));
 
 // --- Middlewares Globaux ---
 // Les middlewares sont des fonctions qui s'exécutent pour chaque requête reçue par le serveur.

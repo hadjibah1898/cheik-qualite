@@ -18,18 +18,6 @@ const Banner = () => {
         return () => clearTimeout(timer);
     }, [currentImageIndex]);
 
-    const goToPrevious = () => {
-        setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
-    };
-
-    const goToNext = () => {
-        setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-    };
-
-    const goToSlide = (index) => {
-        setCurrentImageIndex(index);
-    };
-
     return (
         <section 
             className="banner-section" 
@@ -51,17 +39,6 @@ const Banner = () => {
                 <h1>Bienvenue sur la Plateforme de Qualité Guinéenne</h1>
                 <p>Votre source de confiance pour la vérification des produits et le soutien à l'économie locale.</p>
                 <a href="#verification" className="banner-cta-button">Vérifier un produit</a>
-            </div>
-            <button className="carousel-control prev" onClick={goToPrevious}>&#10094;</button>
-            <button className="carousel-control next" onClick={goToNext}>&#10095;</button>
-            <div className="carousel-dots">
-                {images.map((_, index) => (
-                    <span
-                        key={index}
-                        className={`dot ${index === currentImageIndex ? 'active' : ''}`}
-                        onClick={() => goToSlide(index)}
-                    ></span>
-                ))}
             </div>
         </section>
     );
