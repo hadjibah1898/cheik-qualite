@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: cheik-qualite-backend
+    env: node
+    plan: free
+    # Indique à Render que le code du backend est dans le sous-dossier 'backend'
+    root: backend
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
