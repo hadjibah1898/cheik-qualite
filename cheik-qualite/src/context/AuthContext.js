@@ -12,14 +12,15 @@ export const AuthProvider = ({ children }) => {
 
     const fetchUserProfile = useCallback(async (token) => {
         try {
-            const response = await fetch(`${API_URL}/user/profile`, {
+            // backend exposes profile at GET /api/user
+            const response = await fetch(`${API_URL}/user`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {
                 const userData = await response.json();
                 setUser(userData); // Set full user profile
             } else {
-                console.error("Failed to fetch user profile");
+                console.error("Failed to fetch user profile", response.status, response.statusText);
                 setUser(null);
                 localStorage.removeItem('token');
             }

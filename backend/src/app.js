@@ -23,6 +23,7 @@ import userRoutes from './routes/userRoutes.js';
 import chatbotRoutes from './routes/chatbotRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import profileRoutes from './routes/profileRoutes.js';
+import openfoodfactsRoutes from './routes/openfoodfactsRoutes.js';
 import settingsRoutes from './routes/settingsRoutes.js';
 import permissionRoutes from './routes/permissionRoutes.js';
 import agentRoutes from './routes/agentRoutes.js';
@@ -92,6 +93,7 @@ app.use('/api/user', profileRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/permissions', permissionRoutes);
 app.use('/api/agents', agentRoutes);
+app.use('/api/openfoodfacts', openfoodfactsRoutes);
 
 
 // On exporte l'application 'app' pour qu'elle puisse être utilisée par d'autres fichiers (notamment server.js).

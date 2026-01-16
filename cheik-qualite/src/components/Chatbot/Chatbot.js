@@ -1,23 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import './Chatbot.css';
 
 const Chatbot = () => {
     const [chatbotOpen, setChatbotOpen] = useState(false);
     const [messages, setMessages] = useState([
         {
+            id: Date.now(),
             sender: 'bot',
             text: "Bonjour! 👋 Je suis votre assistant santé. Comment puis-je vous aider aujourd'hui?"
         }
     ]);
+    const timersRef = useRef([]);
     const [chatbotInput, setChatbotInput] = useState('');
     const [error, setError] = useState('');
 
     const handleSendMessage = async () => {
         const message = chatbotInput.trim();
         if (message === '') return;
-
-        const newMessages = [...messages, { sender: 'user', text: message }];
-        setMessages(newMessages);
+        const userMsg = { id: Date.now() + Math.random(), sender: 'user', text: message };
+        setMessages(prev => [...prev, userMsg]);
         setChatbotInput('');
 
         // Send message to backend for processing
@@ -35,12 +37,41 @@ const Chatbot = () => {
             }
 
             const data = await response.json();
-            setMessages(prevMessages => [...prevMessages, { sender: 'bot', text: data.response }]);
+            const botMsg = { id: Date.now() + Math.random(), sender: 'bot', text: data.response };
+            setMessages(prevMessages => [...prevMessages, botMsg]);
+            // Supprimer le message du bot après 3 secondes
+            const t = setTimeout(() => {
+                setMessages(prev => prev.filter(m => m.id !== botMsg.id));
+            }, 3000);
+            timersRef.current.push(t);
         } catch (err) {
             setError(err.message);
-            setMessages(prevMessages => [...prevMessages, { sender: 'bot', text: "Désolé, une erreur est survenue lors de la communication avec l'assistant." }]);
+            const errMsg = { id: Date.now() + Math.random(), sender: 'bot', text: "Désolé, une erreur est survenue lors de la communication avec l'assistant." };
+            setMessages(prevMessages => [...prevMessages, errMsg]);
+            const tErr = setTimeout(() => {
+                setMessages(prev => prev.filter(m => m.id !== errMsg.id));
+            }, 3000);
+            timersRef.current.push(tErr);
         }
     };
+
+    useEffect(() => {
+        return () => {
+            // Cleanup des timers en cas de démontage
+            timersRef.current.forEach(t => clearTimeout(t));
+            timersRef.current = [];
+        };
+    }, []);
+
+    const location = useLocation();
+    useEffect(() => {
+        // Lors d'un changement de route, supprimer les messages du bot et annuler les timers
+        setMessages(prev => prev.filter(m => m.sender !== 'bot'));
+        setChatbotOpen(false);
+        timersRef.current.forEach(t => clearTimeout(t));
+        timersRef.current = [];
+        setError('');
+    }, [location]);
 
     return (
         <>

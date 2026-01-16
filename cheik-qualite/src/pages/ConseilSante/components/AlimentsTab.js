@@ -78,6 +78,20 @@ const AlimentsTab = ({ getStatus }) => {
         };
     }, [searchTerm]); // Le tableau de dépendances: cet effet ne s'exécute que si `searchTerm` change.
 
+    // Helper: retourne la meilleure URL d'image disponible depuis les champs OpenFoodFacts
+    const getProductImage = (p) => {
+        return (
+            p.image_front_small_url ||
+            p.image_front_thumb_url ||
+            p.image_front_url ||
+            p.image_small_url ||
+            p.image_thumb_url ||
+            p.image_url ||
+            p.image ||
+            null
+        );
+    };
+
     // La partie "render" du composant : ce qui est affiché à l'écran.
     return (
         <div className="tab-content active" id="aliments-tab">
@@ -110,21 +124,34 @@ const AlimentsTab = ({ getStatus }) => {
                     // `map` est une fonction de tableau qui crée un nouvel élément pour chaque item du tableau.
                     filteredProducts.map(product => (
                         // `key` est un attribut spécial en React pour aider à identifier les éléments dans une liste.
-                        <div key={product.name} className="product-card-aliment">
+                        <div key={product.code || product._id || product.name} className="product-card-aliment">
                             <div className="product-header-aliment">
                                 <div className="product-image-aliment">
                                     {/* Affiche l'image du produit si elle existe, sinon une icône par défaut. */}
-                                    {product.imageUrl ? (
-                                        <img src={product.imageUrl} alt={product.name} />
+                                    {getProductImage(product) ? (
+                                        <img
+                                            className="aliment-img"
+                                            src={getProductImage(product)}
+                                            alt={product.product_name_fr || product.product_name || product.name}
+                                            loading="lazy"
+                                            decoding="async"
+                                            onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = "data:image/svg+xml;utf8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='400'%20height='400'%3E%3Crect%20fill='%23f0f0f0'%20width='100%25'/%3E%3Ctext%20x='50%25'%20y='50%25'%20dominant-baseline='middle'%20text-anchor='middle'%20fill='%23808080'%20font-family='Arial'%20font-size='24'%3EImage%20indisponible%3C/text%3E%3C/svg%3E"; }}
+                                            srcSet={`${product.image_front_small_url || ''} 200w, ${product.image_front_thumb_url || ''} 400w, ${product.image_front_url || ''} 800w`}
+                                            sizes="(max-width: 600px) 80px, 160px"
+                                        />
                                     ) : (
-                                        <i className="fas fa-utensils" id="product-icon"></i>
+                                        <div className="product-icon-fallback" aria-hidden="true"><i className="fas fa-utensils" id="product-icon"></i></div>
                                     )}
                                 </div>
                                 <div className="product-info-aliment">
                                     {/* Affiche le nom du produit, la marque, les catégories, etc. */}
                                     <h2 id="product-name">{product.product_name_fr || product.name}</h2>
                                     {product.brands && <p className="product-brand">Marque: {product.brands}</p>}
-                                    {product.categories && <p className="product-category">Catégories: {product.categories.join(', ')}</p>}
+                                    {product.categories && (
+                                        <p className="product-category">
+                                            Catégories: {Array.isArray(product.categories) ? product.categories.join(', ') : (typeof product.categories === 'string' ? product.categories : (Array.isArray(product.categories_tags) ? product.categories_tags.join(', ') : String(product.categories)))}
+                                        </p>
+                                    )}
                                     <p id="product-description">{product.description}</p>
                                 </div>
                             </div>
@@ -143,19 +170,19 @@ const AlimentsTab = ({ getStatus }) => {
                                     <h3><i className="fas fa-syringe"></i> Diabète</h3>
                                     <p>Charge glycémique et teneur en sucre</p>
                                     {/* Appel de la fonction `getStatus` passée en prop pour afficher l'indicateur. */}
-                                    {getStatus("diabetic", product.nutriments.sugars)}
+                                    {getStatus("diabetic", product.nutriments && product.nutriments.sugars)}
                                 </div>
 
                                 <div className="indicator hypertension">
                                     <h3><i className="fas fa-heartbeat"></i> Hypertension</h3>
                                     <p>Teneur en sodium et graisses saturées</p>
-                                    {getStatus("hypertension", product.nutriments.salt)}
+                                    {getStatus("hypertension", product.nutriments && product.nutriments.salt)}
                                 </div>
 
                                 <div className="indicator drepanocytosis">
                                     <h3><i className="fas fa-dna"></i> Drépanocytose</h3>
                                     <p>Teneur en fer et propriétés hydratantes</p>
-                                    {getStatus("drepanocytosis", product.nutriments.iron)}
+                                    {getStatus("drepanocytosis", product.nutriments && product.nutriments.iron)}
                                 </div>
                             </div>
 
